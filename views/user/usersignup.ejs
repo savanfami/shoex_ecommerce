@@ -1,0 +1,208 @@
+<%-include('../partials/userPartials/header')%>
+<link rel="stylesheet" href="/css/userlog.css">
+<link rel="stylesheet" href="/css/userhomepage.css">
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 left-box">
+            <div class="featured-image">
+                <img src="images/shoex.png" class="img-fluid " style="width:100%">
+            </div>
+
+        </div>
+        <div class="col-md-6 mt-5">
+            <div id="first">
+				<div class="myform form mt-5 m-auto">
+					 <div class="logo mb-3">
+						 <div class="col-md-12 text-center">
+							<h1>Create New Account</h1>
+						 </div>
+					</div>
+          <% if (message) { %>
+            <p class="text-center" style="color: red;" id="errorShow"><%= message %></p>
+            <script>
+                // Show error message
+                setTimeout(function () {
+                    document.getElementById('errorShow').style.display = 'block';
+                    
+                    // Hide error message after 3 seconds
+                    setTimeout(function () {
+                        document.getElementById('errorShow').style.display = 'none';
+                    }, 3000); // Adjust the delay time in milliseconds (e.g., 3000 for 3 seconds)
+                }, 0); // Set an initial delay if needed (e.g., 0 for no delay)
+            </script>
+        <% } %>
+                   <form action="/submit" method="post" name="login" id="signUp">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Username</label>
+                        <input type="name" name="name"  class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter your name">
+                        
+                     </div>
+                     <p class="error" id="nameError" style="color: red;"></p>
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">Email </label>
+                              <input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter your email" required="">
+                           </div>
+                           <p class="error" id="emailError" style="color: red;"></p>
+                           <div class="form-group" style="position: relative;">
+                              <label for="exampleInputEmail1">Password</label>
+                              <input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Your Password" required="">
+                              <span class="password-toggle" id="togglePassword" style="position: absolute; top: 10px; right: 15px;">
+                                <i class="fas fa-eye mt-4" id="eye-icon"></i>
+                            </div>
+                           <p class="error" id="passwordError" style="color:red;"></p>
+                           <div class="form-group" style="position: relative;">
+                              <label for="exampleInputEmail1">Confirm Password</label>
+                              <input type="password" name="confirmPassword" id="confirmPassword"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Your Password"  required="">
+                              <span class="password-toggle" id="toggleConfirmPassword" style="position: absolute; top: 10px; right: 15px;">
+                                <i class="fas fa-eye  mt-4" id="confirm-eye-icon"></i>
+                              </span>
+              
+                            </div>
+                           <p class="error" id="passwordError" style="color: red;"></p>
+                          
+                           <div class="col-md-12 text-center mt-4">
+                              <button id="login-button"  type="submit" class="btn btn-block form-control">SIGN UP</button>
+                           </div>
+                           <div class="col-md-12 ">
+                              <div class="login-or">     
+                                 <hr class="hr-or">
+                                 <span class="span-or">or</span>
+                              </div>
+                           </div>
+                           <div class="col-md-12 mb-3">
+                            <a id="google-login-button" class="btn btn-white text-dark form-control"> <img id="google-icon" src="/images/google icon.png">
+                                Continue With Google</a>
+                           </div>
+                           <div class="form-group">
+                              <p class="text-center">Already have an account? <a href="/tologin" id="signup">Login</a></p>
+                           </div>
+                        </form>
+                 
+				</div>
+			</div>
+        </div>
+    </div>
+   
+     
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const signUpForm = document.getElementById('signUp');
+        const emailInput = document.getElementById('email');
+        const nameInput = document.getElementById('name');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const showPasswordCheckbox = document.getElementById("showPassword");
+        signUpForm.addEventListener("submit", function (event) {
+          //resetting previous error message
+          nameError.innerHTML = "";
+          emailError.innerHTML = "";
+          passwordError.innerHTML = "";
+          passwordError.textContent = "";
+          //validate emailInput
+          const passwordValue = passwordInput.value.trim()
+          const confirmPasswordValue = confirmPasswordInput.value.trim();
+          const emailValue = emailInput.value.trim()
+          const nameValue = nameInput.value.trim()
+          if (nameValue === "") {
+             event.preventDefault()
+            nameError.textContent = "username can't be empty"
+
+            return
+          }
+          if (emailValue === "") {
+          event.preventDefault()
+
+            emailError.textContent = "Email address can't be empty"
+            return
+          }
+          //validate password input
+          if (passwordValue === "") {
+          event.preventDefault()
+
+            passwordError.textContent = "password field can't be empty"
+            return
+          }
+          if (confirmPasswordValue === "") {
+          event.preventDefault()
+
+            passwordError.textContent = "Confirm Password field can't be empty";
+            return
+            
+          }
+          if (passwordValue !== confirmPasswordValue) {
+          event.preventDefault()
+
+            passwordError.textContent = "Passwords do not match";
+            return
+          }
+          if (!isStrongPassword(passwordValue)) {
+          event.preventDefault()
+
+            passwordError.textContent = "password must be strong (e.g., at least 8 characters, including upper and lower case letters, numbers, and special characters)"
+            event.preventDefault()
+            return;
+          } else {
+            passwordError.textContent = ""
+          }
+          function isStrongPassword(password) {
+            // Define your criteria for a strong password
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            return regex.test(password);
+          }
+          console.log(emailValue,passwordValue);
+        
+
+
+            
+
+
+        })
+      });
+      // const passwordInput = document.getElementById('password');
+      // const showPasswordCheckbox = document.getElementById("showPassword");
+
+
+      // showPasswordCheckbox.addEventListener("change", function () {
+      //   event.preventDefault()
+      //   passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+
+      // });
+         
+    const password = document.getElementById('password');
+    const eyeIcon = document.getElementById('eye-icon');
+    const togglePassword = document.getElementById('togglePassword');
+
+    const confirmInput = document.getElementById('confirmPassword');
+    const confirmEyeIcon = document.getElementById('confirm-eye-icon');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
+    togglePassword.addEventListener('click', () => {
+      togglePasswordVisibility(password, eyeIcon);
+    });
+
+    toggleConfirmPassword.addEventListener('click', () => {
+      togglePasswordVisibility(confirmInput, confirmEyeIcon);
+    });
+
+    function togglePasswordVisibility(input, icon) {
+      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+      input.setAttribute('type', type);
+
+      // Toggle eye icon
+      if (type === 'password') {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      } else {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      }
+    }
+
+      
+    </script>
+<%-include('../partials/userPartials/footer')%>
+

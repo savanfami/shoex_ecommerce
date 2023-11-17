@@ -1,0 +1,100 @@
+<%-include('../adminPartials/header') %>
+<link rel="stylesheet" href="/css/adminslide.css">
+
+
+    <div id="body-pd">
+        <header class="header" id="header">
+            <div class="header_toggle" style="color: black;"> <i class='bx bx-menu' id="header-toggle"></i> </div>
+            <div class="header_img"> <img src="https://i.imgur.com/hczKIze.jpg" alt=""> </div>
+        </header>
+        <div class="l-navbar" id="nav-bar" style="background-color: white ;    ">
+            <nav class="nav">
+                <div>
+                    <a href="#" class="nav_logo" style="text-decoration: none;">
+                        <i class='fa-solid fa-user nav_logo-icon'></i>
+                        <span class="nav_logo-name" style="text-decoration: none;color: black;">SHOEX</span>
+                    </a>
+                    <div class="nav_list">
+                        <a href="#" class="nav_link active">
+                            <i class='bx bx-grid-alt nav_icon'></i>
+                            <span class="nav_name">Dashboard</span>
+                        </a>
+                        <a href="/admin/manageProduct" class="nav_link">
+                            <i class='fa-solid fa-box nav_icon'></i>
+                            <span class="nav_name">Products</span>
+                        </a>
+                        <a href="/admin/manageCategory" class="nav_link">
+                            <i class='fa-solid fa-layer-group nav_icon'></i>
+                            <span class="nav_name">Category</span>
+                        </a>
+                        <a href="#" class="nav_link">
+                            <i class='fa-solid fa-users nav_icon'></i>
+                            <span class="nav_name">Users</span>
+                        </a>
+                        <a href="#" class="nav_link">
+                            <i class='fa-solid fa-ticket nav_icon'></i>
+                            <span class="nav_name">Coupons</span>
+                        </a>
+                        <a href="#" class="nav_link">
+                            <i class='fa-regular fa-image nav_icon'></i>
+                            <span class="nav_name">Banner</span>
+                        </a>
+                        <a href="#" class="nav_link">
+                            <i class='fa-regular fa-credit-card nav_icon'></i>
+                            <span class="nav_name">Transactions</span>
+                        </a>
+                        <a href="#" class="nav_link">
+                            <i class='fa fa-solid fa-gear nav_icon'></i>
+                            <span class="nav_name">Settings</span>
+                        </a>
+                        <a href="#" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span
+                            class="nav_name">Logout</span> </a>
+                            
+                    </div>
+                </div>
+            </div> 
+                                
+                    </div>
+          
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+console.log("--------------------------------");
+const showNavbar = (toggleId, navId, bodyId, headerId) => {
+   const toggle = document.getElementById(toggleId),
+       nav = document.getElementById(navId),
+       bodypd = document.getElementById(bodyId),
+       headerpd = document.getElementById(headerId)
+
+   // Validate that all variables exist
+   if (toggle && nav && bodypd && headerpd) {
+       toggle.addEventListener('click', () => {
+           // show navbar
+           nav.classList.toggle('show')
+           // change icon
+           toggle.classList.toggle('bx-x')
+           // add padding to body
+           bodypd.classList.toggle('body-pd')
+           // add padding to header
+           headerpd.classList.toggle('body-pd')
+       })
+   }
+}
+
+showNavbar('header-toggle', 'nav-bar', 'body-pd', 'header')
+
+/*===== LINK ACTIVE =====*/
+const linkColor = document.querySelectorAll('.nav_link')
+
+function colorLink() {
+   if (linkColor) {
+       linkColor.forEach(l => l.classList.remove('active'))
+       this.classList.add('active')
+   }
+}
+linkColor.forEach(l => l.addEventListener('click', colorLink))
+
+// Your code to run since DOM is loaded and ready
+});
+</script>

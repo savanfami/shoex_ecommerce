@@ -1,0 +1,70 @@
+<%-include('../partials/userPartials/header')%>
+<link rel="stylesheet" href="/css/userlog.css">
+<link rel="stylesheet" href="/css/userhomepage.css">
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 left-box">
+            <div class="featured-image">
+                <img src="/images/shoex.png" class="img-fluid " style="width:100%">
+            </div>
+
+        </div>
+        <div class="col-md-6 mt-5">
+            <div id="first">
+				<div class="myform form mt-5 m-auto">
+					 <div class="logo mb-3">
+						 <div class="col-md-12 text-center">
+							<h1>LOGIN</h1>
+						 </div>
+					</div>
+               <% if (message) { %>
+                  <p class="text-center" style="color: red;" id="errorShow"><%= message %></p>
+                  <script>
+                      // Show error message
+                      setTimeout(function () {
+                          document.getElementById('errorShow').style.display = 'block';
+                          
+                          // Hide error message after 3 seconds
+                          setTimeout(function () {
+                              document.getElementById('errorShow').style.display = 'none';
+                          }, 3000); // Adjust the delay time in milliseconds (e.g., 3000 for 3 seconds)
+                      }, 2000); // Set an initial delay if needed (e.g., 0 for no delay)
+                  </script>
+              <% } %>
+                   <form action="/user/login" method="post" name="login">
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">Email address</label>
+                              <input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                           </div>
+                           <div class="form-group">
+                              <label for="exampleInputEmail1">Password</label>
+                              <input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Password" required="">
+                           </div>
+                           <div class="form-group mt-3">
+                              <p class="text-center"><a  href="#">Forgot password?</a></p>
+                           </div>
+                           <div class="col-md-12 text-center ">
+                              <button id="login-button"  type="submit" class="btn btn-block form-control">Login</button>
+                           </div>
+                           <div class="col-md-12 ">
+                              <div class="login-or">
+                                 <hr class="hr-or">
+                                 <span class="span-or">or</span>
+                              </div>
+                           </div>
+                           <div class="col-md-12 mb-3">
+                            <a id="google-login-button" class="btn btn-white text-dark form-control"> <img id="google-icon" src="/images/google icon.png">
+                                Continue With Google</a>
+                           </div>
+                           <div class="form-group">
+                              <p class="text-center">Don't have account? <a href="/tosignup" id="signup">Sign up</a></p>
+                           </div>
+                        </form>
+                 
+				</div>
+			</div>
+        </div>
+    </div>
+   
+ </div>
+ <%-include('../partials/userPartials/footer')%>

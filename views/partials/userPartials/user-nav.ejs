@@ -1,0 +1,79 @@
+<%-include("../userPartials/header")%>
+<nav class="newnavbar navbar navbar-expand-lg bg-black sticky-top navbar-dark p-3 shadow-sm navbar-color ">
+  <div class="container-fluid">
+    <a class="navbar-brand icon-size " href="#" style="font-family: 'radley';font-size: 25px;"> SHOEX</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="mx-auto my-3 d-lg-none d-sm-block d-xs-block">
+      <div class="input-group">
+        <span class="border-dark input-group-text bg-dark text-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input type="text" class="form-control border-dark" style="color:#7a7a7a">
+        <button class="btn btn-dark text-white">Search</button>
+      </div>
+    </div>
+    <div class="nav-item dropdown d-lg-none">
+      <a class="nav-link mx-2 text-uppercase dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="fa-solid fa-circle-user me-1" style="color: white;"></i>
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">Profile</a>
+        <a class="dropdown-item" href="#">Settings</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/user/logout">Logout</a>
+      </div>
+    </div>
+    <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+      <div class="ms-auto d-none d-lg-block">
+        <div class="input-group">
+          <span class="border-dark input-group-text bg-dark text-white search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input type="text" class="form-control border-white search-input" placeholder="Search">
+          <button class="btn btn-dark text-white">Search</button>
+        </div>
+        
+      </div>
+      <ul class="navbar-nav ms-auto text-end ">
+        <li class="nav-item ">
+          <a class="nav-link mx-2  active " aria-current="page" href="#">Home</a>
+        </li>
+       
+        <li class="nav-item">
+          <a class="nav-link mx-2  active" aria-current="page" href="#">About</a>
+        </li>
+       
+        <li class="nav-item">
+          <a class="nav-link mx-2  active " aria-current="page" href="#">Contact</a>
+        </li>
+       
+        
+      </ul>
+      <ul class="navbar-nav ms-auto text-end">
+        <div class="nav-item dropdown d-md-none d-sm-none d-lg-block">
+          <a class="nav-link mx-2 text-uppercase dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa-solid fa-circle-user me-1" style="color:white;"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="#">Settings</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/user/logout">Logout</a>
+          </div>
+        </div>
+        <li class="nav-item">
+          <a class="nav-link mx-2 text-uppercase" href="#"><i class=" fas fa-heart me-1 text-white"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mx-2 text-uppercase" href="#"><i class="fa-solid fas fa-shopping-cart me-1 text-white"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mx-2 text-uppercase" href="#"><i class="fa-solid fas fa-wallet me-1 text-white"></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
