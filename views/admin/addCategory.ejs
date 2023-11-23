@@ -1,0 +1,33 @@
+<%-include('../partials/adminPartials/header') %>
+<div class="container" style="display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;">
+    
+    <div class="" style="    width: 40%;
+    box-shadow: 0 1px 15px 1px rgb(52 40 104 / 30%);
+    padding: 20px;
+    border-radius: 6px;">
+        <h2 class="mb-4 text-center">ADD CATEGORY</h2>
+        <div class="">
+            <!-- Category Form -->
+            <form action="/admin/add/category" enctype="multipart/form-data" method="post">
+                <div class="mb-3">
+                    <label for="categoryName" class="form-label">Category Name:</label>
+                    <input type="text"  name="name"  class="form-control" id="categoryName" placeholder="Enter category name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="categoryImage" class="form-label">Category Image:</label>
+                    <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" required>
+                </div>
+
+                <button id="login-button"  type="submit" class="btn btn-primary l">Add</button>
+                
+                <!-- Back to Category Button -->
+
+                <a href="/admin/manageCategory" class="btn btn-secondary">Back to Category</a>
+            </form>
+        </div>
+    </div>
+</div>

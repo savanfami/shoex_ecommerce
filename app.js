@@ -9,8 +9,13 @@ connectDB=require('./config/connection')
 const session=require('express-session')
 const{v4:uuidv4}=require('uuid')
 const morgan=require("morgan")
+const nocache=require('nocache')
+const otpRouter=require('./util/otpRouter')
 
+app.use(nocache())
 const PORT=process.env.PORT
+
+
 
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(bodyParser.json())
@@ -38,7 +43,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
-
+app.use('/otp',otpRouter)
 
 app.listen(PORT, () => {
     console.log(`server start running at http://localhost:${PORT}`)

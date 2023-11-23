@@ -1,20 +1,30 @@
-const nodemailer=require('nodemailer')
-const crypto = require('crypto');
-require('dotenv').config()
-const{AUTH_EMAIL,AUTH_PASS}=process.env
+const nodemailer = require("nodemailer");
+const { AUTH_MAIL, AUTH_PASSWORD} = process.env;
 
-
-const transporter = nodemailer.createTransport({
+let mailTransporter=nodemailer.createTransport({
     service: 'gmail',
     auth:{
-        user:AUTH_EMAIL,
-        pass:AUTH_PASS}
-    
-  });
-
-
-  
-module.exports={
-  
+        user:AUTH_MAIL,
+        pass:AUTH_PASSWORD,
+    }
+})
+mailTransporter.verify((error,success)=>{
+    if(error){
+        console.log(error);
+    }else{
+        console.log("email ready");
+        console.log(success);
+    }
+})
+const sendEmail=async (mailOptions)=>{
+    try{
+        await mailTransporter.sendMail(mailOptions)
+        console.log("email sended");
+        
+        return;
+    }catch(err){
+        throw err;
+    }
 }
 
+module.exports=sendEmail;

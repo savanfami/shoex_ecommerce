@@ -1,60 +1,48 @@
-const nodemailer=require('nodemailer')
-require('dotenv').config()
-const{AUTH_EMAIL,AUTH_PASS}=process.env
-const sendmal=require('../util/mail')
+const { error } = require('console')
+const OTP=require('../model/otpSchema')
+const mail=require('../util/mail')
+const generateOTP = require('../util/otpgenerator')
+const {AUTH_MAIL}=process.env
 
-
-const sentOTP=async(email)=>{
-try {
+const sendOtp=async (email)=>{
+    try {
     if(!email){
-        throw Error("provide values for email")
+        throw error("provide the email")
     }
-    //deletiing existing otp
-    await  otpmodel.deleteOne({email:email})
+    await OTP.deleteOne({email})
 
-    //generating new otp
-    const generatedotp = Math.floor(Math.random() * 9000) + 1000; 
-   
+    const generatedOTP=await generateOTP()
 
-    //
     const mailOptions={
-        from:AUTH_EMAIL,
+        from:AUTH_MAIL,
         to:email,
-        subject:"verify the email using this OTP",
-        html:`<p>Use this OTP to verify your email and continue:</p><b>${generatedotp}</b>`
+        subject:"Verify the email using this otp",
+        html:`<p>Hello user use the this otp to verify your email to continue </p><p style="color:tomato;font-size:25px;letter-spacing:2px;">
+        <b>${generatedOTP}</b></p><p>OTP will expire in<b> 10 minute(s)</b>.</p>`
     }
+    await mail(mailOptions)
 
+    function addMinutesToDate(date, minutes) {
+        return new Date(date.getTime() + minutes * 60000); 
+      }
 
-
-    //sending otp
-
-    await sentmail(mailOptions)
-    console.log(`generated otp:${generatedotp}`)
-   
-
-
-    //saving otp
-
-    const currentDate=new Date();
-    const newDate=new Date(currentDate.getTime()+2*60000);
-    const newOTP=await new otpmodel({
+      const currentDate=new Date()
+      const newDate = addMinutesToDate(currentDate, 10);
+      console.log("@@@@@@@@@@",generatedOTP);
+      const newdOtp=await new OTP({
         email,
-        otp:generatedotp,
-        otpAdded:currentDate,
-        ExpireAt:newDate
-    })
+        otp:generatedOTP,  
+        otpAdded:Date.now(),
+        expireAt:newDate
+      })
+      console.log("....................",newdOtp);
+      const createdOtp=await newdOtp.save()
+      console.log("_------------------------------------",createdOtp);
+      return createdOtp;
 
-    const createOTPrecord=await newOTP.save()
-
-
-} catch (error) {
-    console.log(error.message);
-}
-}
-
-
-module.exports={
-    sentOTP
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-    
+module.exports=sendOtp

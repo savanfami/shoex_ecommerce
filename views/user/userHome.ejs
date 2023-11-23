@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="/css/userhomepage.css">
 
   <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+
     <div class="carousel-inner">
       <div class="carousel-item active">
         <img src="/images/heroimage.png" class="d-block w-100" alt="...">
@@ -34,35 +35,18 @@
     </header>
 
     <div class="row my-5 ">
-      <div class="col-lg-4 col-md-6 col-sm-12 ">
-        <div class="card my-2 shadow-0 custom-card pt-5 mx-auto ">
-          <a href="#" class="">
-            <img src="/images/pr1.png" class="card-img-top rounded-2 custom-image">
-          </a>
-          <div class="card-body p-0 pt-2 custom-button">
-            <button class="btn btn " style="color: white; padding-bottom:10px;">Casuals</button>
+      <div class="col  d-flex justify-content-around flex-wrap">
+        <% categoryData.forEach(data => { %>
+          <div class="card my-2 shadow-0 custom-card  mx-auto shadow p-3 mb-5 bg-white">
+            <a href="#" class="">
+              <img src="/uploadedImages/<%=data.image %>" class="card-img-top rounded-2 custom-image">
+            </a>
+            <div class="card-body p-0 pt-2 custom-button">
+              <button class="btn btn " style="color: white; padding-bottom:10px;"><%=data.name%></button>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12 ">
-        <div class="card my-2 shadow-0 custom-card pt-5 mx-auto">
-          <a href="#" class="">
-            <img src="/images/pr2.png" class="card-img-top rounded-2 custom-image">
-          </a>
-          <div class="card-body p-0 pt-2 custom-button">
-            <button class="btn btn " style="color: white; padding-bottom:10px;">formals</button>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12  ">
-        <div class="card my-2 shadow-0 custom-card pt-5 mx-auto">
-          <a href="#" class="">
-            <img src="/images/pr3.png" class="card-img-top rounded-2 custom-image">
-          </a>
-          <div class="card-body p-0 pt-2 custom-button">
-            <button class="btn btn " style="color: white; padding-bottom:10px;">Boots</button>
-          </div>
-        </div>
+       
+          <% }) %>
       </div>
     </div>
     <img src="/images/second img.png" class="img-fluid d-block mx-auto content mt-5">

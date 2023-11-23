@@ -1,0 +1,54 @@
+<%-include("../partials/adminPartials/sidebar")%>
+
+<table class="table align-middle mb-0 bg-white">
+  <thead class="text-white" style="background-color: black;">
+       
+      <tr>
+        <th>No</th>
+        <th>Username</th>
+        <th>email</th>
+        <th>status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% userData.forEach((data)=>{ %>
+            <tr>
+              <td>
+                <%=++i%>
+              </td>
+              <td>
+                <%=data.username%>
+              </td>
+              <td>
+                <%=data.email%>
+              </td>
+              <td
+                class="<%= data.status ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white ">
+                  <% if (data.status) { %>
+                  <% value='Active'; %>
+                  <% } else { %>
+                  <% value='Inactive'; %>
+                  <% } %>
+                  <%= value %>
+              </td>
+              <td>
+                <% if (data.status) { %>
+                  <!-- If user is active, provide option to block -->
+                  <form action="/admin/block/<%- data._id %>" method="POST">
+                    <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
+                      onclick="return confirm('Are you sure you want to block <%=data.username%>?')">Block</button>
+                  </form>
+                  <% } else { %>
+                    <!-- If user is inactive, provide option to unblock -->
+                    <form action="/admin/unblock/<%- data._id %>" method="post">
+                      <button type="submit" class="text-white font-size btn btn-primary px-3 py-0"
+                        onclick="return confirm('Are you sure you want to un-block <%=data.username%>?')">Unblock</button>
+                    </form>
+                    <% } %>
+              </td>
+            </tr>
+            <% }) %>
+    </tbody>
+  </table>
+</div>

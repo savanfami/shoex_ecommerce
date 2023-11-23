@@ -3,17 +3,18 @@
 
 :root {
   --header-height: 3rem;
-  --nav-width: 68px;
-  --first-color: rgba(255, 255, 255, 0.345)
-  --first-color-light: #000000;
+  --nav-width: 80px;
+  --first-color: rgba(255, 255, 255, 0.345) --first-color-light: #000000;
   --white-color: #000000;
   --body-font: 'Nunito', sans-serif;
   --normal-font-size: 1rem;
   --z-fixed: 100;
-  
+
 }
 
-*, ::before, ::after {
+*,
+::before,
+::after {
   box-sizing: border-box;
 }
 
@@ -44,7 +45,7 @@ a {
   z-index: var(--z-fixed);
   transition: .5s;
   width: 5%;
- background-color: white;
+  background-color: white;
 }
 
 .header_toggle {
@@ -71,18 +72,21 @@ a {
   top: 0;
   left: -30%;
   width: var(--nav-width);
-  height: 100vh;
+  max-height: 100vh;
+  /* Set a maximum height for the sidebar */
+  overflow-y: auto;
+  /* Enable vertical scrolling if content exceeds the height */
   background-color: var(--first-color);
   padding: .5rem 1rem 0 0;
   transition: .5s;
   z-index: var(--z-fixed);
   border-radius: 14px;
-    margin-left: 10px;
-    margin-top: 8px;
-    height: auto;
-    box-shadow: 0px 2px 13px -8px #000000;
-
+  margin-left: 10px;
+  margin-top: 8px;
+  height: auto;
+  box-shadow: 0px 2px 13px -8px #000000;
 }
+
 
 .nav {
   height: 100%;
@@ -92,7 +96,8 @@ a {
   overflow: hidden;
 }
 
-.nav_logo, .nav_link {
+.nav_logo,
+.nav_link {
   display: grid;
   grid-template-columns: max-content max-content;
   align-items: center;
@@ -142,14 +147,7 @@ a {
   padding-left: calc(var(--nav-width) + 1rem);
 }
 
-.active {
-  
-  background-color:rgb(192, 225, 255);
-  box-shadow: 0px 2px 13px -8px #000000;
-
-
-}
-.nav_link{
+.nav_link {
   color: black;
   text-decoration: none;
 }

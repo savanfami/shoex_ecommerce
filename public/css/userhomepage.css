@@ -29,6 +29,7 @@
     border-radius: 0 0 20px 20px; 
     text-align: center;  
   }
+  
 
 
    @media (min-width: 997px) {
@@ -36,4 +37,11 @@
       width: 300px;
       height: 300px;
     }
+}
+@media (max-width: 650px) {
+  .nav-drop{
+    position: absolute;
+    top: 20px;
+    right: 100px;
+  }h
 }

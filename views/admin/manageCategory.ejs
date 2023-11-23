@@ -1,0 +1,68 @@
+<%-include("../partials/adminPartials/sidebar")%>
+
+    <h1>CATEGORY MANAGEMENT</h1>
+    <br>
+    <a href="/admin/add/category" class="btn btn-primary">Add Category</a>
+    <table class="table align-middle mb-0 bg-white mt-4">
+        <thead class="text-white" style="background-color: black;">
+            <tr>
+                <th>No</th>
+                <th>image</th>
+                <th>Category Name</th>
+                <th>Created On</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% categoryData.forEach((data)=> { %>
+                <tr>
+                    <td>
+                        <%=++i %>
+                    </td>
+                    <td>
+                        <img src="/uploadedImages/<%=data.image %>" alt="" style="width: 50px; height: 50px"
+                            class="rounded-circle">
+                    </td>
+                    <td>
+                        <%=data.name %>
+                    </td>
+                    <td>
+                        <%=data.date %>
+                    </td>
+                    <td
+                    class="<%= data.status ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white ">
+                      <% if (data.status) { %>
+                      <% value='Active'; %>
+                      <% } else { %>
+                      <% value='Inactive'; %>
+                      <% } %>
+                      <%= value %>
+                  </td>
+                   <td>
+                    
+                    <a href="/admin/edit/category/<%-data._id %>" class="text-white">
+                        <i class="fa-solid fa-pen-to-square fa-xl" style="color: #000000;"></i>
+                      </a>
+
+                   </td>
+                   <td>
+                   <% if (data.status) { %>
+                    <!-- If user is active, provide option to block -->
+                    <form action="/admin/blockCategory/<%- data._id %>" method="POST">
+                      <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
+                        onclick="return confirm('Are you sure you want to block <%=data.name%>?')">Block</button>
+                    </form>
+                    <% } else { %>
+                      <!-- If user is inactive, provide option to unblock -->
+                      <form action="/admin/unblockCategory/<%- data._id %>" method="post">
+                        <button type="submit" class="text-white font-size btn btn-primary px-3 py-0"
+                          onclick="return confirm('Are you sure you want to un-block <%=data.name%>?')">Unblock</button>
+                      </form>
+                      <% } %>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+    </table>

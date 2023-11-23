@@ -2,7 +2,7 @@ const mongoose=require ('mongoose')
 require('dotenv').config()
 
 
-const otp=new mongoose.Schema({
+const otpSchema=new mongoose.Schema({
     otp:{
         type:Number
       
@@ -14,10 +14,10 @@ const otp=new mongoose.Schema({
     otpAdded:{
       type:Date
     },
-    ExpireAt:{
+    expireAt:{
       type:Date
     }
 })
 
-const otpmodel=mongoose.model('user',otp)
+const otpmodel=mongoose.model('OTP',otpSchema)
 module.exports=otpmodel
