@@ -1,8 +1,10 @@
 const { error } = require('console')
 const OTP=require('../model/otpSchema')
-const mail=require('../util/mail')
+const mail=require('../util/mail') 
 const generateOTP = require('../util/otpgenerator')
 const {AUTH_MAIL}=process.env
+const bcrypt=require('bcrypt')
+const email=require('../controller/usercontroller')
 
 const sendOtp=async (email)=>{
     try {
@@ -12,6 +14,8 @@ const sendOtp=async (email)=>{
     await OTP.deleteOne({email})
 
     const generatedOTP=await generateOTP()
+
+    const hashedOtp= await bcrypt.hash(generatedOTP,10)
 
     const mailOptions={
         from:AUTH_MAIL,
@@ -28,16 +32,14 @@ const sendOtp=async (email)=>{
 
       const currentDate=new Date()
       const newDate = addMinutesToDate(currentDate, 10);
-      console.log("@@@@@@@@@@",generatedOTP);
       const newdOtp=await new OTP({
         email,
-        otp:generatedOTP,  
+        otp:hashedOtp,
         otpAdded:Date.now(),
         expireAt:newDate
       })
-      console.log("....................",newdOtp);
       const createdOtp=await newdOtp.save()
-      console.log("_------------------------------------",createdOtp);
+      console.log("otp is",createdOtp);
       return createdOtp;
 
     } catch (error) {

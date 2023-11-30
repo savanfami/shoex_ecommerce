@@ -117,6 +117,10 @@ a {
 .nav_logo-name {
   color: var(--white-color);
   font-weight: 700;
+  /* margin-left: 30px; */
+}
+.nav_name{
+  /* margin-left: 30px; */
 }
 
 .nav_link {

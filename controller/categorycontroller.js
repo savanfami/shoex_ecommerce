@@ -8,7 +8,7 @@ require('dotenv').config()
 
 const manageCategory = async (req, res) => {
     var i = 0
-    const categoryData = await category.find()
+    const categoryData = await category.find().sort({name:1})
     res.render("./admin/manageCategory", { categoryData, i })
 }
 
@@ -17,6 +17,7 @@ const manageCategory = async (req, res) => {
 const toaddCategory = (req, res) => {
     res.render('./admin/addCategory')
 }
+
 
 
 //post method for add category
@@ -77,14 +78,27 @@ const afterEditCategory = async (req, res) => {
 
 }
 
-// const editCategory=async (req,res)=>{
+//post method for categoryblock
+const blockCategory = async (req, res) => {
+    const id = req.params.id
+    const block = await category.updateOne({ _id: id }, { $set: { status: false } })
+    return res.redirect('/admin/manageCategory')
+}
 
-// }
+//post method for categoryblock
+const UnblockCategory = async (req, res) => {
+    const id = req.params.id
+    const block = await category.updateOne({ _id: id }, { $set: { status: true } })
+    return res.redirect('/admin/manageCategory')
+}
+
 
 module.exports = {
     manageCategory,
     toaddCategory,
     addCategory,
     editCategory,
-    afterEditCategory
+    afterEditCategory,
+    blockCategory,
+    UnblockCategory
 }

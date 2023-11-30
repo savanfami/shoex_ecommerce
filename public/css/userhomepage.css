@@ -1,10 +1,12 @@
-
-  
+body{
+  overflow-x: hidden;
+}
   .img-fluid{
     background-size:cover;
     width: 100%;
   }
 
+  
   .custom-card{
     width:100%;
     height:20.75rem;
@@ -43,5 +45,69 @@
     position: absolute;
     top: 20px;
     right: 100px;
-  }h
+  }
+}
+
+.custom-a a {
+  text-decoration: none;
+}
+
+.custom-card-container {
+  width: 12rem;
+  height: 16.25rem;
+  background-color: #ffffff;
+  position: relative;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  filter: blur(10px 30px) blur(42px);
+  transition: transform 0.3s;
+}
+
+
+.custom-card-container:hover {
+  transform: scale(1.05);
+  box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
+}
+
+.custom-icon-heart,
+.custom-icon-cart {
+  position: absolute;
+  font-size: 24px;
+  color: #000000;
+}
+
+.custom-icon-heart {
+  bottom: 10px;
+  right: 10px;
+}
+
+.custom-icon-cart {
+  bottom: 10px;
+  left: 10px;
+}
+
+.custom-additional-info {
+  background-color: #fff;
+  padding: 1rem;
+  margin-top: 1px;
+  width: 12rem;
+  margin-left: 10px;
+}
+
+.custom-additional-info p {
+  font-size: 11.5px;
+  font-weight: 300;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin: 0;
+  margin-left: 0;
+  margin-top: 0;
+}
+
+.custom-icon-cart:hover{
+  color: #014122;
+}
+
+.custom-icon-heart:hover{
+  color: red;
 }

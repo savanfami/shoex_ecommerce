@@ -20,7 +20,7 @@
 }
 
 @media (max-width:550px){
-    #ManageProduct-text{
+    #ManageProduct-text{ 
         margin-top: 17px;
         font-size: medium;
     

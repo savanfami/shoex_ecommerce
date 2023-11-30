@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const userController=require('../controller/usercontroller')
-const otpcontroller=require('../controller/otpcontroller')
+// const otpcontroller=require('../controller/otpcontroller')
 const userAuth=require('../middleWares/userAuth')
 
 // routes for home
@@ -22,8 +22,7 @@ router.post('/submit',userController.signup)
 router.get('/user/toOtp',userController.toOtp)
 router.get('/user/otpSending',userController.otpSender)
 router.post('/user/toOtp',userController.otpConformation)
-// router.get('/user/resend-otp',userController.resendOtp)/
-
+router.get('/user/resendOtp',userController.resendOtp)
 
 //router for forget Password
 

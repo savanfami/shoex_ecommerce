@@ -81,7 +81,7 @@ border: none;
 padding: 9px 0;
 cursor: pointer;
 border-radius: 6px;
-pointer-events: none;
+pointer-events: auto;
 background: #05298d;
 transition: all 0.2s ease;
 }
@@ -102,14 +102,14 @@ background: #05298d
           <h4>Enter OTP Code</h4>
           <form action="/user/toOtp" method="post">
             <div class="input-field">
-              <input type="number" />
-              <input type="number" disabled />
-              <input type="number" disabled />
-              <input type="number" disabled />
+              <input type="number" name="otp1" />
+              <input type="number" name="otp2" disabled />
+              <input type="number" name="otp3" disabled />
+              <input type="number" name="otp4" disabled />
             </div>
-            <input type="text" id="emailverificationCode" name="code" value="uyfuyited" placeholder="enter verificationcode" style="display: none;">
+            <input type="text" id="emailverificationCode" name="code" value="" placeholder="enter verificationcode" style="display: none;">
             <button>Verify OTP</button>
-            <a href="#" style="margin-top: 15px;">Resend otp</a>
+            <a href="/user/resendOtp" style="margin-top: 15px;">Resend otp</a>
           </form>
         </div>
       </body>

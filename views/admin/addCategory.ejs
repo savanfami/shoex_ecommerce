@@ -4,11 +4,10 @@ justify-content: center;
 align-items: center;
 height: 100vh;">
     
-    <div class="" style="    width: 40%;
-    box-shadow: 0 1px 15px 1px rgb(52 40 104 / 30%);
-    padding: 20px;
-    border-radius: 6px;">
-        <h2 class="mb-4 text-center">ADD CATEGORY</h2>
+    <div class="" style="    width: 30em;
+  box-shadow: 0px 0px 7px -3px;    padding: 20px;
+  border-radius: 6px; margin: 0px 16px;">
+        <h2 class="mb-4 text-center" style="font-family: 'Poppins', sans-serif; font-weight: 700;">ADD CATEGORY</h2>
         <div class="">
             <!-- Category Form -->
             <form action="/admin/add/category" enctype="multipart/form-data" method="post">
@@ -19,7 +18,8 @@ height: 100vh;">
 
                 <div class="mb-3">
                     <label for="categoryImage" class="form-label">Category Image:</label>
-                    <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" required>
+                    <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" onchange="previewImage(this)">
+                    <div id="imagePreview" class="mt-2"></div>
                 </div>
 
                 <button id="login-button"  type="submit" class="btn btn-primary l">Add</button>
@@ -31,3 +31,27 @@ height: 100vh;">
         </div>
     </div>
 </div>
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = ''; // Clear previous preview
+
+        const files = input.files;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.createElement("img");
+                img.className = "img-fluid preview-image";
+                img.src = e.target.result;
+                img.style.width = "100px"; // Set the desired width
+                img.style.height = "100px"; // Set the desired height
+                preview.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

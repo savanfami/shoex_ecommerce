@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const otpSchema=new mongoose.Schema({
     otp:{
-        type:Number
+        type:String
       
     },
     email:{

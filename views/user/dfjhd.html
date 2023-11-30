@@ -1,0 +1,31 @@
+<div class="row justify-content-center custom-a">
+    <% productData.forEach((data)=> { %>
+
+        <!-- Card 1 -->
+        <div class="col-lg-3 col-md-3 col-sm-6">
+
+            <!-- Your Card Content -->
+            <div class="custom-card-container ms-5 mt-5">
+                <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+                <a href="/user/add/to/cart/<%=data.id%>" class="custom-icon-cart"><i class="fas fa-cart-plus"></i></a>
+                <a href=" /user/product/details/<%-data.id%>">
+                    <img class="card-img-top" src="/productImages/<%=data.images[0]%>" alt="Card image cap" >
+                </a>
+            </div>
+
+            <!-- Your Additional Info Content -->
+            <div class="custom-additional-info ms-5">
+                <a href=" /user/product/details/<%-data.id%>">
+                    <p>
+                        <%=data.name%>
+                    </p>
+                </a>
+                <p class="custom-p">₹ <%=data.price%> | 5.0 <i class="fa-solid fa-star"
+                            style="color: #F5D426;"></i></p>
+
+            </div>
+        </div>
+
+
+        <% }) %>
+</div>

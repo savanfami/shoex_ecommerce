@@ -1,278 +1,233 @@
 
-<link rel="stylesheet" href="/css/addProduct.css">
- <body>
-  
-<%-include("../partials/adminPartials/sidebar")%>
+<%-include("../partials/adminPartials/header")%>
+<style>
+  .product-text-container{
+  /* background-color: aqua; */
+  border-radius: 12px;
+  width: 100%;
+  height: 56px;
+  margin-top: 73px;
+  box-shadow: 0px 0px 7px -3px;
+  }
+  .image-preview {
+      display: flex;
+      flex-wrap: wrap;
+    }
 
-    <div class="product-text-container container-fluid" style="display: flex; justify-content: space-between;">
-      <h4 style="    margin-top: 11px;" id="ManageProduct-text">Add Products</h4>
+    .preview-container {
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
 
+    .preview-image {
+      max-width: 100px;
+      max-height: 100px;
+      border: 1px solid #ccc;
+      margin-bottom: 5px;
+    }
+    #form{
+    border: 2px ; /* Add border style here */
+    padding: 15px; /* Add padding for better appearance */
+    border-radius: 10px; /* Optional: Add border radius for rounded corners */
+    box-shadow: 0px 0px 7px -3px;
+  }
+
+</style>
+
+<div class="product-text-container container" style="display: flex; justify-content: space-between;">
+  <h4 style="    margin-top: 11px;" id="ManageProduct-text"> ADD PRODUCT</h4>
+
+</div>
+<div class="container mt-5">
+
+  <!-- Bootstrap form with grid layout -->
+  <form action="/admin/add-Product " method="POST" id="form" enctype="multipart/form-data">
+
+      <!-- General Information Section -->
+      <div class="row mb-4">
+          <div class="col-md-6">
+              <label for="productName" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="productName" name="name" placeholder="Product name" required>
+          </div>
+          <div class="col-md-6">
+              <label for="productPrice" class="form-label">Price</label>
+              <input type="number" class="form-control" id="productPrice" name="price" placeholder="Price" required>
+          </div>
+      </div>
+
+      <div class="row mb-4">
+          <div class="col-md-6">
+              <label for="productDescription" class="form-label">Product Description</label>
+              <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" rows="3" required></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="productColor" class="form-label">Color</label>
+            <input type="text" class="form-control" id="productColor" name="color" placeholder="Color">
+        </div>
+        <div class="col-md-6">
+          <label for="productColor" class="form-label">Brand</label>
+          <input type="text" class="form-control" id="productColor" name="brand" placeholder="brand name">
+      </div>
+      <div class="col-md-6">
+      <label for="productColor" class="form-label">Category</label>
+      <select class="form-select form-select-input form-select-sm shadow-none" name="category" id="category"
+         aria-label=".form-select-sm example">
+        <option selected>Select Category</option>
+        <% categoryData.forEach(data => { %>
+          <option value="<%=data.name %>"><%=data.name %></option>
+      
+        <% }) %>
+      </select>
     </div>
-    <form action="/admin/addProduct" method="POST" id="form" enctype="multipart/form-data">
-      <div class="general-info container-fluid" style="    width: 60%;margin-left: 13%;">
-        <h5 style="margin-left: 10px; color:#4461F2;">General Information</h5>
-        <div>
-          <div class="form-group">
-            <label for="formGroupExampleInput" style="margin-left: 1%; font-size: smaller;">Product Name</label>
-            <input type="text" class="form-control  shadow-none" id="product-name-input" name="name"
-              placeholder="Product name">
-            <div class="text-danger " style="font-size: small; margin-left: 20px;" id="nameError"></div>
-          </div>
-          <div class="form-group" style="float: right; margin-top: -62px;">
-            <label for="formGroupExampleInput" style="margin-left: 1%; font-size: smaller;">Price</label>
-            <input type="number" class="form-control shadow-none" id="product-price-input" type="number" name="price"
-              placeholder="price">
-            <div class="text-danger " style="font-size: small; margin-left: 20px;" id="priceError"></div>
-          </div>
-        </div>
-        <div class="form-group" style="    margin-top: 2vw; margin-left: 12px;">
-          <label for="formGroupExampleInput2" style="margin-left: 1%; font-size: smaller;">Product Description</label>
-          <input type="text" class="form-control shadow-none" id="product-des-input" name="description"
-            style="font-size: smaller;" placeholder="Product Description">
-          <div class="text-danger " style="font-size: small; margin-left: 20px;" id="descriptionError"></div>
-        </div>
-        <div class="form-group" style="float: right; margin-top: -94px;">
-          <label for="formGroupExampleInput" style="margin-left: 1%; font-size: smaller;">Stock Quantity</label>
-          <input type="number" class="form-control shadow-none" id="product-stock-input" type="number" name="Stock"
-            placeholder="Stock">
-          <div class="text-danger " style="font-size: small; margin-left: 20px;" id="StockError"></div>
-        </div>
-
-
-      </div>
-      <div class="category-container">
-        <h5 style="margin-left: 10px;color:#4461F2;">Category</h5>
-        <select class="form-select form-select-input form-select-sm shadow-none" name="category" id="category"
-          style="    width: 79%;border-radius: 10px;" aria-label=".form-select-sm example">
-          <option selected>Select Category</option>
-          <option value="Iphone">Iphone</option>
-          <option value="2">MacBook</option>
-          <option value="3">Airpods</option>
-          <option value="3">Apple Watch</option>
-        </select>
-        <div class="text-danger " style="font-size: small; margin-left: 20px;" id="categoryError"></div>
-        <h5 style="margin-left: 10px;color:#4461F2;">Status</h5>
-        <select class="form-select form-select-input   form-select-sm shadow-none" name="status"
-          style="    width: 79%;border-radius: 10px;" id="status" aria-label=".form-select-sm example">
-          <option selected>Select Status</option>
-          <option value="Draft">Draft</option>
-          <option value="Published">Published</option>
-          <option value="Out of Stock">Out of Stock</option>
-          <option value="Low Stock">Low Stock</option>
-        </select>
-        <div class="text-danger " style="font-size: small; margin-left: 20px;" id="statusError"></div>
-
       </div>
 
-      <div class="image-upload container-fluid"
-        style="    width: 60%; margin-left: 13%;  height: auto; padding-bottom: 25px;   ">
-        <h5 style="margin-left: 10px;color:#4461F2;">Image Upload</h5>
+      <div class="row mb-4">
+        <!-- Add Variant Button -->
+        <div class="col-md-12 d-flex justify-content-center">
+            <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
+        </div>
+    </div>
+    
+    <!-- Size and Color Section -->
+<!-- Size and Quantity Section -->
+<div id="variantSection">
+  <!-- Variant Template -->
+  <div class="variant-row row mb-4" data-variant-index="0">
+    <div class="col-md-6">
+      <label for="productSize" class="form-label">Size</label>
+      <input type="number" class="form-control" name="variant[size][]"  placeholder="Size">
+    </div>
+    <div class="col-md-6">
+      <label for="productStock" class="form-label">Stock Quantity</label>
+      <input type="number" class="form-control" name="variant[quantity][]" placeholder="Stock" required>
+    </div>
+    <!-- Remove Variant Icon -->
+    <div class="col-md-12 mt-2 d-flex justify-content-end">
+      <!-- Ensure at least one variant is always present -->
+      <button type="button" class="btn btn-danger" onclick="removeVariant(this)" disabled>&times;</button>
+    </div>
+  </div>
+</div>
 
-        <div class="image-upload-container" style=" height: auto; padding-bottom: 25px; ">
-          <p style="text-align: center;">Main Image</p>
-          <div style="       margin-left: 5%;">
-            <label for="file" class="custom-upload-btn">Upload Image</label>
-            <div class="text-danger " style="font-size: small; " id="mainImageError"></div>
+<!-- Add Variant Button -->
+<!-- <div class="col-md-12 d-flex justify-content-center">
+  <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
+</div> -->
 
-            <input name="main-image" type="file" accept="image/*" id="file" onchange="previewImage('file','Mimg')"
-              class="file-input">
-
-
-            <div class="img-con"><img src="" class="prev-img" alt="" id="Mimg"></div>
-          </div>
-          <p style="text-align: center;">Sub Images</p>
-          <div style="       margin-left: 5%;">
-            <label for="filemul" class="custom-upload-btn">Upload Image</label>
-            <div class="text-danger " style="font-size: small;  margin-top: auto; " id="img1Error"></div>
-            <input type="file" name="sub-image" onchange="showMultiplePreview('filemul','img')" id="filemul"
-              class="file-input" multiple>
-
-            <div style="display: flex;    display: flex;gap: 25px;">
-              <div class="img-con"><img src="" alt="" class="prev-img" id="img1">
-
-              </div>
-
-              <div class="img-con"><img src="" alt="" class="prev-img" id="img2">
-
-              </div>
-
-              <div class="img-con"><img src="" alt="" class="prev-img" id="img3">
-
-              </div>
-
-              <div class="img-con"><img src="" alt="" class="prev-img" id="img4">
-
-              </div>
-
-
-            </div>
-          </div>
-
+      <!-- Image Upload Section -->
+      <div class="row mb-4">
+        <div class="mb-3">
+          <label for="mainImage" class="form-label">Main Image</label>
+          <input type="file" class="form-control" id="mainImage" name="mainImage" accept="image/*" required>
+          <div class="image-preview" id="mainImagePreview"></div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="categoryImage1" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="categoryImage1" name="image1" accept="image/*" required>
+          <div class="image-preview" id="categoryImagePreview1"></div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="categoryImage2" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="categoryImage2" name="image2" accept="image/*" required>
+          <div class="image-preview" id="categoryImagePreview2"></div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="categoryImage3" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="categoryImage3" name="image3" accept="image/*" required>
+          <div class="image-preview" id="categoryImagePreview3"></div>
+        </div>
+    
+        <div class="mb-3">
+          <label for="categoryImage4" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="categoryImage4" name="image4" accept="image/*" required>
+          <div class="image-preview" id="categoryImagePreview4"></div>
         </div>
       </div>
-      <button type="submit " class="btn" value="submit" id="add-product-btn">Add</button>
-    </form>
-  </body>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Add Product</button>
+      <a href="/admin/manage-Product" class="btn btn-secondary">Back to Product</a>
+
+  </form>
+
+</div>
+<script>
+  document.getElementById('addVariant').addEventListener('click', function () {
+    // Clone the existing variant section and append it to the variantSection div
+    var index = document.querySelectorAll('#variantSection .variant-row').length;
+    var newVariantSection = document.querySelector('#variantSection .variant-row').cloneNode(true);
+  
+    // Update the variant index in the new variant section
+    newVariantSection.setAttribute('data-variant-index', index);
+  
+    // Enable the remove button in the new variant section
+    newVariantSection.querySelector('button').removeAttribute('disabled');
+  
+    // Clear input values in the new variant section
+    newVariantSection.querySelectorAll('input').forEach(input => {
+      input.value = '';
+    });
+  
+    document.getElementById('variantSection').appendChild(newVariantSection);
+  });
+  
+  function removeVariant(button) {
+    var variantSection = document.getElementById('variantSection');
+  
+    // Ensure at least one variant is always present
+    if (variantSection.querySelectorAll('.variant-row').length > 1) {
+      // Remove the parent row of the clicked button
+      button.closest('.variant-row').remove();
+    }
+  }
+  </script>
     <script>
-
-    //   function previewImage(inputid, imgID) {
-    //     const input = document.getElementById(inputid)
-    //     const img = document.getElementById(imgID)
-
-    //     // alert('dd')
-    //     //cheaking if a file was delected
-    //     if (input.files && input.files[0]) {
-    //       const reader = new FileReader();
-
-    //       //set up a function to run when the image is loaded
-    //       reader.onload = function (e) {
-    //         img.src = e.target.result;
-    //       }
-    //       //read the selsected file as a data URL and load it into the image tag
-    //       reader.readAsDataURL(input.files[0]);
-    //     } else {
-    //       //if no file selected or browser dont suppot the file,clear the image 
-    //       img.src = "";
-    //     }
-    //   }
-    //   function showMultiplePreview(inputId, image) {
-    //     const input = document.getElementById(inputId)
-    //     if (input.files) {
-    //       for (let i = 0; i < input.files.length; i++) {
-    //         const reader = new FileReader()
-
-    //         reader.onload = function (e) {
-    //           document.getElementById(${image}${i + 1}).src = e.target.result
-    //         }
-    //         reader.readAsDataURL(input.files[i])
-    //       }
-    //     }
-
-    //   }
-
-
-
-      //to validate select input
-      // function emptyselect(value) {
-      //   if (value === "Select Status" || value === "Select Category") {
-      //     return true
-      //   }
-      // }
-
-      //  //to validate imagez
-      //  function imagevalidate(value){
-      //   if(!value.files && !value.files[0]){
-      //     return true
-      //   }
-      //  }
-
-
-
-      //to validat other inputs
-    //   function isEmpty(value) {
-    //     const trimmedValue = value.trim();
-    //     return trimmedValue === "";
-    //   }
-    //   // Function to validate the form on submit
-    //   document.querySelector("form").addEventListener("submit", function (event) {
-    //     const nameInput = document.getElementById("product-name-input");
-    //     const nameValue = nameInput.value;
-    //     const nameError = document.querySelector("#nameError");
-
-    //     const priceInput = document.querySelector("#product-price-input");
-    //     const priceValue = priceInput.value;
-    //     const priceError = document.querySelector("#priceError");
-
-    //     const categoryInput = document.querySelector("#category");
-    //     const categoryValue = categoryInput.value;
-    //     const categoryError = document.querySelector("#categoryError");
-
-    //     const descriptionInput = document.querySelector("#product-des-input");
-    //     const descriptionValue = descriptionInput.value;
-    //     const descriptionError = document.querySelector("#descriptionError");
-
-    //     const statusInput = document.querySelector("#status");
-    //     const statusValue = statusInput.value;
-    //     const statusError = document.querySelector("#statusError");
-
-
-    //     const StockInput = document.querySelector("#product-stock-input");
-    //     const StockValue = StockInput.value;
-    //     const StockError = document.querySelector("#StockError");
-
-
-    //     // const imageInput=document.getElementById('#file');
-    //     // // const imageValue=imageInput.value;
-    //     // const mainImageError=document.getElementById('#mainImageError')
-
-    //     nameError.textContent = "";
-    //     priceError.textContent = "";
-    //     descriptionError.textContent = "";
-    //     categoryError.textContent = "";
-    //     statusError.textContent = "";
-    //     // mainImageError.textContent = "";
-    //     // statusError.textContent = "";
-
-
-    //     if (isEmpty(nameValue)) {
-    //       nameError.textContent = "Product Name cannot be empty";
-    //       event.preventDefault();
-    //     }
-    //     if (isEmpty(priceValue)) {
-    //       priceError.textContent = "Price cannot be empty";
-    //       event.preventDefault();
-    //     }
-    //     if (isEmpty(descriptionValue)) {
-    //       descriptionError.textContent = "Description cannot be empty";
-    //       event.preventDefault();
-    //     }
-    //     if (isEmpty(StockValue)) {
-    //       StockError.textContent = "Stock cannot be empty";
-    //       event.preventDefault();
-    //     }
-
-
-    //     if (emptyselect(categoryValue) === true) {
-    //       categoryError.textContent = "Select the Category";
-    //       event.preventDefault();
-    //     }
-    //     if (emptyselect(statusValue)) {
-    //       statusError.textContent = "Select the Status";
-    //       event.preventDefault();
-    //     }
-
-
-    //     //image validation
-    //     const mainImage = document.getElementById("file")
-    //     const subImage = document.getElementById("filemul")
-
-
-
-
-    //     if (!mainImage.files || !mainImage.files[0]) {
-    //       document.getElementById('mainImageError').textContent = "Main Image is required";
-    //       event.preventDefault();
-    //     } else {
-    //       document.getElementById('mainImageError').textContent = "";
-    //     }
-
-
-
-    //     if (!subImage.files || !subImage.files[0] || !subImage.files[1] || !subImage.files[2] || !subImage.files[3]) {
-    //       document.getElementById('img1Error').textContent = "Sub Images are required";
-    //       event.preventDefault();
-    //     } else {
-    //       document.getElementById('img1Error').textContent = "";
-    //     }
-    //   })
-
-
-
-
-
-
-    // </script>
-
-
+      function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        while (preview.firstChild) {
+          preview.removeChild(preview.firstChild);
+        }
+  
+        const files = input.files;
+  
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const reader = new FileReader();
+  
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.className = "preview-image";
+            img.src = e.target.result;
+            preview.appendChild(img);
+          };
+  
+          reader.readAsDataURL(file);
+        }
+      }
+  
+      document.getElementById("mainImage").addEventListener("change", function () {
+        previewImage(this, "mainImagePreview");
+      });
+  
+      document.getElementById("categoryImage1").addEventListener("change", function () {
+        previewImage(this, "categoryImagePreview1");
+      });
+  
+      document.getElementById("categoryImage2").addEventListener("change", function () {
+        previewImage(this, "categoryImagePreview2");
+      });
+  
+      document.getElementById("categoryImage3").addEventListener("change", function () {
+        previewImage(this, "categoryImagePreview3");
+      });
+  
+      document.getElementById("categoryImage4").addEventListener("change", function () {
+        previewImage(this, "categoryImagePreview4");
+      });
+    </script>
+  
 
 <%-include("../partials/adminPartials/footer")%>

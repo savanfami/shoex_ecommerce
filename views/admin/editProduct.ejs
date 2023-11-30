@@ -1,0 +1,221 @@
+  <%-include("../partials/adminPartials/header")%>
+    <style>
+      .product-text-container {
+        /* background-color: aqua; */
+        border-radius: 12px;
+        width: 100%;
+        height: 56px;
+        margin-top: 73px;
+        box-shadow: 0px 0px 7px -3px;
+        
+      }
+      
+      #form{
+      border: 2px ; /* Add border style here */
+      padding: 15px; /* Add padding for better appearance */
+      border-radius: 10px; /* Optional: Add border radius for rounded corners */
+      box-shadow: 0px 0px 7px -3px;
+    }
+    </style>
+
+    <div class="product-text-container container" style="display: flex; justify-content: space-between;">
+      <h4 style="    margin-top: 11px;" id="ManageProduct-text"> EDIT PRODUCT</h4>
+
+    </div>
+    <div class="container mt-5">
+
+      <!-- Bootstrap form with grid layout -->
+
+      <form action="/admin/edit-Product/<%=productData.id %>" method="POST" id="form" enctype="multipart/form-data">
+
+        <!-- General Information Section -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="productName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="productName" value="<%=productData.name %>" name="name"
+              placeholder="Product name" required>
+          </div>
+          <div class="col-md-6">
+            <label for="productPrice" class="form-label">Price</label>
+            <input type="number" class="form-control" id="productPrice" value="<%=productData.price %>" name="price"
+              placeholder="Price" required>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="productDescription" class="form-label">Product Description</label>
+            <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description"
+              rows="3" required><%=productData.description %></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="productColor" class="form-label">Color</label>
+            <input type="text" class="form-control" id="productColor" value="<%=productData.color %>" name="color"
+              placeholder="Color">
+          </div>
+          <div class="col-md-6">
+            <label for="productColor" class="form-label">Brand</label>
+            <input type="text" class="form-control" id="productColor" value="<%=productData.brand %>" name="brand"
+              placeholder="brand name">
+          </div>
+          <div class="col-md-6">
+            <label for="productColor" class="form-label">Category</label>
+            <select class="form-select form-select-input form-select-sm shadow-none" name="category" id="category"
+              aria-label=".form-select-sm example">
+              <option value="<%=productData.category %>" selected>
+              <%=productData.category %>
+            </option>
+              <% categoryData.forEach(data=> { %>
+                <option value="<%=data.name %>">
+                  <%=data.name %>
+                </option>
+
+                <% }) %>
+
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <!-- Add Variant Button -->
+          <div class="col-md-12 d-flex justify-content-center">
+            <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
+          </div>
+        </div>
+
+        <!-- Size and Color Section -->
+        <!-- Size and Quantity Section -->
+        <div id="variantSection">
+          <!-- Variant Template -->
+          <% productData.variant.forEach((variant,index)=> { %>
+
+            <div class="variant-row row mb-4" data-variant-index="<%=index %>">
+              <div class="col-md-6">
+                <label for="productSize" class="form-label">Size</label>
+                <input type="number" class="form-control" name="variant[size][]" value="<%=variant.size%>"
+                  placeholder="Size">
+              </div>
+              <div class="col-md-6">
+                <label for="productStock" class="form-label">Stock Quantity</label>
+                <input type="number" class="form-control" name="variant[quantity][]" value="<%=variant.quantity %>"
+                  placeholder="Stock" required>
+              </div>
+              <!-- Remove Variant Icon -->
+              <div class="col-md-12 mt-2 d-flex justify-content-end">
+                <!-- Ensure at least one variant is always present -->
+                <button type="button" class="btn btn-danger" onclick="removeVariant(this)" disabled>&times;</button>
+              </div>
+            </div>
+            <% }) %>
+
+        </div>
+
+
+
+        <!-- Image Upload Section -->
+        <div class="row mb-4">
+          <div class="mb-3">
+            <label for="mainImage" class="form-label">Main Image</label>
+            <input type="file" class="form-control" id="mainImage" name="mainImage"  accept="image/*" >
+            <img id="mainImagePreview" src="/productImages/<%=productData.images[0] %>" alt="Main Image Preview"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="image1" class="form-label">Product Image 1</label>
+            <input type="file" class="form-control" id="image1" name="image1" accept="image/*" >
+            <img id="image1Preview" src="/productImages/<%=productData.images[1] %>" alt="Image 1 Preview"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="image2" class="form-label">Product Image 2</label>
+            <input type="file" class="form-control" id="image2" name="image2" accept="image/*" >
+            <img id="image2Preview" src="/productImages/<%=productData.images[2] %>" alt="Image 2 Preview"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="image3" class="form-label">Product Image 3</label>
+            <input type="file" class="form-control" id="image3" name="image3" accept="image/*" >
+            <img id="image3Preview" src="/productImages/<%=productData.images[3] %>" alt="Image 3 Preview"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="image4" class="form-label">Product Image 4</label>
+            <input type="file" class="form-control" id="image4" name="image4" accept="image/*" >
+            <img id="image4Preview" src="/productImages/<%=productData.images[4] %>" alt="Image 4 Preview"
+              style="max-width: 100%; max-height: 200px; margin-top: 10px;">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">SUBMIT</button>
+        <a href="/admin/manage-Product" class="btn btn-secondary">Back to Product</a>
+
+      </form>
+
+    </div>
+    <script>
+      document.getElementById('addVariant').addEventListener('click', function () {
+        // Clone the existing variant section and append it to the variantSection div
+        var index = document.querySelectorAll('#variantSection .variant-row').length;
+        var newVariantSection = document.querySelector('#variantSection .variant-row').cloneNode(true);
+
+        // Update the variant index in the new variant section
+        newVariantSection.setAttribute('data-variant-index', index);
+
+        // Enable the remove button in the new variant section
+        newVariantSection.querySelector('button').removeAttribute('disabled');
+
+        // Clear input values in the new variant section
+        newVariantSection.querySelectorAll('input').forEach(input => {
+          input.value = '';
+        });
+
+        document.getElementById('variantSection').appendChild(newVariantSection);
+      });
+
+      function removeVariant(button) {
+        var variantSection = document.getElementById('variantSection');
+
+        // Ensure at least one variant is always present
+        if (variantSection.querySelectorAll('.variant-row').length > 1) {
+          // Remove the parent row of the clicked button
+          button.closest('.variant-row').remove();
+        }
+      }
+    </script>
+    <script>
+      // Function to update image preview
+      function updateImagePreview(inputId, previewId) {
+        var input = document.getElementById(inputId);
+        var preview = document.getElementById(previewId);
+
+        input.addEventListener('change', function () {
+          var file = input.files[0];
+
+          if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+              preview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+          } else {
+            // If no file is selected, show a placeholder or hide the preview
+            preview.src = '#';
+          }
+        });
+      }
+
+      // Update image previews for each file input
+      updateImagePreview('mainImage', 'mainImagePreview');
+      updateImagePreview('image1', 'image1Preview');
+      updateImagePreview('image2', 'image2Preview');
+      updateImagePreview('image3', 'image3Preview');
+      updateImagePreview('image4', 'image4Preview');
+    </script>
+    <%-include("../partials/adminPartials/footer")%>

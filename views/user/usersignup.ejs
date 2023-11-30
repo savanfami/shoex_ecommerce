@@ -42,6 +42,8 @@
                            <div class="form-group">
                               <label for="exampleInputEmail1">Email </label>
                               <input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter your email" required="">
+                              <!-- <span id="emailError" class="error"></span> -->
+
                            </div>
                            <p class="error" id="emailError" style="color: red;"></p>
                            <div class="form-group" style="position: relative;">
@@ -114,6 +116,14 @@
 
             return
           }
+          if(!isvalidEmail(emailValue)){
+            event.preventDefault()
+            emailError.textContent=" please enter a valid email address"
+            return;
+          }else{
+            emailError.textContent=""
+          }
+
           if (emailValue === "") {
           event.preventDefault()
 
@@ -157,6 +167,10 @@
           console.log(emailValue,passwordValue);
         
 
+          function isvalidEmail(email){
+            return /^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email);
+           
+          }
 
             
 

@@ -1,15 +1,30 @@
 <%-include("../partials/adminPartials/sidebar")%>
 
-    <h1>CATEGORY MANAGEMENT</h1>
+<style>
+    .product-text-container{
+    /* background-color: aqua; */
+    border-radius: 12px;
+    width: 100%;
+    height: 56px;
+    margin-top: 73px;
+    box-shadow: 0px 0px 7px -3px;
+}
+</style>
+
+ <div class="product-text-container container-fluid" style="display: flex; justify-content: space-between;">
+        <h4 style="    margin-top: 11px;" id="ManageProduct-text">CATEGORY MANAGEMENT</h4>
+  
+      </div>
     <br>
     <a href="/admin/add/category" class="btn btn-primary">Add Category</a>
-    <table class="table align-middle mb-0 bg-white mt-4">
+    <table class="table align-middle mb-0 bg-white mt-4 table-bordered" style="border: 2px  black;">
         <thead class="text-white" style="background-color: black;">
             <tr>
                 <th>No</th>
                 <th>image</th>
                 <th>Category Name</th>
                 <th>Created On</th>
+                <th>Updated On</th>
                 <th>Status</th>
                 <th>Edit</th>
                 <th>Action</th>
@@ -22,14 +37,21 @@
                         <%=++i %>
                     </td>
                     <td>
-                        <img src="/uploadedImages/<%=data.image %>" alt="" style="width: 50px; height: 50px"
-                            class="rounded-circle">
+                        <img src="/uploadedImages/<%=data.image %>" alt=""  style="width: 80px; height: 50px ">
+                    
                     </td>
                     <td>
                         <%=data.name %>
                     </td>
                     <td>
-                        <%=data.date %>
+                        <% if (data.createdAt) { %>
+                            <%= new Date(data.createdAt).toLocaleString() %>
+                        <% } %> 
+                    </td>
+                    <td>
+                        <% if (data.updatedAt) { %>
+                            <%= new Date(data.updatedAt).toLocaleString() %>
+                        <% } %>
                     </td>
                     <td
                     class="<%= data.status ? 'text-success fw-bold' : 'text-danger fw-bold' %> table-white ">
@@ -48,21 +70,67 @@
 
                    </td>
                    <td>
-                   <% if (data.status) { %>
-                    <!-- If user is active, provide option to block -->
-                    <form action="/admin/blockCategory/<%- data._id %>" method="POST">
-                      <button type="submit" class="text-white font-size btn btn-danger px-3 py-0"
-                        onclick="return confirm('Are you sure you want to block <%=data.name%>?')">Block</button>
-                    </form>
+                    <% if (data.status) { %>
+                        <!-- If user is active, provide option to block -->
+                        <form id="blockForm<%= data._id %>" action="/admin/blockCategory/<%- data._id %>" method="POST">
+                            <button type="button" class="text-white font-size btn btn-danger px-3 py-0 block-btn"
+                                data-category="<%= data.name %>" data-category-id="<%= data._id %>">Block</button>
+                        </form>
                     <% } else { %>
-                      <!-- If user is inactive, provide option to unblock -->
-                      <form action="/admin/unblockCategory/<%- data._id %>" method="post">
-                        <button type="submit" class="text-white font-size btn btn-primary px-3 py-0"
-                          onclick="return confirm('Are you sure you want to un-block <%=data.name%>?')">Unblock</button>
-                      </form>
-                      <% } %>
-                    </td>
+                        <!-- If user is inactive, provide option to unblock -->
+                        <form id="unblockForm<%= data._id %>" action="/admin/unblockCategory/<%- data._id %>" method="post">
+                            <button type="button" class="text-white font-size btn btn-primary px-3 py-0 unblock-btn"
+                                data-category="<%= data.name %>" data-category-id="<%= data._id %>">Unblock</button>
+                        </form>
+                    <% } %>
+                </td>
+                
                 </tr>
                 <% }) %>
         </tbody>
     </table>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+           // For blocking category
+           document.querySelectorAll('.block-btn').forEach(button => {
+              button.addEventListener('click', function () {
+                 const categoryName = this.getAttribute('data-category');
+                 Swal.fire({
+                    title: 'Block Category',
+                    text: `Are you sure you want to block ${categoryName}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, block it!'
+                 }).then((result) => {
+                    if (result.isConfirmed) {
+                       document.getElementById(`blockForm${this.getAttribute('data-category-id')}`).submit();
+                    }
+                 });
+              });
+           });
+     
+           // For unblocking category
+           document.querySelectorAll('.unblock-btn').forEach(button => {
+              button.addEventListener('click', function () {
+                 const categoryName = this.getAttribute('data-category');
+                 Swal.fire({
+                    title: 'Unblock Category',
+                    text: `Are you sure you want to unblock ${categoryName}?`,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, unblock it!'
+                 }).then((result) => {
+                    if (result.isConfirmed) {
+                       document.getElementById(`unblockForm${this.getAttribute('data-category-id')}`).submit();
+                    }
+                 });
+              });
+           });
+        });
+     </script>
+     
+     

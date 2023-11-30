@@ -1,13 +1,15 @@
 const user = require('../model/userSchema')
 const bcrypt = require('bcrypt')
 const sendOTP = require('../controller/otpcontroller')
-const session = require('express-session')
 const OTP = require('../model/otpSchema')
-const sendOtp = require('../controller/otpcontroller')
 const category = require('../model/categorySchema')
+const generateOTP=require('../util/otpgenerator')
+const sendMail=require('../util/mail')
+const product = require('../model/productSchema')
 //get for user home not logged in
-const home = (req, res) => {
-    res.render('./user/home')
+const home =async (req, res) => {
+    const categoryData = await category.find({ status: true }).limit(3)
+    res.render('./user/home',{categoryData})
 }
 
 //get for user login
@@ -23,8 +25,9 @@ const toSignup = (req, res) => {
 
 //get for userhomepage when logged in
 const toUserHome = async (req, res) => {
-    const categoryData=await category.find({status:true}).limit(3)
-    res.render('./user/userHome',{categoryData})
+    const categoryData = await category.find({ status: true }).limit(3)
+    const productData=await product.find({status:true}).limit(4)
+    res.render('./user/userHome', { categoryData,productData})
 }
 
 
@@ -40,13 +43,13 @@ const signup = async (req, res) => {
         } else {
 
             const hashedPassword = await bcrypt.hash(password, 10)
-
-            const newUser = await user.create({
+            const newUser = ({
                 username: name,
                 email: email,
                 password: hashedPassword
             })
-            req.session.data=newUser
+
+            req.session.data = newUser
             req.session.username = req.body.name
             req.session.email = req.body.email
             req.session.userlogged = true
@@ -59,6 +62,7 @@ const signup = async (req, res) => {
 }
 
 
+//get for otp page
 
 const toOtp = (req, res) => {
     if (req.session.signOtp || req.session.forgot) {
@@ -68,27 +72,38 @@ const toOtp = (req, res) => {
     }
 }
 
+// otp sending
+
 const otpSender = async (req, res) => {
     if (req.session.signOtp || req.session.forgot) {
         try {
-            console.log(req.session.email);
-            console.log("otp route");
             const email = req.session.email
-            console.log(email);
-            const otpsending=await sendOTP(email)
-            console.log("session before verifiying otp");
+            // console.log(email);
+            const otpsending = await sendOTP(email)
+            // console.log("session before verifiying otp");
 
             res.status(200).redirect('/user/toOtp')
         } catch (err) {
             console.log(err);
             req.session.err = "sorry cant send otp"
-           
 
-            if (req.session.forgot) {
-                res.redirect('/user/forgetpass')
-            }
-            res.redirect('/user/tosignup')
+
+           
         }
+    }
+}
+
+const resendOtp=async(req,res)=>{
+    try{
+        const {email}=req.session.data
+        console.log(email);
+        const newOtp=await generateOTP()
+        
+        await OTP.updateOne({email},{$set:{otp:newOtp}})
+        // console.log("resend");
+        await sendOTP(email)
+    }catch(err){
+        console.log(err);
     }
 }
 
@@ -97,47 +112,37 @@ const otpSender = async (req, res) => {
 
 
 const otpConformation = async (req, res) => {
-    console.log("otp confiming................");
-    
-        console.log("this otp confirmation");
-   
-        try {
-            const data = req.session.data;
-            console.log(req.session.data);
-            const Otp = await OTP.findOne({ email: data.email })
-            console.log(Otp.expireAt);
-            if (Date.now() > Otp.expireAt) {
-                await OTP.deleteOne({ email });
-            } else {
-                const hashed = Otp.otp
-                
-                const { code, email } = req.body
-                console.log(code,'---------------',hashed);
-                req.session.email = data.email;
-                console.log(req.session.email)
-                if (hashed == code) {
-                    const result = await user.insertMany([data])
-                    req.session.logged = true;
-                    console.log(result);
-                    req.session.signotp = false
-      
-                    res.redirect("/user/home")
-
-                }
-                else {
-                    req.session.err = "Invalid OTP"
-                    console.log("erro 1");
-                    res.render("./user/otp", { err: "invalid OTP" })
-                }
+    try {
+        const data = req.session.data;
+        const Otp = await OTP.findOne({ email: data.email })
+        // console.log(Otp.expireAt);
+        if (Date.now() > Otp.expireAt) {
+            await OTP.deleteOne({ email });
+        } else {
+            const hashedOtp= Otp.otp
+            const userEnteredOtp= req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
+            const compareOtp=await bcrypt.compare(userEnteredOtp,hashedOtp)
+            req.session.email = data.email;
+            console.log(req.session.email)
+            if (compareOtp) {
+                const newUser = await user.create([data])
+                req.session.userlogged = true;
+                // console.log(result);
+                req.session.signOtp = false
+                res.redirect("/user/home")
             }
-
-
-        } catch (err) {
-            console.log(err);
-            console.log("error 2" + err);
-            res.render("./user/otp")
+            else {
+                req.session.err = "Invalid OTP"
+                console.log("erro 1");
+                res.render("./user/otp", { err: "invalid OTP" })
+            }
         }
+    } catch (err) {
+        console.log(err);
+        console.log("error 2" + err);
+        res.render("./user/otp")
     }
+}
 
 
 //to forgot password
@@ -183,22 +188,7 @@ const otpConformation = async (req, res) => {
 
 // }
 
-//get for resend otp 
 
-// const resendOtp = async (req, res) => {
-//     if (req.session.signOtp || req.session.forgot) {
-//         try {
-//             const email = req.session.email;
-//             const createdOtp = await sendOtp(email)
-//             res.session.email = email
-//         } catch (err) {
-//             console.log(err);
-//             req.session.err = "cant sent otp"
-//         }
-//     } else {
-
-//     }
-// }
 
 
 // post for userlogin
@@ -237,8 +227,15 @@ const logout = (req, res) => {
 }
 
 
+// GET FOR PRODUCT DETAILS
 
-
+const getProductDetails=async (req,res)=>{
+    try{
+        res.render('./user/productDetails')
+    }catch(err){
+        console.log(err);
+    }
+}
 
 
 
@@ -253,8 +250,8 @@ module.exports = {
     logout,
     toOtp,
     otpSender,
-    otpConformation
+    otpConformation,
+    resendOtp
     // toForgotPassword,
     // forgotPass,
-    // resendOtp
 }
