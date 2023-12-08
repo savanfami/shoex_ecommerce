@@ -1,0 +1,113 @@
+
+<%-include('../partials/userPartials/user-nav')%>
+<style>
+    
+.custom-a a {
+  text-decoration: none;
+}
+
+.custom-card-container {
+  width: 12rem;
+  height: 16.25rem;
+  background-color: #ffffff;
+  position: relative;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  filter: blur(10px 30px) blur(42px);
+  transition: transform 0.3s;
+}
+
+
+.custom-card-container:hover {
+  transform: scale(1.05);
+  box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
+}
+
+.custom-icon-heart,
+.custom-icon-cart {
+  position: absolute;
+  font-size: 24px;
+  color: #000000;
+}
+
+.custom-icon-heart {
+  bottom: 10px;
+  right: 10px;
+}
+
+.custom-icon-cart {
+  bottom: 10px;
+  left: 10px;
+}
+
+.custom-additional-info {
+  background-color: #fff;
+  padding: 1rem;
+  margin-top: 1px;
+  width: 12rem;
+  margin-left: 10px;
+}
+
+.custom-additional-info p {
+  font-size: 11.5px;
+  font-weight: 300;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin: 0;
+  margin-left: 0;
+  margin-top: 0;
+}
+
+.custom-icon-cart:hover{
+  color: #014122;
+}
+
+.custom-icon-heart:hover{
+  color: red;
+}
+</style>
+<div class="container">
+    <div class="row custom-a">
+      <% productData.forEach((data)=> { %>
+        <div class="col d-flex justify-content-around flex-wrap col-lg-3">
+          <div class="custom-card-container ms-5 mt-5">
+            <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+            <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
+            <a href="/user-productDetails/<%-data._id %>">
+              <img class="card-img-top" src="/productImages/<%=data.images[0]%>" alt="Card image cap"
+                height="190px" width="210px">
+            </a>
+          </div>
+          <div class="custom-additional-info ms-5">
+            <a href=" /user/product/details/">
+              <p>
+                <%=data.name%>
+              </p>
+            </a>
+            <p class="custom-p">₹ <%=data.price%> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i>
+            </p>
+          </div>
+        </div>
+        <% }) %>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%-include('../partials/userPartials/user-footer')%>

@@ -6,6 +6,8 @@ const adminAuth=require('../middleWares/adminAuth')
 const upload=require('../middleWares/addCategory-multer')
 const uploads=require('../middleWares/Product-multer')
 
+
+
  const uploadfields=[
     {name:"mainImage",maxCount:1},
     {name:"image1",maxCount:1},
@@ -16,11 +18,11 @@ const uploads=require('../middleWares/Product-multer')
 
 
 // routes for admin login
-router.get('/',adminController.toadminLogin)
-router.post('/login',adminController.adminLogin)
-
+router.get('/',adminAuth.existingAdmin,adminController.toadminLogin)
+router.post('/login',adminAuth.existingAdmin,adminController.adminLogin)
+router.get('/logout',adminController.adminLogout)
 //route for user management
-router.get('/manageUser',adminController.usermanagement)
+router.get('/manageUser',adminAuth.verifyAdmin,adminController.usermanagement)
 
 
 //route for block and unblock user

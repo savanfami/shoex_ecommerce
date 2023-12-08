@@ -1,7 +1,8 @@
 const { use } = require("../router/adminRouter");
 const user = require('../model/userSchema')
 const category = require('../model/categorySchema')
-const product = require('../model/productSchema')
+const product = require('../model/productSchema');
+const { trusted } = require("mongoose");
 
 const credentials = {
     email: "shoexoff@gmail.com",
@@ -27,6 +28,16 @@ const adminLogin = (req, res) => {
     }
 }
 
+//adminlogout
+
+const adminLogout=async (req,res)=>{
+    try{
+        req.session.destroy()
+        res.redirect('/')
+    }catch(err){
+        console.log(err);
+    }
+}
 
 //get for usermanagement
 
@@ -58,8 +69,8 @@ const unBlock = async (req, res) => {
 //get for manageProduct
 const manageProduct = async (req, res) => {
     var i = 0
-    const productData = await product.find().sort({ name: 1 })
-    res.render('./admin/manageProduct', { productData, i })
+    const productData = await product.find().sort({ name: 1})
+    res.render('./admin/manageProduct', { productData,i })
 }
 
 //get for addProduct
@@ -84,7 +95,6 @@ const addProduct = async (req, res) => {
         }
 
         const images = req.files;
-        // console.log(Obj, ' new _______________________r all varients')
 
         console.log(images);
         const allImage = [].concat(...Object.values(images).map(arr => arr.map(file => file.filename)));
@@ -230,6 +240,7 @@ module.exports = {
     afterEditProduct,
     blockProduct,
     unblockProduct,
-    deleteProduct
+    deleteProduct,
+    adminLogout
 
 }

@@ -1,0 +1,277 @@
+<%-include('../partials/userPartials/user-nav')%>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
+    .product-text-container {
+        /* background-color: aqua; */
+        border-radius: 12px;
+        height: 56px;
+        margin-top: 53px;
+        box-shadow: 0px 0px 7px -3px;
+    }
+    .data{
+      border-radius: 12px;
+      box-shadow: 0px 0px 7px -3px;
+    }
+    body{
+      overflow-x: hidden;
+    }
+</style>
+<body>
+  <% if(message){%>
+<p class="text-center mt-4 " id="errorShow" style="color: red;font-weight: bold; font-family: 'Merriweather', serif;  ;">
+  <%=message%>
+  </p>
+<%}%>
+<script>
+  setTimeout(function () {
+      document.getElementById('errorShow').style.display = 'block';
+            setTimeout(function () {
+          document.getElementById('errorShow').style.display = 'none';
+      },3000); 
+  }, 0); 
+</script>
+<div class="product-text-container p-4 mx-5" style="display: flex; justify-content: center; align-items: center;">
+    <h3 style="font-family: 'Merriweather', serif;   margin-top: 11px;" id="ManageProduct-text">MANAGE ADDRESS</h3>
+</div >
+
+<!-- Button trigger modal -->
+<div class="mx-5 data mt-4 p-3 ">
+<button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    ADD ADDRESS
+  </button>
+  <a href="/user-profile" class="btn btn-secondary" style="color: #fff; text-decoration: none;"> Back to Profile</a>
+   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg  ">
+      <div class="modal-content ">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 " id="staticBackdropLabel">ADD ADDRESS</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="container  mt-5 mb-5 ">
+            <div class="row mx-0 justify-content-center">
+              <div class="col-md-6 col-lg-6">
+                <form
+                  method="POST"
+                  class="w-100 rounded-1 p-4 border bg-white"
+                  action="/user-addAddress"
+                >
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">Name</span>
+                    <input
+                      name="name"
+                      type="text"
+                      class="form-control"
+                      placeholder="enter your name" required
+                    />
+                  </label>
+          
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">Address line </span>
+                    <input
+                      name="address"
+                      type="text"
+                      class="form-control"
+                      placeholder="Address(Area and Street) "required
+                    />
+                  </label>
+          
+              
+          
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">City</span>
+                    <input name="city" type="text" class="form-control" placeholder="City/District/Town" required/>
+                  </label>
+          
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">State/Province</span>
+                    <input name="state" type="text" class="form-control" placeholder="State" required/>
+                  </label>
+          
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">Zip/Postal code</span>
+                    <input name="pincode" type="text" class="form-control" placeholder="Pincode" required/>
+                  </label>
+          
+                
+          
+                  <label class="d-block mb-4">
+                    <span class="form-label d-block">Phone</span>
+                    <input
+                      name="phone"
+                      type="text"
+                      class="form-control"
+                      placeholder="10-digit mobile number" required
+                    />
+                  </label>
+          
+                 
+          
+                  <div class="mb-3  ">
+                    <button type="submit" class="btn btn-primary px-4 rounded-3">
+                      Save
+                    </button>
+                    <button type="button" class="btn btn-danger px-4 rounded-3" data-bs-dismiss="modal">Close</button>
+
+                  </div>
+          
+                </form>
+              </div>
+            </div>
+          </div>
+        <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <div class="row mx-5 ">
+  <% addressData.address.forEach(data => { %>
+  <div class=" mt-4 col-md-4  ">
+    <div class="card " style=" box-shadow: 0px 0px 7px -3px;border-radius: 12px;">
+      <div class="card-body">
+        <h5 class="card-title">Address Details</h5>
+        <p class="card-text">Name:<%=data.name%></p>
+        <p class="card-text">Address:<%=data.address%></p>
+        <p class="card-text">City:<%=data.city%></p>
+        <p class="card-text">State:<%=data.state%></p>
+        <p class="card-text">Pincode:<%=data.pincode%></p>
+        <p class="card-text">Phone:<%=data.phone%></p>
+  
+        <!-- Edit and Delete Buttons -->
+        <div class="">
+        <button type="button " class="btn btn-primary"  onclick="openEditAddressModal('<%= data._id %>')"> EDIT </button>  
+        <button type="button" class="btn btn-danger" onclick="deleteAddress('<%= data._id %>')">Delete</button>
+        </div>
+        <!--edit address modal-->
+
+        <div class="modal fade" id="editAddressModal<%= data._id %>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg  ">
+            <div class="modal-content ">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5 " id="editAddressModallabel">EDIT ADDRESS</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="container  mt-5 mb-5 ">
+                  <div class="row mx-0 justify-content-center">
+                    <div class="col-md-6 col-lg-6">
+                      <!--edit address form -->
+                      <form method="POST" class="w-100 rounded-1 p-4 border bg-white" action="/user-editAddress/<%= data._id %>">
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">Name</span>
+                          <input
+                            name="name"
+                            type="text"
+                            value="<%=data.name%>"
+                            class="form-control"
+                            placeholder="enter your name" required
+                          />
+                        </label>
+                
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">Address line </span>
+                          <input
+                            name="address"
+                            type="text"
+                            class="form-control"
+                            value="<%=data.address%>"
+
+                            placeholder="Address(Area and Street) "required
+                          />
+                        </label>
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">City</span>
+                          <input name="city" type="text" class="form-control" 
+                          placeholder="City/District/Town" value="<%=data.city%>" required/>
+                        </label>
+                
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">State/Province</span>
+                          <input name="state" type="text" class="form-control" placeholder="State" value="<%=data.state%>" required/>
+
+                        </label>
+                
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">Zip/Postal code</span>
+                          <input name="pincode" type="text" class="form-control" placeholder="Pincode" value="<%=data.pincode%>" required/>
+                        </label>
+                
+                      
+                
+                        <label class="d-block mb-4">
+                          <span class="form-label d-block">Phone</span>
+                          <input
+                            name="phone"
+                            type="text"
+                            class="form-control"
+                            value="<%=data.phone%>"
+                            placeholder="10-digit mobile number" required
+                          />
+                        </label>
+                
+        
+                
+                        <div class="mb-3  ">
+                          <button type="submit" class="btn btn-primary px-4 rounded-3">
+                            Save Changes
+                          </button>
+                          <button type="button" class="btn btn-danger px-4 rounded-3" data-bs-dismiss="modal">Close</button>
+        
+                        </div>
+                
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Understood</button>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+</body>
+
+ 
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+
+<script>
+  function openEditAddressModal(addressId){
+    $('#editAddressModal'+addressId).modal('show')
+  }
+
+  function deleteAddress(addressId){
+    if(confirm('Are you sure you want to delete this address')){
+      fetch(`/user-deleteAddress/${addressId}`,{
+        method:'post',
+      }).then(response=>response.json())
+      .then((data)=>{
+        if(data.success){
+          window.location.reload()
+        }else{
+          console.error('error deleting address',data.message);
+        }
+      })
+      .catch((err)=>{
+        console.error('error deleting address',err);
+      })
+    }
+  }
+  
+</script>
+
+ 
+<div style="height: 100px;">
+
+</div>
+
+<%-include('../partials/userPartials/user-footer')%>

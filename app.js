@@ -10,6 +10,7 @@ const session=require('express-session')
 const{v4:uuidv4}=require('uuid')
 const morgan=require("morgan")
 const nocache=require('nocache')
+const flash=require('connect-flash')
 
 app.use(nocache())
 const PORT=process.env.PORT
@@ -22,12 +23,13 @@ app.use(bodyParser.json())
 app.use(session({
     secret:uuidv4(),
     saveUninitialized:true,
-    resave:false,
-    cookie:{
-        httpOnly:true,
-        maxAge:360000
-    }
+    resave:true,
+    // cookie:{
+    //     httpOnly:true,
+    //     maxAge:360000
+    // }
 }))
+app.use(flash())
 app.use(morgan("tiny"))
 //static files serving
 app.use(express.static('public'))

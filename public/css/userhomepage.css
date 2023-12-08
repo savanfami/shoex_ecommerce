@@ -16,6 +16,18 @@ body{
     overflow: hidden;
     border-radius: 20px;
     object-fit: cover;
+    transition: transform 0.3s;
+
+
+
+  }
+  .custom-card:hover{
+    transform: scale(1.05);
+    box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
+
+
+
+
   }
   .custom-image{
     width: 100%;

@@ -21,15 +21,15 @@
           <% if (message) { %>
             <p class="text-center" style="color: red;" id="errorShow"><%= message %></p>
             <script>
-                // Show error message
+                
                 setTimeout(function () {
                     document.getElementById('errorShow').style.display = 'block';
                     
-                    // Hide error message after 3 seconds
+                  
                     setTimeout(function () {
                         document.getElementById('errorShow').style.display = 'none';
-                    }, 3000); // Adjust the delay time in milliseconds (e.g., 3000 for 3 seconds)
-                }, 0); // Set an initial delay if needed (e.g., 0 for no delay)
+                    }, 3000); 
+                }, 0); 
             </script>
         <% } %>
                    <form action="/submit" method="post" name="login" id="signUp">

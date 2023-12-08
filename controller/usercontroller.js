@@ -3,13 +3,15 @@ const bcrypt = require('bcrypt')
 const sendOTP = require('../controller/otpcontroller')
 const OTP = require('../model/otpSchema')
 const category = require('../model/categorySchema')
-const generateOTP=require('../util/otpgenerator')
-const sendMail=require('../util/mail')
+const generateOTP = require('../util/otpgenerator')
+const sendMail = require('../util/mail')
 const product = require('../model/productSchema')
+const { error } = require('console')
 //get for user home not logged in
-const home =async (req, res) => {
+const home = async (req, res) => {
     const categoryData = await category.find({ status: true }).limit(3)
-    res.render('./user/home',{categoryData})
+    const productData = await product.find({ status: true }).limit(4)
+    res.render('./user/home', { categoryData, productData })
 }
 
 //get for user login
@@ -26,9 +28,10 @@ const toSignup = (req, res) => {
 //get for userhomepage when logged in
 const toUserHome = async (req, res) => {
     const categoryData = await category.find({ status: true }).limit(3)
-    const productData=await product.find({status:true}).limit(4)
-    res.render('./user/userHome', { categoryData,productData})
+    const productData = await product.find({ status: true }).limit(4)
+    res.render('./user/userHome', { categoryData, productData, })
 }
+
 
 
 //post for usersignup
@@ -52,7 +55,6 @@ const signup = async (req, res) => {
             req.session.data = newUser
             req.session.username = req.body.name
             req.session.email = req.body.email
-            req.session.userlogged = true
             req.session.signOtp = true
             res.redirect('/user/otpSending')
         }
@@ -88,21 +90,21 @@ const otpSender = async (req, res) => {
             req.session.err = "sorry cant send otp"
 
 
-           
+
         }
     }
 }
 
-const resendOtp=async(req,res)=>{
-    try{
-        const {email}=req.session.data
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.session.data
         console.log(email);
-        const newOtp=await generateOTP()
-        
-        await OTP.updateOne({email},{$set:{otp:newOtp}})
+        const newOtp = await generateOTP()
+
+        await OTP.updateOne({ email }, { $set: { otp: newOtp } })
         // console.log("resend");
         await sendOTP(email)
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
@@ -119,11 +121,11 @@ const otpConformation = async (req, res) => {
         if (Date.now() > Otp.expireAt) {
             await OTP.deleteOne({ email });
         } else {
-            const hashedOtp= Otp.otp
-            const userEnteredOtp= req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
-            const compareOtp=await bcrypt.compare(userEnteredOtp,hashedOtp)
+            const hashedOtp = Otp.otp
+            const userEnteredOtp = req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
+            const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
             req.session.email = data.email;
-            console.log(req.session.email)
+            // console.log(req.session.email)
             if (compareOtp) {
                 const newUser = await user.create([data])
                 req.session.userlogged = true;
@@ -143,6 +145,8 @@ const otpConformation = async (req, res) => {
         res.render("./user/otp")
     }
 }
+
+
 
 
 //to forgot password
@@ -204,10 +208,11 @@ const userLogin = async (req, res) => {
                     req.session.username = req.body.name
                     req.session.userlogged = true
                     req.session.email = req.body.email
+
                     // console.log(".......gg..............");
                     res.redirect('/user/home')
                 } else {
-                    res.render('./user/userlogin', { message: "sorry user is blocked" })
+                    res.render('./user/userlogin', { message: "sorry user is blocked " })
                 }
             } else {
                 res.render('./user/userlogin', { message: "Invalid password" })
@@ -220,25 +225,262 @@ const userLogin = async (req, res) => {
 
 }
 
+
+
+
 //route for user logout
 
 const logout = (req, res) => {
-    res.redirect('/')
+    req.session.destroy((err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect('/')
+        }
+    })
 }
+
+
 
 
 // GET FOR PRODUCT DETAILS
 
-const getProductDetails=async (req,res)=>{
-    try{
-        res.render('./user/productDetails')
-    }catch(err){
+const getProductDetails = async (req, res) => {
+    try {
+        const id = req.params.id
+        const productData = await product.findOne({ _id: id })
+        const relatedData = await product.find({ brand: productData.brand, category: productData.category }).limit(4)
+        const RelatedDatas = relatedData.filter(item => item._id.toString() !== productData._id.toString());
+        res.render('./user/productDetails', { productData, RelatedDatas })
+
+    } catch (err) {
+        console.log(err);
+    }
+
+}
+
+const getProductDetailshome = async (req, res) => {
+    try {
+        const id = req.params.id
+        const productData = await product.findOne({ _id: id })
+        const relatedData = await product.find({ brand: productData.brand, category: productData.category }).limit(4)
+        const RelatedDatas = relatedData.filter(item => item._id.toString() !== productData._id.toString());
+        res.render('./user/productDetails', { productData, RelatedDatas })
+
+    } catch (err) {
+        console.log(err);
+    }
+
+}
+
+
+//get for view all Product
+
+const viewallProduct=async (req,res)=>{
+    const productData=await product.find({status:true}).limit(16)
+    res.render('./user/viewallProduct',{productData})
+}
+
+const viewallProducthome=async (req,res)=>{
+    const productData=await product.find({status:true}).limit(16)
+    res.render('./user/viewallProduct',{productData})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//<-----------------------------------------UserProfile--------------------------------------------------------->//
+//to user profile
+
+const touserProfile = async (req, res) => {
+    try {
+        const userData = await user.findOne({ email: req.session.email })
+        res.render('./user/userProfile', { userData })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//post edit userProfile
+const usereditProfile = async (req, res) => {
+    try {
+        const id = req.params.id
+        const userData = await user.findOne({ _id: id })
+        const updateUser = await userData.updateOne({ username: req.body.name })
+        res.redirect('/user-profile')
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//get for manageAddress
+
+const manageAddress = async (req, res) => {
+    try {
+        const addressData = await user.findOne({ email: req.session.email })
+        // console.log(addressData);
+        const message = req.flash('success')
+        res.render('./user/manageAddress', { addressData, message })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//post for addAddress
+
+const addAddress = async (req, res) => {
+    try {
+        const { name, address, city, state, pincode, phone } = req.body
+        let email = req.session.email
+        const addressData = {
+            name,
+            address,
+            city,
+            state,
+            pincode,
+            phone
+        }
+        const users = await user.findOne({ email })
+        if (users.address.length >= 3) {
+            // console.log(users.address.length,"dddddddddddddddddddddddddddddddddddddddddddddd");
+            req.flash("success", "Max Address limit reached!!! please edit or delete existing Address")
+            res.redirect('/user-manageAddress')
+        } else {
+            users.address.push(addressData)
+            await users.save()
+           
+            
+
+            // console.log("address addred succesfulllllly");
+            res.redirect('/user-manageAddress')
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+//post for edit address
+const editAddress = async (req, res) => {
+    try {
+        const id = req.params.id
+        const addressData = {
+            name: req.body.name,
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            pincode: req.body.pincode,
+            phone: req.body.phone
+        }
+        // console.log(addressData,id,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+        const users = await user.findOneAndUpdate(
+            { 'address._id': id },
+            { $set: { 'address.$': addressData } },
+            { new: true }
+        )
+        if (users) {
+            // console.log("updated successfully");
+            res.redirect('/user-manageAddress')
+        }
+    } catch (err) {
         console.log(err);
     }
 }
 
 
+//post for delete address
 
+const deleteAddress = async (req, res) => {
+    try {
+        const id = req.params.id
+        const email = req.session.email
+        const userFind = await user.findOne({ email })
+        if (!userFind) {
+            return res.status(404).json({ message: "no user found" })
+        }
+        const deletAddress = await user.updateOne({ email },
+            {
+                $pull: { 'address': { _id: id } }
+            })
+        res.status(200).json({ success: true, message: 'Address deleted successfully' })
+
+    } catch (error) {
+        console.error("error deleting address".error)
+        res.status('500').json({ message: "Unable to delete address" })
+    }
+}
+
+//post for update profile Image
+
+const editprofileImage = async (req, res) => {
+    try {
+        if (req.file) {
+            const updatedUser = await user.findOneAndUpdate(
+                { email: req.session.email },
+                { profilePhoto: req.file.filename },
+                { new: true }
+            )
+            if (updatedUser) {
+                
+                res.status(200).json({ message: "profile photo updated successfully" })
+            } else {
+                res.status(400).json({ error: "user not found" })
+            }
+        } else {
+            res.status(400).json({ error: "no file was uploaded" })
+        }
+    } catch (err) {
+        console.error('error', err)
+        res.status(500).json({ error: "internal server error" })
+    }
+
+}
+
+//post for change password
+
+const changePassword=async(req,res)=>{
+    try{
+        const email=req.session.email
+        // console.log(email,"sedsssionnnnnnnnnnnnemaiilllllllllllllllllllllll");
+        const check=await user.findOne({email})
+        console.log("userrrr",check);
+        // console.log(req.body.oldPassword,"dddddddddddddddddddddddddddddddddddd");
+        // console.log(req.body.newPassword,"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        if(check){
+            const checkPassword=await bcrypt.compare(req.body.oldPassword,check.password)
+            // console.log("password is matched",checkPassword);
+
+        if(checkPassword){
+            const hashpassword=await bcrypt.hash(req.body.newPassword,10)
+            const updateUser=await user.updateOne({email},{$set:{password:hashpassword}})
+            // console.log(updateUser,"updated userrrrrrrrrrrrrrrrrrrrrrrr");
+            return res.json({success:true})
+        }else{
+            return res.json({success:false,error:"Old password is Wrong"})
+        }
+    }
+    }catch(error){
+        console.log(error);
+    }
+}
 
 module.exports = {
     home,
@@ -251,7 +493,19 @@ module.exports = {
     toOtp,
     otpSender,
     otpConformation,
-    resendOtp
+    resendOtp,
+    getProductDetails,
+    touserProfile,
+    usereditProfile,
+    manageAddress,
+    addAddress,
+    editAddress,
+    deleteAddress,
+    editprofileImage,
+    viewallProduct,
+    viewallProducthome,
+    getProductDetailshome,
+    changePassword
     // toForgotPassword,
     // forgotPass,
 }

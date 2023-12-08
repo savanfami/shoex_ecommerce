@@ -20,25 +20,23 @@
                <% if (message) { %>
                   <p class="text-center" style="color: red;" id="errorShow"><%= message %></p>
                   <script>
-                      // Show error message
                       setTimeout(function () {
                           document.getElementById('errorShow').style.display = 'block';
                           
-                          // Hide error message after 3 seconds
                           setTimeout(function () {
                               document.getElementById('errorShow').style.display = 'none';
-                          }, 2000); // Adjust the delay time in milliseconds (e.g., 3000 for 3 seconds)
-                      }, 0); // Set an initial delay if needed (e.g., 0 for no delay)
+                          }, 2000); 
+                      }, 0); 
                   </script>
               <% } %>
                    <form action="/user/login" method="post" name="login">
                            <div class="form-group">
                               <label for="exampleInputEmail1">Email address</label>
-                              <input type="email" name="email"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                              <input type="email" name="email" value="savanfami1239@gmail.com" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required>
                            </div>
                            <div class="form-group">
                               <label for="exampleInputEmail1">Password</label>
-                              <input type="password" name="password" id="password"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Password" required="">
+                              <input type="password" name="password" id="password" value="Sava@1239" class="form-control" aria-describedby="emailHelp" placeholder="Enter Password" required="">
                               <span class="password-toggle" id="togglePassword" style="position: absolute; top: 160px; right: 25px;">
                                  <i class="fas fa-eye mt-4" id="eye-icon"></i>
                                  </span>
@@ -75,17 +73,13 @@
  const eyeIcon = document.getElementById('eye-icon');
  const togglePassword = document.getElementById('togglePassword');
 
-//  const confirmInput = document.getElementById('confirmPassword');
-//  const confirmEyeIcon = document.getElementById('confirm-eye-icon');
-//  const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+
 
  togglePassword.addEventListener('click', () => {
    togglePasswordVisibility(password, eyeIcon);
  });
 
-//  toggleConfirmPassword.addEventListener('click', () => {
-//    togglePasswordVisibility(confirmInput, confirmEyeIcon);
-//  });
+
 
  function togglePasswordVisibility(input, icon) {
    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';

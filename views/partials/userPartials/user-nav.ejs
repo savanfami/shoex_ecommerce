@@ -1,7 +1,8 @@
 <%-include("../userPartials/header")%>
+
 <nav class="newnavbar navbar navbar-expand-lg bg-black sticky-top navbar-dark p-3 shadow-sm navbar-color ">
   <div class="container-fluid">
-    <a class="navbar-brand icon-size " href="#" style="font-family: 'radley';font-size: 25px;"> SHOEX</a>
+    <a class="navbar-brand icon-size " href="/user/home" style="font-family: 'radley';font-size: 25px;"> SHOEX</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -11,18 +12,6 @@
         <span class="border-dark input-group-text bg-dark text-white"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input type="text" class="form-control border-dark" style="color:#7a7a7a">
         <button class="btn btn-dark text-white">Search</button>
-      </div>
-    </div>
-    <div class="nav-item dropdown d-lg-none d-none">
-      <a class="nav-link mx-2 text-uppercase dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
-        <i class="fa-solid fa-circle-user me-1" style="color: white;"></i>
-      </a>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" href="#">Profile</a>
-        <a class="dropdown-item" href="#">Settings</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/user/logout">Logout</a>
       </div>
     </div>
     <div class=" collapse navbar-collapse" id="navbarNavDropdown">
@@ -38,7 +27,7 @@
       </div>
       <ul class="navbar-nav ms-auto text-end ">
         <li class="nav-item ">
-          <a class="nav-link mx-2  active " aria-current="page" href="#">Home</a>
+          <a class="nav-link mx-2  active " aria-current="page" href="/user/home">Home</a>
         </li>
        
         <li class="nav-item">
@@ -58,7 +47,7 @@
             <i class="fa-solid fa-circle-user me-1" style="color:white;"></i>
           </a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="/user-profile">Profile</a>
             <a class="dropdown-item" href="#">Settings</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/user/logout">Logout</a>

@@ -21,7 +21,7 @@ const sendOtp=async (email)=>{
         from:AUTH_MAIL,
         to:email,
         subject:"Verify the email using this otp",
-        html:`<p>Hello user use the this otp to verify your email to continue </p><p style="color:tomato;font-size:25px;letter-spacing:2px;">
+        html:`<p>Hello user use the this otp to verify your email to continue </p> <p style="color:tomato;font-size:25px;letter-spacing:2px;">
         <b>${generatedOTP}</b></p><p>OTP will expire in<b> 10 minute(s)</b>.</p>`
     }
     await mail(mailOptions)
