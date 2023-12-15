@@ -15,7 +15,20 @@ height: 100vh;">
                     <label for="categoryName" class="form-label">Category Name:</label>
                     <input type="text"  name="name"  class="form-control" id="categoryName" placeholder="Enter category name" required>
                 </div>
-
+                <% if(message){%>
+                    <p class="text-center mt-4 " id="errorShow" style="color: red; font-family: 'Merriweather', serif;  ;">
+                      <%=message%>
+                      </p>
+                    <%}%>
+                    <script>
+                      setTimeout(function () {
+                          document.getElementById('errorShow').style.display = 'block';
+                                setTimeout(function () {
+                              document.getElementById('errorShow').style.display = 'none';
+                          },3000); 
+                      }, 0); 
+                    </script>
+                    
                 <div class="mb-3">
                     <label for="categoryImage" class="form-label">Category Image:</label>
                     <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" onchange="previewImage(this)">

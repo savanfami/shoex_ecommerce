@@ -117,33 +117,42 @@
       <!-- Image Upload Section -->
       <div class="row mb-4">
         <div class="mb-3">
-          <label for="mainImage" class="form-label">Main Image</label>
-          <input type="file" class="form-control" id="mainImage" name="mainImage" accept="image/*" required>
-          <div class="image-preview" id="mainImagePreview"></div>
+          <label for="imageInput1"  class="form-label">Main Image</label>
+          <input type="file" class="form-control" id="imageInput1" name="mainImage" accept="image/*" required>
+          <img id="imagePreview1" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+          <button class="btn btn-danger mt-2 delete-button" id="deleteButton1"
+              style="display: none">Delete</button>
         </div>
     
         <div class="mb-3">
-          <label for="categoryImage1" class="form-label">Product Image:</label>
-          <input type="file" class="form-control" id="categoryImage1" name="image1" accept="image/*" required>
-          <div class="image-preview" id="categoryImagePreview1"></div>
+          <label for="imageInput2" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="imageInput2" name="image1" accept="image/*" required>
+          <img id="imagePreview2" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+          <button class="btn btn-danger mt-2 delete-button" id="deleteButton2"
+              style="display: none">Delete</button>
         </div>
     
         <div class="mb-3">
-          <label for="categoryImage2" class="form-label">Product Image:</label>
-          <input type="file" class="form-control" id="categoryImage2" name="image2" accept="image/*" required>
-          <div class="image-preview" id="categoryImagePreview2"></div>
+          <label for="imageInput3" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="imageInput3" name="image2" accept="image/*" required>
+          <img id="imagePreview3" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+          <button class="btn btn-danger mt-2 delete-button" id="deleteButton3"
+              style="display: none">Delete</button>
         </div>
-    
         <div class="mb-3">
-          <label for="categoryImage3" class="form-label">Product Image:</label>
-          <input type="file" class="form-control" id="categoryImage3" name="image3" accept="image/*" >
-          <div class="image-preview" id="categoryImagePreview3"></div>
+          <label for="imageInput4" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="imageInput4" name="image3" accept="image/*" >
+          <img id="imagePreview4" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+          <button class="btn btn-danger mt-2 delete-button" id="deleteButton4"
+              style="display: none">Delete</button>
         </div>
-    
+
         <div class="mb-3">
-          <label for="categoryImage4" class="form-label">Product Image:</label>
-          <input type="file" class="form-control" id="categoryImage4" name="image4" accept="image/*">
-          <div class="image-preview" id="categoryImagePreview4"></div>
+          <label for="imageInput5" class="form-label">Product Image:</label>
+          <input type="file" class="form-control" id="imageInput5" name="image4" accept="image/*">
+          <img id="imagePreview5" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
+          <button class="btn btn-danger mt-2 delete-button" id="deleteButton5"
+              style="display: none">Delete</button>
         </div>
       </div>
 
@@ -184,7 +193,7 @@
     }
   }
   </script>
-    <script>
+    <!-- <script>
       function previewImage(input, previewId) {
         const preview = document.getElementById(previewId);
         while (preview.firstChild) {
@@ -227,7 +236,34 @@
       document.getElementById("categoryImage4").addEventListener("change", function () {
         previewImage(this, "categoryImagePreview4");
       });
-    </script>
+    </script> -->
   
+  <script>
+    // JavaScript to handle image preview and delete
+    const inputIds = ["1", "2", "3", "4","5"];
 
+    inputIds.forEach((id) => {
+        const input = document.getElementById(`imageInput${id}`);
+        const preview = document.getElementById(`imagePreview${id}`);
+        const deleteButton = document.getElementById(`deleteButton${id}`);
+
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    preview.src = event.target.result;
+                    deleteButton.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        deleteButton.addEventListener('click', () => {
+            input.value = '';
+            preview.src = '';
+            deleteButton.style.display = 'none';
+        });
+    });
+</script>
 <%-include("../partials/adminPartials/footer")%>

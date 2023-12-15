@@ -8,6 +8,8 @@
         <link rel="stylesheet" href="style.css" />
         <!-- Boxicons CSS -->
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">
+
        <script src="script.js" defer></script>
       
 <style>
@@ -33,6 +35,7 @@ align-items: center;
 justify-content: center;
 }
 .container {
+  max-width: 500px;
 background: #fff;
 padding: 30px 65px;
 border-radius: 12px;
@@ -92,6 +95,11 @@ pointer-events: auto;
 form button:hover {
 background: #05298d
 }
+.error-message{
+  color: red;
+  font-size: 14px;
+
+}
 </style>
       </head>
       <body>
@@ -100,7 +108,17 @@ background: #05298d
             <i class="bx bxs-check-shield"></i>
           </header>
           <h4>Enter OTP Code</h4>
-          <form action="/user/toOtp" method="post">
+          <% if (typeof err !== 'undefined' && err) { %>
+            <p class="error-message"><%= err %></p>
+            <script>
+              setTimeout(function () {
+                document.querySelector('.error-message').style.display = 'none';
+              }, 2000);
+            </script>
+          <% } %>
+
+          
+          <form action="/user/toOtp" method="post">`
             <div class="input-field">
               <input type="number" name="otp1" />
               <input type="number" name="otp2" disabled />
@@ -109,8 +127,11 @@ background: #05298d
             </div>
             <input type="text" id="emailverificationCode" name="code" value="" placeholder="enter verificationcode" style="display: none;">
             <button>Verify OTP</button>
-            <a class="btn btn-primary" href="/user/resendOtp" style="margin-top: 15px;">Resend otp</a>
+            <span class="mt-3" id="countdownText" style="color: red;" >request another otp in <span id="countdown">60</span>seconds</span>
+            <a href="/user/resendOtp" class="" id="resend-otp"  style="margin-top: 15px;"></a>
+      
           </form>
+          
         </div>
       </body>
     </html>
@@ -122,37 +143,34 @@ background: #05298d
 
 
       <script>
+
         const inputs = document.querySelectorAll("input"),
   button = document.querySelector("button");
 
-// iterate over all inputs
+
 inputs.forEach((input, index1) => {
   input.addEventListener("keyup", (e) => {
-    // This code gets the current input element and stores it in the currentInput variable
-    // This code gets the next sibling element of the current input element and stores it in the nextInput variable
-    // This code gets the previous sibling element of the current input element and stores it in the prevInput variable
+   
     const currentInput = input,
       nextInput = input.nextElementSibling,
       prevInput = input.previousElementSibling;
 
-    // if the value has more than one character then clear it
+
     if (currentInput.value.length > 1) {
       currentInput.value = "";
       return;
     }
-    // if the next input is disabled and the current value is not empty
-    //  enable the next input and focus on it
+ 
     if (nextInput && nextInput.hasAttribute("disabled") && currentInput.value !== "") {
       nextInput.removeAttribute("disabled");
       nextInput.focus();
     }
 
-    // if the backspace key is pressed
+   
     if (e.key === "Backspace") {
-      // iterate over all inputs again
+     
       inputs.forEach((input, index2) => {
-        // if the index1 of the current input is less than or equal to the index2 of the input in the outer loop
-        // and the previous element exists, set the disabled attribute on the input and focus on the previous element
+     
         if (index1 <= index2 && prevInput) {
           input.setAttribute("disabled", true);
           input.value = "";
@@ -160,8 +178,7 @@ inputs.forEach((input, index1) => {
         }
       });
     }
-    //if the fourth input( which index number is 3) is not empty and has not disable attribute then
-    //add active class if not then remove the active class.
+  
     if (!inputs[3].disabled && inputs[3].value !== "") {
       button.classList.add("active");
       return;
@@ -187,9 +204,49 @@ function updateOTPValue(inputs) {
 //focus the first input which index is 0 on window load
 window.addEventListener("load", () => inputs[0].focus());
 
-
-function resendOtp
     </script>
+  <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      const countdownText = document.getElementById('countdownText');
+      const countdown = document.getElementById('countdown');
+      const resend = document.getElementById('resend-otp')
+      let timer =localStorage.getItem('countdown')|| 30; // 2 minutes (2 * 60 seconds)
+        const countdownInterval = setInterval(() => {
+        updateCountdown();
+        localStorage.setItem('countdown', timer);
+    }, 1000);
+
+        function updateCountdown() {
+            countdown.textContent = timer;
+            if (timer <= 0) {
+                clearInterval(countdownInterval);
+                countdownText.style.display = 'none';
+                resend.innerHTML="resend otp "
+                   // Hide the countdown text
+                // Show the "Didn't get the OTP? Resend OTP" link here
+            }
+            timer--;
+        }
+
+        // Initialize the countdown
+        updateCountdown();
+
+        // Start the countdown timer
+
+   
+        // Add a click event listener to the "Validate" button5
+      
+            // alert('d')
+         
+            // Make an HTTP request to send the OTP to the backend
+          
+        });
+        window.addEventListener('beforeunload', () => {
+        localStorage.removeItem('countdown');
+    });
+</script>
+
 </body>
 
 </html>

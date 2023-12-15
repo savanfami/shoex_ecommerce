@@ -1,178 +1,265 @@
 <%-include('../partials/userPartials/user-nav')%>
-<link href="/css/productDetails.css" rel="stylesheet">
+  <link href="/css/productDetails.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
+  <body>
+   
+      <!-- content -->
+      <section class="py-5">
+        <div class="container">
 
-<body>
+          <div class="row gx-5">
+            <aside class="col-lg-6">
 
-  <!-- content -->
-  <section class="py-5">
-    <div class="container">
-
-      <div class="row gx-5">
-        <aside class="col-lg-6">
-
-          <div class="border rounded-4 mb-3 d-flex justify-content-center">
-            <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image">
-              <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit"
-                src="/productImages/<%= productData.images[0] %>">
-            </a>
-          </div>
-          <div class="d-flex justify-content-center mb-3">
-            <% productData.images.forEach((image,index)=> { %>
-
-              <a data-fslightbox="mygalley" class="border mx-2 rounded-2" target="_blank" data-type="image">
-                <img width="60" height="60" class="rounded-2" data-index="<%=index +1%>"
-                  src="/productImages/<%=image%>" />
-              </a>
-              <% }) %>
-          </div>
-          <!-- thumbs-wrap.// -->
-          <!-- gallery-wrap .end// -->
-        </aside>
-        <main class="col-lg-6">
-          <div class="ps-lg-3">
-            <h4 class="title text-dark">
-              <%=productData.name %>
-            </h4>
-            <div class="d-flex flex-row my-3">
-              <div class="text-warning mb-1 me-2">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span class="ms-1">
-                  4.5
-                </span>
+              <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image">
+                  <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit "
+                    id="selected-image" src="/productImages/<%= productData.images[0] %>">
+                </a>
               </div>
-              <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
-              <!-- <span class="text-success ms-2">In stock</span> -->
-            </div>
+              <div class="d-flex justify-content-center mb-3 thumbnail-image-container ">
+                <% productData.images.forEach((image,index)=> { %>
+                  <% if(image){ %>
 
-            <div class="mb-3">
-              <span class="h5">₹<%=productData.price%></span>
-              <!-- <span class="text-muted">/per box</span> -->
-            </div>
+                    <a data-fslightbox="mygalley" class="border mx-2 rounded-2" target="_blank" data-type="image">
+                      <img width="60" height="60" class="rounded-2" data-index="<%=index +1%>" id="cursor"
+                        src="/productImages/<%=image%>" />
+                    </a>
+                    <% } %>
+                      <% }) %>
+              </div>
+              <!-- thumbs-wrap.// -->
+              <!-- gallery-wrap .end// -->
+            </aside>
+            <main class="col-lg-6">
+              <div class="ps-lg-3">
+                <h4 class="title text-dark">
+                  <%=productData.name %>
+                </h4>
+                <div class="d-flex flex-row my-3">
+                  <div class="text-warning mb-1 me-2">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="ms-1">
+                      4.5
+                    </span>
+                  </div>
+                  <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
+                  <!-- <span class="text-success ms-2">In stock</span> -->
+                </div>
 
-            <p>
-              <%=productData.description %>
-            </p>
+                <div class="mb-3">
+                  <span class="h5">₹<%=productData.price%></span>
+                  <!-- <span class="text-muted">/per box</span> -->
+                </div>
 
-            <div class="row">
-              <dt class="col-3">Type:</dt>
-              <dd class="col-9">
-                <%=productData.category %>
-              </dd>
+                <p>
+                  <%=productData.description %>
+                </p>
 
-              <dt class="col-3">Color</dt>
-              <dd class="col-9">
-                <%=productData.color %>
-              </dd>
-              <!--       
+                <div class="row">
+                  <dt class="col-3">Type:</dt>
+                  <dd class="col-9">
+                    <%=productData.category %>
+                  </dd>
+
+                  <dt class="col-3">Color</dt>
+                  <dd class="col-9">
+                    <%=productData.color %>
+                  </dd>
+                  <!--       
                 <dt class="col-3">Material</dt>
                 <dd class="col-9">Cotton, Jeans</dd>
      -->
-              <dt class="col-3">Brand</dt>
-              <dd class="col-9">
-                <%=productData.brand %>
-              </dd>
-            </div>
+                  <dt class="col-3">Brand</dt>
+                  <dd class="col-9">
+                    <%=productData.brand %>
+                  </dd>
+                </div>
 
-            <hr/>
+                <hr />
 
-            <!-- ... (your existing code) ... -->
-            
-          
-              <div class="row">
-                <label class="mb-2 mt-4"> Available Size</label>
+                <!-- ... (your existing code) ... -->
 
-               <p class="status-message"></p>
-                    <% productData.variant.sort((a,b)=>a.size-b.size).forEach(data => { %>
- 
-                 <div class="col-1">
+
+                <div class="row">
+                  <label class="mb-2 mt-4"> Available Size</label>
+
+                  <p class="status-message"></p>
+                  <% productData.variant.sort((a,b)=>a.size-b.size).forEach(data => { %>
+
+                    <div class="col-1">
                       <div class="size-selector">
-                          <div class="size-box">
-                            <button class="btn btn-size" data-quantity="<%= data.quantity %>" <%= data.quantity < 1 ? 'disabled' : '' %>><%= data.size %></button>                             
-                          </div>
+                        <div class="size-box">
+                          <button class="btn btn-size" data-quantity="<%= data.quantity %>"  data-size="<%= data.size %>" <%=data.quantity < 1
+                            ? 'disabled' : '' %>><%= data.size %> </button>
+                        </div>
                       </div>
-                  </div>
-                  <% }) %>   
+                    </div>
+                    <% }) %>
+                </div>
+
+
+                <!-- ... (your existing code) ... -->
+
+                <!-- col.// -->
+
               </div>
-         
-          
-            <!-- ... (your existing code) ... -->
+              <a href="#" class="btn btn-primary shadow-0 mt-4"> <i class="fa-solid fa-heart fa-lg"
+                  style="color: #ffffff;"></i> Add to wishlist</a>
+              <button class="btn btn- shadow-0 mt-4" data-item-id="<%= productData._id %>" id="addtoCart"
+                style="background-color: rgb(254, 167, 6);"> <i class="me-1 fa fa-shopping-basket fa-lg" 
+                  style="color:#fff;"></i> Add to cart </button>
 
-            <!-- col.// -->
-
-          </div>
-          <a href="#" class="btn btn-primary shadow-0 mt-4"> <i class="fa-solid fa-heart fa-lg" style="color: #ffffff;"></i> Add to wishlist</a>
-          <a href="#" class="btn btn- shadow-0 mt-4" style="background-color: rgb(254, 167, 6);"> <i class="me-1 fa fa-shopping-basket fa-lg" style="color:#fff;"></i> Add to cart </a>
-
-      </div>
-      </main>
+    </div>
+    </main>
     </div>
     </div>
-  </section>
+    </section>
 
-  <section>
+    <section>
 
-    <header class=" sub-head mt-4 container" style="font-family:radley;font-size:25px;">
-      <h3 class=" sub-headi pt-3" style="color: #014122; font-size: 2.5rem;">
-        Related Products</h3>
-    </header>
-    <div class="row custom-a">
-      <% RelatedDatas.forEach((data)=> { %>
-        <div class="col d-flex justify-content-around flex-wrap col-lg-3">
-          <div class="custom-card-container ms-5 mt-5">
-            <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
-            <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
-            <a href="/user-productDetails/<%-data._id %>">
-              <img class="card-img-top" src="/productImages/<%=data.images[0]%>" alt="Card image cap"
-                height="190px" width="210px">
-            </a>
-          </div>
-          <div class="custom-additional-info ms-5">
-            <a href=" /user/product/details/">
-              <p>
-                <%=data.name%>
+      <header class=" sub-head mt-4 container" style="font-family:radley;font-size:25px;">
+        <h3 class=" sub-headi pt-3" style="color: #014122; font-size: 2.5rem;">
+          Related Products</h3>
+      </header>
+      <div class="row custom-a">
+        <% RelatedDatas.forEach((data)=> { %>
+          <div class="col d-flex justify-content-around flex-wrap col-lg-3">
+            <div class="custom-card-container ms-5 mt-5">
+              <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+              <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
+              <a href="/user-productDetails/<%-data._id %>">
+                <img class="card-img-top" src="/productImages/<%=data.images[0]%>" alt="Card image cap" height="190px"
+                  width="210px">
+              </a>
+            </div>
+            <div class="custom-additional-info ms-5">
+              <a href=" /user/product/details/">
+                <p>
+                  <%=data.name%>
+                </p>
+              </a>
+              <p class="custom-p">₹ <%=data.price%> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i>
               </p>
-            </a>
-            <p class="custom-p">₹ <%=data.price%> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i>
-            </p>
+            </div>
           </div>
-        </div>
-        <% }) %>
-    </div>
-  </div>
-  </section>
- 
-</body>
+          <% }) %>
+      </div>
+      </div>
+    </section>
 
+  </body>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
+  <style>
+    #cursor:hover {
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
       // Get all buttons with the class 'btn-size'
       var buttons = document.querySelectorAll('.btn-size');
 
       // Add click event listeners to the buttons
       buttons.forEach(function (button) {
-          button.addEventListener('click', function () {
-              // Remove 'selected' class from all buttons
-              buttons.forEach(function (btn) {
-                  btn.classList.remove('selected');
-              });
-
-              // Add 'selected' class to the clicked button
-              button.classList.add('selected');
-
-              // Optionally, you can perform additional actions when a size is selected
-              var selectedSize = button.innerText;
-              console.log('Selected Size:', selectedSize);
+        button.addEventListener('click', function () {
+          // Remove 'selected' class from all buttons
+          buttons.forEach(function (btn) {
+            btn.classList.remove('selected');
           });
+
+          // Add 'selected' class to the clicked button
+          button.classList.add('selected');
+
+          // Optionally, you can perform additional actions when a size is selected
+          var selectedSize = button.innerText;
+          console.log('Selected Size:', selectedSize);
+        });
       });
-  });
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var thumbnailImages = document.querySelectorAll('.thumbnail-image-container img');
+      var selectedImage = document.getElementById('selected-image');
+
+      thumbnailImages.forEach(function (thumbnail) {
+        thumbnail.addEventListener('click', function () {
+          var newImageSrc = thumbnail.getAttribute('src');
+          selectedImage.setAttribute('src', newImageSrc);
+          initializeImageZoom();
+        });
+      });
+
+    });
 
 
-  
-</script>
-<%-include('../partials/userPartials/user-footer')%>
+  </script> 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+   <script>
+    document.getElementById('addtoCart').addEventListener("click", function () {
+      const selectedSizeElement = document.querySelector('.btn-size.selected');
+
+if (!selectedSizeElement) {
+    // No size selected, show an error message
+    Toastify({
+        text: 'Please select an available size before adding to cart',
+        duration: 2000,
+        gravity: 'bottom',
+        position: 'center',
+        style: {
+    background: "red",
+    marginTop:'80px'
+  },
+    }).showToast();
+    return; // Stop execution
+}
+      const itemId = this.dataset.itemId
+      const selectedSize=document.querySelector('.btn-size.selected').getAttribute('data-size')
+      fetch('/user-addtoCart', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ itemId: itemId, selectedSize: selectedSize })
+      }).then(response => {
+      if (response.ok) {
+       
+        Toastify({
+          text: 'Item added to cart',
+          duration: 2000,
+          gravity: 'top', 
+          position: 'center', 
+          style: {
+    background: "green",
+    marginTop:'80px'
+  },
+          
+        }).showToast();
+
+      
+        // setTimeout(() => {
+        //   window.location.href = '/user-addtoCart';
+        // }, 3000);
+      } else {
+        Toastify({
+          text: 'Failed to add item to cart',
+          duration: 2000,
+          gravity: 'bottom',
+          position: 'center',
+          backgroundColor: 'linear-gradient(to right, #FF0000, #FF4500)',
+        }).showToast();
+      }
+    })
+        .catch(error => {
+          console.error(error);
+        });
+    })
+  </script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <%-include('../partials/userPartials/user-footer')%>

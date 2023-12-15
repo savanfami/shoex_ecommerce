@@ -1,14 +1,15 @@
 const express=require('express')
 const router=express.Router()
 const userController=require('../controller/usercontroller')
-// const otpcontroller=require('../controller/otpcontroller')
+const userblock=require('../middleWares/userBlock')
 const userAuth=require('../middleWares/userAuth')
 const upload=require('../middleWares/profile-multer')
+const cartController=require('../controller/cartcontroller')
 
 
 // routes for home
 router.get('/',userAuth.existingUser,userController.home)
-router.get('/user/home',userAuth.verifyUser,userController.toUserHome)
+router.get('/user/home',userAuth.verifyUser,userblock,userController.toUserHome)
 router.get('/user/logout',userController.logout)
 
 //route for login 
@@ -24,7 +25,7 @@ router.post('/submit',userAuth.existingUser,userController.signup)
 router.get('/user/toOtp',userAuth.existingUser,userController.toOtp)
 router.get('/user/otpSending',userAuth.existingUser,userController.otpSender)
 router.post('/user/toOtp',userAuth.existingUser,userController.otpConformation)
-router.get('/user/resendOtp',userAuth.existingUser,userController.resendOtp)
+router.get('/user/resendOtp',userAuth.existingUser,userController.otpSender)
 
 //router for forget Password
 
@@ -38,7 +39,6 @@ router.get('/user-viewallProduct',userAuth.verifyUser,userController.viewallProd
 router.get('/user-viewallProducthome',userController.viewallProducthome)
 
 
-
 //route for userprofile
 
 router.get('/user-profile',userAuth.verifyUser,userController.touserProfile)
@@ -49,4 +49,11 @@ router.post('/user-editAddress/:id',userController.editAddress)
 router.post('/user-deleteAddress/:id',userAuth.verifyUser,userController.deleteAddress)
 router.post('/user-profileImage',upload.single('profileimage'),userController.editprofileImage)
 router.post('/user-changePassword',userController.changePassword)
+
+
+//routes for cart
+router.get('/user-addtoCart',userAuth.verifyUser,cartController.getaddtoCart)
+router.post('/user-addtoCart',userAuth.verifyUser,cartController.addtoCart)
+router.delete('/user-deletefromCart/:id',cartController.deletefromCart)
+
 module.exports=router

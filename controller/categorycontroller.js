@@ -15,7 +15,8 @@ const manageCategory = async (req, res) => {
 //get method for add category
 
 const toaddCategory = (req, res) => {
-    res.render('./admin/addCategory')
+    const message = req.flash('success')
+    res.render('./admin/addCategory',{message})
 }
 
 
@@ -24,24 +25,30 @@ const toaddCategory = (req, res) => {
 
 const addCategory = async (req, res) => {
     try {
-        const { name } = req.body
-        const image = req.file.filename
-        // log("aaaaaaaaaa",req.file)
-        const existCategory = await category.findOne({ name })
+        const { name } = req.body;
+        const image = req.file.filename;
+
+        const lowerCaseName = name.toLowerCase();
+        const nameRegex = new RegExp('^' + lowerCaseName + '$', 'i'); 
+
+        const existCategory = await category.findOne({ name: nameRegex });
+
         if (existCategory) {
-            res.render('./admin/addCategory')
+            req.flash("success", "Category with the same name already exists")
+            res.redirect('/admin/add/category');
         } else {
             const newCategory = await category.create({
-                name: name,
+                name: lowerCaseName,
                 image: image
-            })
-            // console.log("categptu",newCategory);
-            res.redirect('/admin/manageCategory')
+            });
+            res.redirect('/admin/manageCategory');
         }
     } catch (error) {
         console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
 
 //get method for admin edit category
 

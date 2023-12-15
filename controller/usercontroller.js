@@ -9,9 +9,13 @@ const product = require('../model/productSchema')
 const { error } = require('console')
 //get for user home not logged in
 const home = async (req, res) => {
+    try{
     const categoryData = await category.find({ status: true }).limit(3)
     const productData = await product.find({ status: true }).limit(4)
     res.render('./user/home', { categoryData, productData })
+    }catch(err){
+        console.log(err);
+    }
 }
 
 //get for user login
@@ -27,11 +31,14 @@ const toSignup = (req, res) => {
 
 //get for userhomepage when logged in
 const toUserHome = async (req, res) => {
+    try{
     const categoryData = await category.find({ status: true }).limit(3)
     const productData = await product.find({ status: true }).limit(4)
     res.render('./user/userHome', { categoryData, productData, })
+}catch(err){
+    console.log(err);
 }
-
+}
 
 
 //post for usersignup
@@ -67,16 +74,20 @@ const signup = async (req, res) => {
 //get for otp page
 
 const toOtp = (req, res) => {
+    try{
     if (req.session.signOtp || req.session.forgot) {
         res.render('./user/otp', { title: "OTP" })
     } else {
         res.redirect('./user/logout')
     }
-}
+}catch(err){
+    console.log(err);
+}}
 
 // otp sending
 
 const otpSender = async (req, res) => {
+   try{
     if (req.session.signOtp || req.session.forgot) {
         try {
             const email = req.session.email
@@ -88,17 +99,15 @@ const otpSender = async (req, res) => {
         } catch (err) {
             console.log(err);
             req.session.err = "sorry cant send otp"
-
-
-
         }
     }
-}
+}catch(err){
+    console.log(err);
+}}
 
 const resendOtp = async (req, res) => {
     try {
         const { email } = req.session.data
-        console.log(email);
         const newOtp = await generateOTP()
 
         await OTP.updateOne({ email }, { $set: { otp: newOtp } })
@@ -231,6 +240,7 @@ const userLogin = async (req, res) => {
 //route for user logout
 
 const logout = (req, res) => {
+    try{
     req.session.destroy((err) => {
         if (err) {
             console.log(err);
@@ -238,7 +248,9 @@ const logout = (req, res) => {
             res.redirect('/')
         }
     })
-}
+}catch(err){
+    console.log(err);
+}}
 
 
 
@@ -277,14 +289,20 @@ const getProductDetailshome = async (req, res) => {
 //get for view all Product
 
 const viewallProduct=async (req,res)=>{
+  try{
     const productData=await product.find({status:true}).limit(16)
     res.render('./user/viewallProduct',{productData})
-}
+}catch(err){
+    console.log(err);
+}}
 
 const viewallProducthome=async (req,res)=>{
+  try{
     const productData=await product.find({status:true}).limit(16)
     res.render('./user/viewallProduct',{productData})
-}
+}catch(err){
+    console.log(err);
+}}
 
 
 

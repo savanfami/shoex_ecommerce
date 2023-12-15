@@ -1,24 +1,23 @@
 const express=require('express')
 const app=express()
+const database=require('./config/connection')
 const userRouter=require('./router/userRouter')
 const adminRouter=require('./router/adminRouter')
 const path=require('path')
 require('dotenv').config()
-const bodyParser=require('body-parser')
 connectDB=require('./config/connection')
 const session=require('express-session')
 const{v4:uuidv4}=require('uuid')
 const morgan=require("morgan")
 const nocache=require('nocache')
 const flash=require('connect-flash')
-
 app.use(nocache())
 const PORT=process.env.PORT
+connectDB
+// console.log(connectDB);
 
-
-
-app.use(bodyParser.urlencoded({extended:true}))
-app.use(bodyParser.json())
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
 
 app.use(session({
     secret:uuidv4(),

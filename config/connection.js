@@ -2,11 +2,13 @@ const mongoose=require('mongoose')
 require('dotenv').config()
 
 
-mongoose.connect(process.env.MONGO_URL,{
-    useNewurlParser:true,
-    useUnifiedTopology:true
-}).then(()=>{
+ const DBconnection=mongoose.connect(process.env.MONGO_URL,{})
+    .then(()=>{
     console.log("db connected");
-}).catch((err)=>{
+    }).catch((err)=>{
     console.log("not connected",err);
 })
+
+module.exports={
+    DBconnection
+}

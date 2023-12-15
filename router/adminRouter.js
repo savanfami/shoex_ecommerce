@@ -53,8 +53,8 @@ router.post('/edit-Product/:id',uploads.fields(uploadfields),adminController.aft
 router.post('/block-Product/:id',adminController.blockProduct)
 router.post('/unblock-Product/:id',adminController.unblockProduct)
 router.get('/delete-Product/:id',adminController.deleteProduct)
-
-
+router.delete('/delete-image/:id/:index',adminController.deleteimage)
+// router.post('/searchProduct',adminController.searchProduct)
 
 
 module.exports=router

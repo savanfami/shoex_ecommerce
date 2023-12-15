@@ -3,6 +3,8 @@ const user = require('../model/userSchema')
 const category = require('../model/categorySchema')
 const product = require('../model/productSchema');
 const { trusted } = require("mongoose");
+const fs=require('fs')
+const path=require('path')
 
 const credentials = {
     email: "shoexoff@gmail.com",
@@ -17,24 +19,27 @@ const toadminLogin = (req, res) => {
 //post of admin login
 
 const adminLogin = (req, res) => {
-    // console.log(req.body);
-    if (req.body.email == credentials.email && req.body.password == credentials.password) {
-        req.session.email = req.body.email;
-        req.session.adminlogged = true;
-        req.session.password = req.body.password
-        res.render('./admin/adminDash')
-    } else {
-        res.render('./admin/adminlogin', { message: "incorrect username or password" })
+    try {
+        // console.log(req.body);
+        if (req.body.email == credentials.email && req.body.password == credentials.password) {
+            req.session.email = req.body.email;
+            req.session.adminlogged = true;
+            req.session.password = req.body.password
+            res.render('./admin/adminDash')
+        } else {
+            res.render('./admin/adminlogin', { message: "incorrect username or password" })
+        }
+    } catch (err) {
+        console.log(err);
     }
 }
-
 //adminlogout
 
-const adminLogout=async (req,res)=>{
-    try{
+const adminLogout = async (req, res) => {
+    try {
         req.session.destroy()
         res.redirect('/')
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
@@ -69,8 +74,8 @@ const unBlock = async (req, res) => {
 //get for manageProduct
 const manageProduct = async (req, res) => {
     var i = 0
-    const productData = await product.find().sort({ name: 1})
-    res.render('./admin/manageProduct', { productData,i })
+    const productData = await product.find().sort({ name: 1 })
+    res.render('./admin/manageProduct', { productData, i })
 }
 
 //get for addProduct
@@ -98,7 +103,7 @@ const addProduct = async (req, res) => {
 
         console.log(images);
         const allImage = [].concat(...Object.values(images).map(arr => arr.map(file => file.filename)));
-        console.log(allImage);
+        // console.log(allImage);
 
         const newProduct = await product.create({
             name,
@@ -137,7 +142,7 @@ const afterEditProduct = async (req, res) => {
     try {
         const id = req.params.id
         const productDetails = req.body
-        console.log("product details",productDetails);
+        console.log("product details", productDetails);
         const files = req.files
         let Obj = []
         for (let i = 0; i < req.body.variant.size.length; i++) {
@@ -152,12 +157,12 @@ const afterEditProduct = async (req, res) => {
 
         }
         const updateData = {
-            name:req.body.name,
-            description:req.body.description,
-            price:req.body.price,
-            brand:req.body.brand,
-            color:req.body.color,
-            category:req.body.category,
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            brand: req.body.brand,
+            color: req.body.color,
+            category: req.body.category,
             variant: Obj,
             images: []
         }
@@ -192,40 +197,76 @@ const afterEditProduct = async (req, res) => {
 
 //post  for product block
 
-const blockProduct=async(req,res)=>{
-    try{
-    const id=req.params.id
-    const block=await product.updateOne({_id:id},{$set:{status:false}})
-    res.redirect('/admin/manage-Product')
-}catch(err){
-    console.log(err);
-}
+const blockProduct = async (req, res) => {
+    try {
+        const id = req.params.id
+        const block = await product.updateOne({ _id: id }, { $set: { status: false } })
+        res.redirect('/admin/manage-Product')
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 //post for unblock block 
 
-const unblockProduct=async(req,res)=>{
-    try{
-    const id=req.params.id
-    const block=await product.updateOne({_id:id},{$set:{status:true}})
-    res.redirect('/admin/manage-Product')
-}catch(err){
-    console.log(err);
-}
+const unblockProduct = async (req, res) => {
+    try {
+        const id = req.params.id
+        const block = await product.updateOne({ _id: id }, { $set: { status: true } })
+        res.redirect('/admin/manage-Product')
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 
 //post for delete Product
 
-const deleteProduct=async (req,res)=>{
-    try{
-    const id=req.params.id
-    const deleteProduct=await product.deleteOne({_id:id})
-    res.redirect('/admin/manage-Product')
-}catch(err){
-    console.log(err)
-}}
+const deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id
+        const deleteProduct = await product.deleteOne({ _id: id })
+        res.redirect('/admin/manage-Product')
+    } catch (err) {
+        console.log(err)
+    }
+}
 
+const deleteimage=async(req,res)=>{
+    try{
+        const id=req.params.id
+        const imageIndex=req.params.index
+        const productimage=await product.findById(id)
+        // console.log(productimage,"ddddddddddddddddd");
+        if(!productimage){
+            res.status(404).json({success:false,message:"prouduct not found"})
+            return
+        }
+        var img=productimage.images.splice(imageIndex, 1);
+        // console.log(img,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+        await productimage.save();
+        res.status(200).json({success:true,message:"image deleted successfully"})
+    
+    }catch (error) {
+        console.error('Error deleting image:', error);
+        res.status(500).json({success:false,message:'Failed to delete image'});
+    }
+}
+
+
+// const searchProduct=async(req,res)=>{
+//     try{
+//         // console.log("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+//         const searchData=req.body?.search;
+//         console.log(req.body);
+//         // var i=0
+//         const searchDatas=await product.find({name:{$regex:searchData.search,$options:"i"}})
+//         res.render('./admin/manageProduct',{searchDatas})
+//     }catch (err) {
+//         console.error(err);
+//         res.status(500).send("Internal Server Error");
+//     }
+// }
 
 module.exports = {
     toadminLogin,
@@ -241,6 +282,7 @@ module.exports = {
     blockProduct,
     unblockProduct,
     deleteProduct,
-    adminLogout
-
+    adminLogout,
+    deleteimage,
+    // searchProduct
 }
