@@ -7,16 +7,27 @@ require('dotenv').config()
 //get method for category management
 
 const manageCategory = async (req, res) => {
-    var i = 0
-    const categoryData = await category.find().sort({name:1})
-    res.render("./admin/manageCategory", { categoryData, i })
+    try{
+        var i = 0
+        const categoryData = await category.find().sort({name:1})
+        res.render("./admin/manageCategory", { categoryData, i })
+
+    }catch(err){
+        console.error(err)
+    }
 }
 
 //get method for add category
 
 const toaddCategory = (req, res) => {
-    const message = req.flash('success')
-    res.render('./admin/addCategory',{message})
+    try{
+        const message = req.flash('success')
+        const errorMessage = req.flash('error');
+        res.render('./admin/addCategory',{message,errorMessage})
+
+    }catch(err){
+        console.error(err)
+    }
 }
 
 
@@ -26,7 +37,7 @@ const toaddCategory = (req, res) => {
 const addCategory = async (req, res) => {
     try {
         const { name } = req.body;
-        const image = req.file.filename;
+        const image = req.file ? req.file.filename : null;
 
         const lowerCaseName = name.toLowerCase();
         const nameRegex = new RegExp('^' + lowerCaseName + '$', 'i'); 
@@ -37,14 +48,18 @@ const addCategory = async (req, res) => {
             req.flash("success", "Category with the same name already exists")
             res.redirect('/admin/add/category');
         } else {
+            if(image !==null){
             const newCategory = await category.create({
                 name: lowerCaseName,
                 image: image
             });
             res.redirect('/admin/manageCategory');
-        }
+        }else{
+            req.flash("error", "Image is required for the category");
+            res.redirect('/admin/add/category');
+        }}
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -53,10 +68,14 @@ const addCategory = async (req, res) => {
 //get method for admin edit category
 
 const editCategory = async (req, res) => {
-    const id = req.params.id;
-    const categoryData = await category.findOne({ _id: id })
-    // console.log("dljsfsffffffffffffffffffffffffffffffffffffff");
-    res.render('./admin/editCategory', { categoryData })
+    try{
+        const id = req.params.id;
+        const categoryData = await category.findOne({ _id: id })
+        res.render('./admin/editCategory', { categoryData })
+
+    }catch(err){
+        console.error(err)
+    }
 }
 
 
@@ -87,16 +106,27 @@ const afterEditCategory = async (req, res) => {
 
 //post method for categoryblock
 const blockCategory = async (req, res) => {
-    const id = req.params.id
-    const block = await category.updateOne({ _id: id }, { $set: { status: false } })
-    return res.redirect('/admin/manageCategory')
+    try{
+        const id = req.params.id
+        const block = await category.updateOne({ _id: id }, { $set: { status: false } })
+        return res.redirect('/admin/manageCategory')
+
+    }catch(err){
+        console.error(err)
+    }
 }
 
 //post method for categoryblock
 const UnblockCategory = async (req, res) => {
-    const id = req.params.id
-    const block = await category.updateOne({ _id: id }, { $set: { status: true } })
-    return res.redirect('/admin/manageCategory')
+    try{
+
+        const id = req.params.id
+        const block = await category.updateOne({ _id: id }, { $set: { status: true } })
+        return res.redirect('/admin/manageCategory')
+
+    }catch(err){
+        console.error(err)
+    }
 }
 
 

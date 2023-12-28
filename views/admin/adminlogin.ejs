@@ -1,79 +1,127 @@
 <%-include('../partials/adminPartials/header')%>
-<link rel="stylesheet" href="/css/adminlog.css">
-<div class="container">
+   <link rel="stylesheet" href="/css/adminlog.css">
+   <div class="container">
 
-    <div class="row mt-5">
-        <div class="col-md-6 left-box">
+      <div class="row mt-5">
+         <div class="col-md-6 left-box">
             <div class="featured-image">
-                <img src="/images/shoex.png" class="img-fluid " style="width:100%">
+               <img src="/images/shoex.png" class="img-fluid " style="width:100%">
             </div>
 
-        </div>
-        <div class="col-md-6 ">
+         </div>
+         <div class="col-md-6 ">
             <div id="first" class="admin-form">
-				<div class="myform form">
-					 <div class="logo mb-3">
-						 <div class="col-md-12 text-center">
-							<h1> ADMIN LOGIN</h1>
-						 </div>
-					</div>
-                   <form action="/admin/login" method="post" name="login">
-                        
-                           <div class="form-group">
-                              <label for="exampleInputEmail1">Email address</label>
-                              <input type="email" name="email" value="shoexoff@gmail.com" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required="">
-                           </div>
-                           <div class="form-group ">
-                              <label for="exampleInputEmail1">Password</label>
-                              <input type="password" name="password" id="password" value="shoex123" class="form-control" aria-describedby="emailHelp" placeholder="Enter Password" required="">
-                              <span class="password-toggle" id="togglePassword"  style="position: absolute; top: 160px; right: 25px;">
-                                 <i class="fas fa-eye mt-4" id="eye-icon"></i>
-                                 </span>
-                           </div>
-                          
-                           <div class="col-md-12 text-center mt-4">
-                              <button id="login-button"  type="submit" class="btn btn-block form-control">Login</button>
-                           </div>
-                        </form>
-                 
-				</div>
-			</div>
-        </div>
-    </div>
-   
- </div>
- <script>
+               <div class="myform form">
+                  <div class="logo mb-3">
+                     <div class="col-md-12 text-center">
+                        <h1> ADMIN LOGIN</h1>
+                        <div style="height: 2px; " class="d-flex justify-content-center">
+                           <span id="errorMessage" style="color: rgb(207, 0, 0);text-align: center;"></span>
+                        </div>
+                     </div>
+                  </div>
+                  <form id="loginbutton" name="login">
+
+                     <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" name="email" value="shoexoff@gmail.com" class="form-control" id="email"
+                           aria-describedby="emailHelp" placeholder="Enter email" required="">
+                     </div>
+                     <div class="form-group ">
+                        <label for="exampleInputEmail1">Password</label>
+                        <input type="password" name="password" id="password" value="shoex123" class="form-control"
+                           aria-describedby="emailHelp" placeholder="Enter Password" required="">
+                        <span class="password-toggle" id="togglePassword"
+                           style="position: absolute; top: 160px; right: 25px;">
+                           <i class="fas fa-eye mt-4" id="eye-icon"></i>
+                        </span>
+                     </div>
+
+                     <div class="col-md-12 text-center mt-4">
+                        <button id="login-button" type="submit" class="btn btn-block form-control">Login</button>
+                     </div>
+                  </form>
+
+               </div>
+            </div>
+         </div>
+      </div>
+
+   </div>
+   <script>
       const password = document.getElementById('password');
-    const eyeIcon = document.getElementById('eye-icon');
-    const togglePassword = document.getElementById('togglePassword');
+      const eyeIcon = document.getElementById('eye-icon');
+      const togglePassword = document.getElementById('togglePassword');
 
-   //  const confirmInput = document.getElementById('confirmPassword');
-   //  const confirmEyeIcon = document.getElementById('confirm-eye-icon');
-   //  const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+      //  const confirmInput = document.getElementById('confirmPassword');
+      //  const confirmEyeIcon = document.getElementById('confirm-eye-icon');
+      //  const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
 
-    togglePassword.addEventListener('click', () => {
-      togglePasswordVisibility(password, eyeIcon);
-    });
+      togglePassword.addEventListener('click', () => {
+         togglePasswordVisibility(password, eyeIcon);
+      });
 
-   //  toggleConfirmPassword.addEventListener('click', () => {
-   //    togglePasswordVisibility(confirmInput, confirmEyeIcon);
-   //  });
+      //  toggleConfirmPassword.addEventListener('click', () => {
+      //    togglePasswordVisibility(confirmInput, confirmEyeIcon);
+      //  });
 
-    function togglePasswordVisibility(input, icon) {
-      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-      input.setAttribute('type', type);
+      function togglePasswordVisibility(input, icon) {
+         const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+         input.setAttribute('type', type);
 
-      // Toggle eye icon
-      if (type === 'password') {
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      } else {
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
+         // Toggle eye icon
+         if (type === 'password') {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+         } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+         }
       }
-    }
 
-      
- </script>
 
- <%-include('../partials/adminPartials/footer') %>
+   </script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+   <script>
+      $(document).ready(function () {
+         document.getElementById('loginbutton').addEventListener("submit", function (event) {
+            event.preventDefault()
+
+
+
+            const email = document.querySelector("input[name='email']").value;
+            const passwords = document.querySelector("input[name='password']").value;
+
+            const logindata = {
+               email: email,
+               password: passwords
+            }
+            fetch('/admin/login', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(logindata)
+
+            })
+               .then(response => response.json())
+               .then(data => {
+                  if (data.success) {
+                     console.log("dataaaaaaaaaaaa",data);
+                     window.location.href = '/admin/dashboard'
+                  } else {
+                     document.getElementById('errorMessage').textContent = data.error
+                  }
+                  setTimeout(() => {
+                     document.getElementById('errorMessage').textContent = ''
+                  }, 2500)
+               }).catch(error => {
+                  console.error(error)
+               })
+
+         })
+      })
+
+
+   </script>
+
+   <%-include('../partials/adminPartials/footer') %>

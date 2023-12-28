@@ -7,6 +7,8 @@ const generateOTP = require('../util/otpgenerator')
 const sendMail = require('../util/mail')
 const product = require('../model/productSchema')
 const { error } = require('console')
+const helpers=require('../controller/helpers')
+
 //get for user home not logged in
 const home = async (req, res) => {
     try{
@@ -34,7 +36,8 @@ const toUserHome = async (req, res) => {
     try{
     const categoryData = await category.find({ status: true }).limit(3)
     const productData = await product.find({ status: true }).limit(4)
-    res.render('./user/userHome', { categoryData, productData, })
+    const cartcount=await helpers.getCartCount(req,res,req.session.email)
+    res.render('./user/userHome', { categoryData, productData,cartcount})
 }catch(err){
     console.log(err);
 }
@@ -149,9 +152,8 @@ const otpConformation = async (req, res) => {
             }
         }
     } catch (err) {
-        console.log(err);
-        console.log("error 2" + err);
-        res.render("./user/otp")
+        console.error("error 2" + err);
+        // res.render("./user/otp")
     }
 }
 
@@ -217,19 +219,20 @@ const userLogin = async (req, res) => {
                     req.session.username = req.body.name
                     req.session.userlogged = true
                     req.session.email = req.body.email
-
-                    // console.log(".......gg..............");
-                    res.redirect('/user/home')
+                    return res.json({ success: true });
+                   
+                  
                 } else {
-                    res.render('./user/userlogin', { message: "sorry user is blocked " })
+                    return res.json({ success: false, error: "User is blocked" });
                 }
             } else {
-                res.render('./user/userlogin', { message: "Invalid password" })
+                return res.json({ error: "Invalid password" });
             }
-        }
+        }else {
+            return res.json({ success: false, error: "User not found" });
+          }
     } catch (error) {
-        console.log(error);
-
+        return res.json({ success: false, error: "Invalid username or password" });
     }
 
 }
@@ -262,8 +265,9 @@ const getProductDetails = async (req, res) => {
         const id = req.params.id
         const productData = await product.findOne({ _id: id })
         const relatedData = await product.find({ brand: productData.brand, category: productData.category }).limit(4)
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
         const RelatedDatas = relatedData.filter(item => item._id.toString() !== productData._id.toString());
-        res.render('./user/productDetails', { productData, RelatedDatas })
+        res.render('./user/productDetails', { productData, RelatedDatas,cartcount})
 
     } catch (err) {
         console.log(err);
@@ -291,7 +295,8 @@ const getProductDetailshome = async (req, res) => {
 const viewallProduct=async (req,res)=>{
   try{
     const productData=await product.find({status:true}).limit(16)
-    res.render('./user/viewallProduct',{productData})
+    const cartcount=await helpers.getCartCount(req,res,req.session.email)
+    res.render('./user/viewallProduct',{productData,cartcount})
 }catch(err){
     console.log(err);
 }}
@@ -299,6 +304,7 @@ const viewallProduct=async (req,res)=>{
 const viewallProducthome=async (req,res)=>{
   try{
     const productData=await product.find({status:true}).limit(16)
+
     res.render('./user/viewallProduct',{productData})
 }catch(err){
     console.log(err);
@@ -332,7 +338,8 @@ const viewallProducthome=async (req,res)=>{
 const touserProfile = async (req, res) => {
     try {
         const userData = await user.findOne({ email: req.session.email })
-        res.render('./user/userProfile', { userData })
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
+        res.render('./user/userProfile', { userData ,cartcount})
     } catch (err) {
         console.log(err);
     }
@@ -357,7 +364,9 @@ const manageAddress = async (req, res) => {
         const addressData = await user.findOne({ email: req.session.email })
         // console.log(addressData);
         const message = req.flash('success')
-        res.render('./user/manageAddress', { addressData, message })
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
+
+        res.render('./user/manageAddress', { addressData, message,cartcount })
     } catch (err) {
         console.log(err);
     }
@@ -385,8 +394,6 @@ const addAddress = async (req, res) => {
         } else {
             users.address.push(addressData)
             await users.save()
-           
-            
 
             // console.log("address addred succesfulllllly");
             res.redirect('/user-manageAddress')
@@ -395,6 +402,36 @@ const addAddress = async (req, res) => {
         console.log(err);
     }
 }
+
+const addnewAddress=async (req,res)=>{
+    try {
+        const { name, address, city, state, pincode, phone } = req.body
+        let email = req.session.email
+        const addressData = {
+            name,
+            address,
+            city,
+            state,
+            pincode,
+            phone
+        }
+        const users = await user.findOne({ email })
+        if (users.address.length >= 3) {
+            // console.log(users.address.length,"dddddddddddddddddddddddddddddddddddddddddddddd");
+            req.flash("success", "Max Address limit reached!!! please delete existing address to add more")
+            res.redirect('/user-checkout')
+        } else {
+            users.address.push(addressData)
+            await users.save()
+
+            // console.log("address addred succesfulllllly");
+            res.redirect('/user-checkout')
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 
 //post for edit address
 const editAddress = async (req, res) => {
@@ -523,7 +560,8 @@ module.exports = {
     viewallProduct,
     viewallProducthome,
     getProductDetailshome,
-    changePassword
+    changePassword,
+    addnewAddress
     // toForgotPassword,
     // forgotPass,
 }

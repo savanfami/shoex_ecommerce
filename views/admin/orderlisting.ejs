@@ -1,0 +1,140 @@
+<%-include("../partials/adminPartials/sidebar")%>
+
+<style>
+    .product-text-container {
+            border-radius: 12px;
+            width: 100%;
+            height: 56px;
+            margin-top: 73px;
+            box-shadow: 0px 0px 7px -3px;
+        }
+</style>
+
+<div class="product-text-container container-fluid" style="display: flex; justify-content: space-between;">
+    <h4 style=" margin-top: 11px;" id="ManageProduct-text">ORDER MANAGEMENT</h4>
+</div>
+
+<table id="orderTable" class="table table-responsive mt-5 table-hover table-bordered">
+    <thead class="table-dark">
+      <tr class="text-center">
+        <th>No</th>
+        <th>BuyerName</th>
+        <th>Purchased On</th>
+        <th>OrderId</th>
+        <th>User Id</th>
+        <th>Payment Method</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Action</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody id="orderTableBody">
+       <% orderDatas.forEach((order)=> { %>
+
+      <tr class="text-start">
+        <td>
+          <strong> <%=++i%> </strong>
+        </td>
+        <td>
+          <strong> <%=order.userId.username%> </strong>
+        </td>
+        <td>
+          <strong> <%- new Date(order.orderDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) %> </strong>
+        </td>
+        <td>
+         
+         <strong><%=order._id %></strong>
+   
+        </td>
+        <td>
+         
+          <strong><%=order.userId._id %></strong> <br />
+          
+        </td>
+        <td>
+         
+          <strong> <%-order.paymentMethod %> </strong>
+
+        </td>
+        <td>
+         
+          <strong>₹<%-order.totalPrice %></strong> <br />
+         
+        </td>
+        <td
+          class="<% if (order.status === 'Pending') { %> text-warning <% } else if (order.status === 'Processing') { %> text-info <% } else if (order.status === 'Placed') { %> text-primary <% } else if (order.status === 'Shipped') { %> text-secondory <% } else if (order.status === 'Delivered') { %> text-success <% } else if (order.status === 'Returned') { %> text-warning <% } else if (order.status === 'Cancelled') { %> text-danger <% } %>"
+        >
+          <i class="fas fa-check-circle fa-shake"></i
+          ><strong> <%= order.status %> </strong>
+        </td>
+
+        <td>
+          <% if (order.status==='Delivered' ) { %>
+          <strong class="text-success">Order Delivered</strong>
+          <% } else if (order.status==='Cancelled' ) { %>
+          <strong class="text-danger">User canceled the order</strong>
+          <% } else { %>
+          <div class="dropdown">
+            <button
+              class="btn btn-primary dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Change Order Status
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <% if (order.status=="Pending" ) { %>
+              <li value="Processing">
+                <a
+                  class="dropdown-item"
+                  onclick="orderProcess('<%-order._id%>','Processing')"
+                >
+                  <i class="fas fa-spinner text-success"></i>
+                  Processing
+                </a>
+              </li>
+              <% } %> <% if (order.status=="Processing" ) { %>
+              <li value="Placed">
+                <a
+                  class="dropdown-item"
+                  onclick="orderPlace('<%-order._id%>','Placed')"
+                >
+                  <i class="fas fa-shopping-basket text-success"></i>
+                  Placed
+                </a>
+              </li>
+              <% } %> <% if (order.status=="Placed" ) { %>
+              <li value="Shipped" aria-disabled="true">
+                <a
+                  class="dropdown-item"
+                  onclick="orderShip('<%-order._id%>','Shipped')"
+                >
+                  <i class="fa-solid fa-truck text-success"></i>
+                  Shipped
+                </a>
+              </li>
+              <% } %> <% if (order.status=="Shipped" ) { %>
+              <li
+                value="Delivered"
+                onclick="orderDelivery('<%-order._id%>','Delivered')"
+              >
+                <a class="dropdown-item">
+                  <i class="fas fa-check-circle text-success fw-bold"></i>
+                  Delivered
+                </a>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <% } %>
+        </td>
+        <td>
+            <a href="/admin/order-Details/<%-order._id %>" class="btn btn-success">View</a>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>

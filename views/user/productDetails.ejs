@@ -86,8 +86,11 @@
 
 
                 <div class="row">
+                  <div style="height: 2px; " class="">
+                    <span id="errorMessage" style="color: rgb(207, 0, 0);font-weight: bold;"  ></span>
+                 </div>
                   <label class="mb-2 mt-4"> Available Size</label>
-
+                
                   <p class="status-message"></p>
                   <% productData.variant.sort((a,b)=>a.size-b.size).forEach(data => { %>
 
@@ -110,7 +113,7 @@
               </div>
               <a href="#" class="btn btn-primary shadow-0 mt-4"> <i class="fa-solid fa-heart fa-lg"
                   style="color: #ffffff;"></i> Add to wishlist</a>
-              <button class="btn btn- shadow-0 mt-4" data-item-id="<%= productData._id %>" id="addtoCart"
+              <button class="btn btn- shadow-0 mt-4" data-item-id="<%= productData._id %>"  id="addtoCart"
                 style="background-color: rgb(254, 167, 6);"> <i class="me-1 fa fa-shopping-basket fa-lg" 
                   style="color:#fff;"></i> Add to cart </button>
 
@@ -201,16 +204,17 @@
 
   </script> 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  
    <script>
     document.getElementById('addtoCart').addEventListener("click", function () {
       const selectedSizeElement = document.querySelector('.btn-size.selected');
-
+      
 if (!selectedSizeElement) {
     // No size selected, show an error message
     Toastify({
         text: 'Please select an available size before adding to cart',
-        duration: 2000,
-        gravity: 'bottom',
+        duration: 2500,
+        gravity: 'top',
         position: 'center',
         style: {
     background: "red",
@@ -227,8 +231,10 @@ if (!selectedSizeElement) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ itemId: itemId, selectedSize: selectedSize })
-      }).then(response => {
-      if (response.ok) {
+      })
+      .then(response => response.json())  
+      .then(response => {
+      if (response.success) {
        
         Toastify({
           text: 'Item added to cart',
@@ -241,19 +247,16 @@ if (!selectedSizeElement) {
   },
           
         }).showToast();
-
-      
-        // setTimeout(() => {
-        //   window.location.href = '/user-addtoCart';
-        // }, 3000);
-      } else {
-        Toastify({
-          text: 'Failed to add item to cart',
-          duration: 2000,
-          gravity: 'bottom',
-          position: 'center',
-          backgroundColor: 'linear-gradient(to right, #FF0000, #FF4500)',
-        }).showToast();
+        setTimeout(() => {
+                window.location.reload()
+            }, 500);
+      } 
+      else {
+       
+          document.getElementById("errorMessage").textContent = response.message;
+       setTimeout(() => {
+        document.getElementById("errorMessage").textContent = ""
+       }, 1500);
       }
     })
         .catch(error => {

@@ -17,19 +17,11 @@
 							<h1>LOGIN</h1>
 						 </div>
 					</div>
-               <% if (message) { %>
-                  <p class="text-center" style="color: red;" id="errorShow"><%= message %></p>
-                  <script>
-                      setTimeout(function () {
-                          document.getElementById('errorShow').style.display = 'block';
-                          
-                          setTimeout(function () {
-                              document.getElementById('errorShow').style.display = 'none';
-                          }, 2000); 
-                      }, 0); 
-                  </script>
-              <% } %>
-                   <form action="/user/login" method="post" name="login">
+               <div style="height: 2px; " class="d-flex justify-content-center">
+                  <span id="errorMessage" style="color: rgb(207, 0, 0);text-align: center;"></span>
+               </div>
+              
+                   <form id="loginForm"  name="login">
                            <div class="form-group">
                               <label for="exampleInputEmail1">Email address</label>
                               <input type="email" name="email" value="savanfami1239@gmail.com" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" required>
@@ -41,6 +33,7 @@
                                  <i class="fas fa-eye mt-4" id="eye-icon"></i>
                                  </span>
                            </div>
+                          
                            <div class="form-group mt-3">
                               <p class="text-center"><a  href="#">Forgot password?</a></p>
                            </div>
@@ -97,4 +90,51 @@
 
    
 </script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+   
+   $(document).ready(function () {
+ 
+ document.getElementById("loginForm").addEventListener("submit", function (event) {
+   event.preventDefault(); 
+
+   const email = document.querySelector("input[name='email']").value;
+   const password = document.querySelector("input[name='password']").value;
+
+  
+   const data = {
+       email: email,
+       password: password
+   };
+
+   fetch("/user/login", {
+       method: "POST",
+       headers: {
+           "Content-Type": "application/json"
+       },
+       body: JSON.stringify(data)
+   })
+   .then(response => response.json())
+   .then(data => {
+       console.log("responseee", data);
+       if (data.success) {
+           window.location.href = "/user/home";
+       } else {
+           console.log("inside elsee");
+           document.getElementById("errorMessage").textContent = data.error;
+   setTimeout(() => {
+    document.getElementById("errorMessage").textContent = "";
+         }, 2500);
+
+       }
+   })
+   .catch(error => {
+       console.error(error);
+   });
+});
+
+});
+
+</script>
+
  <%-include('../partials/userPartials/footer')%>

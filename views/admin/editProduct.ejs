@@ -29,7 +29,7 @@
 
     <!-- Bootstrap form with grid layout -->
 
-    <form action="/admin/edit-Product/<%=productData.id %>" method="POST" id="form" enctype="multipart/form-data">
+    <form action="/admin/edit-Product/<%=productData.id %>"  onchange="return validateForm()" method="POST" id="form" enctype="multipart/form-data">
 
       <!-- General Information Section -->
       <div class="row mb-4">
@@ -37,11 +37,13 @@
           <label for="productName" class="form-label">Product Name</label>
           <input type="text" class="form-control" id="productName" value="<%=productData.name %>" name="name"
             placeholder="Product name" required>
+            <p style="color: rgb(252, 56, 56);" id="productNameError"></p>
         </div>
         <div class="col-md-6">
           <label for="productPrice" class="form-label">Price</label>
           <input type="number" class="form-control" id="productPrice" value="<%=productData.price %>" name="price"
             placeholder="Price" required>
+            <p style="color: rgb(252, 56, 56);" id="productPriceError"></p>
         </div>
       </div>
 
@@ -50,16 +52,19 @@
           <label for="productDescription" class="form-label">Product Description</label>
           <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description"
             rows="3" required><%=productData.description %></textarea>
+            <p style="color: rgb(252, 56, 56);" id="productDescriptionError"></p>
         </div>
         <div class="col-md-6">
           <label for="productColor" class="form-label">Color</label>
           <input type="text" class="form-control" id="productColor" value="<%=productData.color %>" name="color"
             placeholder="Color">
+            <p style="color: rgb(252, 56, 56);" id="productColorError"></p>
         </div>
         <div class="col-md-6">
           <label for="productColor" class="form-label">Brand</label>
-          <input type="text" class="form-control" id="productColor" value="<%=productData.brand %>" name="brand"
+          <input type="text" class="form-control" id="productBrand" value="<%=productData.brand %>" name="brand"
             placeholder="brand name">
+            <p style="color: rgb(252, 56, 56);" id="productBrandError"></p>
         </div>
         <div class="col-md-6">
           <label for="productColor" class="form-label">Category</label>
@@ -84,6 +89,7 @@
         <div class="col-md-12 d-flex justify-content-center">
           <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
         </div>
+        <p style="color: rgb(252, 56, 56); text-align: center;" id="variantError"></p>
       </div>
 
       <!-- Size and Color Section -->
@@ -133,7 +139,6 @@
             style="max-width: 100%; max-height: 200px; margin-top: 10px;">
           <input type="hidden" id="productId" value="<%= productData.id %>">
           <button type="button" class="btn btn-danger" onclick="deleteImage(1)">Delete</button>
-
         </div>
 
         <div class="mb-3">
@@ -165,7 +170,7 @@
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">SUBMIT</button>
+      <button type="submit" id="submitButton" class="btn btn-primary">SUBMIT</button>
       <a href="/admin/manage-Product" class="btn btn-secondary">Back to Product</a>
 
     </form>
@@ -232,7 +237,6 @@
 
           reader.readAsDataURL(file);
         } else {
-          // If no file is selected, show a placeholder or hide the preview
           preview.src = '#';
         }
       });
@@ -283,6 +287,83 @@
   }
 </script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('productName').addEventListener('input', validateForm);
+  document.getElementById('productPrice').addEventListener('input', validateForm);
+  document.getElementById('productDescription').addEventListener('input', validateForm);
+  document.getElementById('productColor').addEventListener('input', validateForm);
+  document.getElementById('productBrand').addEventListener('input', validateForm);
+  document.querySelectorAll('.variant-row input[name^="variant[size]"]').forEach(function (input) {
+    input.addEventListener('input', validateForm);
+  });
+  document.querySelectorAll('.variant-row input[name^="variant[quantity]"]').forEach(function (input) {
+    input.addEventListener('input', validateForm);
+  });
+});
+
+function validateForm() {
+  var productname = document.getElementById('productName').value.trim();
+  var productprice = document.getElementById('productPrice').value.trim();
+  var productcolor = document.getElementById('productColor').value.trim();
+  var productdescription = document.getElementById('productDescription').value.trim();
+  var productbrand = document.getElementById('productBrand').value.trim();
+
+  var submitButton = document.getElementById('submitButton');
+  if (productname === '') {
+    document.getElementById('productNameError').innerHTML = 'product name is required';
+    submitButton.disabled = true;
+  } else {
+    document.getElementById('productNameError').innerHTML = "";
+    submitButton.disabled = false;
+  }
+
+  if (productcolor === '') {
+    document.getElementById('productColorError').innerHTML = 'color is required';
+    submitButton.disabled = true;
+  } else {
+    document.getElementById('productColorError').innerHTML = "";
+  }
+
+  if (productbrand === '') {
+    document.getElementById('productBrandError').innerHTML = 'brand is required';
+    submitButton.disabled = true;
+  } else {
+    document.getElementById('productBrandError').innerHTML = "";
+  }
+
+  if (productprice === '' || parseFloat(productprice) < 0) {
+    document.getElementById('productPriceError').innerHTML = 'Price must be a non-negative number';
+    submitButton.disabled = true;
+  } else {
+    document.getElementById('productPriceError').innerHTML = '';
+  }
+
+  var variantInputs = document.querySelectorAll('.variant-row');
+  var invalidVariant = false;
+  variantInputs.forEach(function (variantInput) {
+    var sizeInput = variantInput.querySelector('input[name^="variant[size]"]');
+    var quantityInput = variantInput.querySelector('input[name^="variant[quantity]"]');
+
+    if (sizeInput.value.trim() === '' || parseFloat(sizeInput.value.trim()) < 0 ||
+      quantityInput.value.trim() === '' || parseFloat(quantityInput.value.trim()) < 0) {
+      invalidVariant = true;
+    }
+  });
+
+  if (invalidVariant) {
+    document.getElementById('variantError').innerHTML = 'Size and Stock Quantity must be non-negative numbers';
+    submitButton.disabled = true;
+  } else {
+    document.getElementById('variantError').innerHTML = '';
+  }
+}
+
+
+
+
+</script>
 
 
   <%-include("../partials/adminPartials/footer")%>

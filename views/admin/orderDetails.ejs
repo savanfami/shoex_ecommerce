@@ -1,0 +1,160 @@
+<%-include('../partials/adminPartials/header) %>
+
+<body>
+
+<section class="h-100 gradient-custom shadow">
+    <div class="container py-5 h-100  ">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-10 col-xl-8">
+          <div class="card shadow" style="border-radius: 10px;">
+            <div class="card-header px-4 py-5">
+              <h5 class=" mb-0 " style="font-family:Georgia, 'Times New Roman', Times, serif;">Thanks for Shopping with us : <span style="color:#014122;font-weight:600;"><%=userData.username%></span></h5>
+            </div>
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <p class="lead fw-normal mb-0" style="color:red;font-family: 'Times New Roman', Times, serif;">Receipt</p>
+                <!-- <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p> -->
+              </div>
+              <div class="card shadow-0 border mb-4">
+                <div class="card-body">
+                    <% if (orderData && orderData[0].items && Array.isArray(orderData[0].items)) { %>
+                        <% orderData[0].items.forEach((x) => { %>
+                  <div class="row" style="font-family: 'Times New Roman', Times, serif;">
+                    <div class="col-md-2">
+                      <img src="/productImages/<%=x.productId.images[0]%>"
+                        class="img-fluid" alt="Phone">
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0"><%=x.productId.name %> </p>
+                    </div>
+                   
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small">Qty : <%= x.quantity %></p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small">Size : <%= x.size %></p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small">Price: <%= x.productId.price %></p>
+                    </div>
+                    <% if(x.status=="return"){%>
+                      <h5 style="color: brown;">Product Return</h5>
+                    
+                    <% }else if(orderData[0].Status=="Delivered" ){ %>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <button class="btn small btn-danger"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                         id="returnOrderBtn" data-item-id="<%= x._id %> " data-order-id="<%=orderData[0]._id%>">Return</button>
+                      </div>
+                      <% }else{%>
+                    
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <button class="btn small btn-danger"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .80rem;" id="cancelOrderBtn" data-item-id="<%= x._id %> " data-order-id="<%=orderData[0]._id%>">Cancel Order</button>
+                      </div>
+                  </div>
+                 <% } %>
+                  <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                  <div class="row d-flex align-items-center">
+                    <!-- <div class="col-md-2">
+                      <p class="text-muted mb-0 small">Track Order</p>
+                    </div> -->
+                    <!-- <div class="col-md-10">
+                      <div class="progress" style="height: 6px; border-radius: 16px;">
+                        <div class="progress-bar" role="progressbar"
+                          style="width: 65%; border-radius: 16px; background-color: #0f000b;" aria-valuenow="65"
+                          aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      <div class="d-flex justify-content-around mb-1">
+                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
+                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                      </div>
+                    </div> -->
+                  </div>
+                  <% }) %>
+                  <% }else{%>
+                      <h3>No data available</h3>
+                      <% } %>
+                </div>
+              </div>
+              
+  
+              <!-- <div class="d-flex justify-content-between pt-2">
+                <p class="fw-bold mb-0">Order Details</p>
+                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> $898.00</p>
+              </div>
+  
+              <div class="d-flex justify-content-between pt-2">
+                <p class="text-muted mb-0">Invoice Number : 788152</p>
+                
+              </div>-->
+              <div style="font-family: 'Times New Roman', Times, serif;">
+              <div class="d-flex justify-content-between" >
+                <p class=" mb-0">Order ID : <%=orderData[0]._id%></p>
+                <!-- <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p> -->
+              </div> 
+  
+              <div class="d-flex justify-content-between mb-5">
+                <p class=" mb-0"><b>Order Status : <%=orderData[0].status%></b></p>
+                <!-- <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p> -->
+              </div> 
+              <h5 style="text-decoration: underline;">Order Address</h5>
+              <div class="d-flex justify-content-between pt-2">
+                <p class=" mb-0"><%=orderData[0].address[0].address%></p>
+                
+              </div>
+              <div class="d-flex justify-content-between pt-2">
+                <p class=" mb-0"><%=orderData[0].address[0].city%></p>
+                
+              </div>
+              <div class="d-flex justify-content-between pt-2">
+                <p class="mb-0"><%=orderData[0].address[0].pincode%></p>
+                
+              </div>
+              <div class="d-flex justify-content-between pt-2">
+                <p class="mb-0"><%=orderData[0].address[0].state%></p>
+                
+              </div>
+              <div class="d-flex justify-content-between pt-2">
+                <p class=" mb-0"><%=orderData[0].address[0].phone%></p>
+                
+              </div>
+              </div>
+            </div>
+            <div class="card-footer border-0 px-4 py-5"
+              style="background-color: #014122; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+              <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0" style="font-family: 'Times New Roman', Times, serif;">Total   Amount :
+            <span class=" h3 mb-0 ms-2">  ₹ <%= orderData[0].totalPrice %></span></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<!-- Add this to your HTML file before the closing body tag -->
+<div class="modal fade" id="returnOrderModal" tabindex="-1" role="dialog" aria-labelledby="returnOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnOrderModalLabel">Return Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="returnReason">Reason:</label>
+          <input type="text" class="form-control" id="returnReason" placeholder="Enter reason" required>
+        </div>
+        <div class="form-group">
+          <label for="returnDescription">Description:</label>
+          <textarea class="form-control" id="returnDescription" placeholder="Enter description" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirmReturnBtn">Confirm Return</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

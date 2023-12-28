@@ -11,10 +11,10 @@ const{v4:uuidv4}=require('uuid')
 const morgan=require("morgan")
 const nocache=require('nocache')
 const flash=require('connect-flash')
-app.use(nocache())
 const PORT=process.env.PORT
 connectDB
-// console.log(connectDB);
+
+
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -28,6 +28,9 @@ app.use(session({
     //     maxAge:360000
     // }
 }))
+
+app.use(nocache())
+
 app.use(flash())
 app.use(morgan("tiny"))
 //static files serving

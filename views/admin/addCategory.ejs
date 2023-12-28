@@ -10,10 +10,11 @@ height: 100vh;">
         <h2 class="mb-4 text-center" style="font-family: 'Poppins', sans-serif; font-weight: 700;">ADD CATEGORY</h2>
         <div class="">
             <!-- Category Form -->
-            <form action="/admin/add/category" enctype="multipart/form-data" method="post">
+            <form action="/admin/add/category" onchange="return validateForm()" enctype="multipart/form-data" method="post">
                 <div class="mb-3">
                     <label for="categoryName" class="form-label">Category Name:</label>
                     <input type="text"  name="name"  class="form-control" id="categoryName" placeholder="Enter category name" required>
+                    <p style="color: rgb(252, 56, 56);" id="categoryNameError"></p>
                 </div>
                 <% if(message){%>
                     <p class="text-center mt-4 " id="errorShow" style="color: red; font-family: 'Merriweather', serif;  ;">
@@ -32,6 +33,21 @@ height: 100vh;">
                 <div class="mb-3">
                     <label for="categoryImage" class="form-label">Category Image:</label>
                     <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" onchange="previewImage(this)">
+                    <% if (errorMessage && errorMessage.length > 0) { %>
+                        <p class="text-center mt-4 " id="errorShows" style="color: red; font-family:'Times New Roman', Times, serif  ;">
+                            <%= errorMessage %>
+                        </p>
+                        
+                    <% } %>
+                    <script>
+                        setTimeout(function () {
+                            document.getElementById('errorShows').style.display = 'block';
+                                  setTimeout(function () {
+                                document.getElementById('errorShows').style.display = 'none';
+                            },2000); 
+                        }, 0); 
+                      </script>
+                    <p style="color: rgb(252, 56, 56);" id="categoryImageError"></p>
                     <div id="imagePreview" class="mt-2"></div>
                 </div>
 
@@ -44,10 +60,10 @@ height: 100vh;">
         </div>
     </div>
 </div>
-<script>
+
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
-        preview.innerHTML = ''; // Clear previous preview
+        preview.innerHTML = ''; 
 
         const files = input.files;
 
@@ -67,4 +83,59 @@ height: 100vh;">
             reader.readAsDataURL(file);
         }
     }
+
+
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('categoryName').addEventListener('input',validateForm)
+    })
+
+    function validateForm(){
+        var categoryname=document.getElementById('categoryName').value.trim()
+        var submitButton=document.getElementById('login-button')
+        if(categoryname===''){
+      document.getElementById('categoryNameError').innerHTML='category name is required'
+      submitButton.disabled=true
+    }else{
+      document.getElementById('categoryNameError').innerHTML=""
+      submitButton.disabled=false
+    }
+    }
+</script>
+
+
+
+<script>
+        function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const errorMessage = document.getElementById('categoryImageError');
+        preview.innerHTML = '';
+        
+        const file = input.files[0];
+
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                input.value = '';
+                errorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF)';
+            } else if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/avif'].includes(file.type)) {
+                input.value = '';
+                errorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF).';
+            } else {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = document.createElement('img');
+                    img.className = 'img-fluid preview-image';
+                    img.src = event.target.result;
+                    img.style.width = '100px';
+                    img.style.height = '100px';
+                    preview.appendChild(img);
+                    errorMessage.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+
 </script>

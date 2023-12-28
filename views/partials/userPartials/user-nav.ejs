@@ -60,7 +60,16 @@
           <a class="nav-link mx-2 text-uppercase" href="#"><i class=" fas fa-heart me-1 text-white"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link mx-2 text-uppercase" href="/user-addtoCart"><i class="fa-solid fas fa-shopping-cart me-1 text-white"></i></a>
+          <a class="nav-link mx-2 text-uppercase" href="/user-addtoCart">
+            <i class="fa-solid fas fa-shopping-cart me-1 text-white"></i>
+            <% if (cartcount > 0) { %>
+              <span class="position-absolute translate-middle badge rounded-pill bg-danger">
+                <%= cartcount %>
+              </span>
+            <% } else { %>
+              <span class="position-absolute translate-middle badge rounded-pill bg-danger"></span>
+            <% } %>
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link mx-2 text-uppercase" href="#"><i class="fa-solid fas fa-wallet me-1 text-white"></i></a>

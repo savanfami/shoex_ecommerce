@@ -1,4 +1,5 @@
 <%-include('../partials/userPartials/user-nav') %>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
   <body>
     <section class="h-100 gradient-custom">
@@ -6,212 +7,286 @@
         <div class="row d-flex justify-content-center my-4">
           <div class="col-md-9">
             <div class="card-header py-3  ">
-              <h5 class="mb-0">User Shopping Cart     <i class="fa-solid fa-truck " style="color: #000000;"></i></h5>
+              <h5 class="mb-0">User Shopping Cart  <i class="fa-solid fa-truck " style="color: #000000;"></i></h5>
             </div>
-            <% if (cartProductData.length===0) { %>
+          <% if (cartProductData.length>0) { %>
+            <% cartProductData.forEach((data,i) => { %>
               <div class="card mb-4">
-                <div class="image-container">
-                  <img src="https://wpmet.com/wp-content/uploads/2022/09/EmptyCart_3-Copy.png" alt="Cart image"
-                    class="img-fluid" />
-                </div>
-              </div>
-              <% } else {%>
-                <% cartProductData.forEach((data)=> { %>
-
-                  <div class="card mb-4">
-                    <div class="card-body">
-                      <div class="row" style="align-items: center; ">
-                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0 ">
-                          <!-- Image -->
-                          <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                            <a href="/user-productDetails/<%=data.product._id %>"> <img src="/productImages/<%= data.product.images[0] %>"
-                                style="height: 200px; width: 200px;" alt="Blue Jeans Jacket" /> </a>
-                            <a href="">
-                              <!-- <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div> -->
-                            </a>
-                          </div>
-                          <!-- Image -->
-                        </div>
-                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                          <!-- Data -->
-                          <p> <a class="text-decoration-none  fw-bold text-dark"  href="/user-productDetails/<%=data.product._id %>" > name:<%= data.product.name%></a>
-                          </p>
-                          <p>Color: <%= data.product.color %>
-                          </p>
-                          <p>Size: <%= data.size %>
-                          </p>
-                          <p>Quantity: <%= data.quantity %>
-                          </p>
-                          <p class="mt-2">
-                            Price:<strong>₹ <%=data.product.price %></strong>
-                          </p>
-                          <div>
-
-                          </div>
-                          <!-- Data -->
-                        </div>
-                        <button class="btn btn-outline-dark btn-sm quantity-btn "
-                          onclick="quantityChanger('<%= data._id %>',-1)" data-item-id="<%= data._id %>"
-                          style="height: 30px; width: 2rem;">-</button>
-
-                        <span id="quantity_<%= data._id %>"
-                          style="border: 0.5px solid black; height: 30px;width: 4rem; text-align: center;border-radius: 4px;margin-left: 5px;margin-right: 5px;">
-                          <%= data.quantity %>
-                        </span>
-
-                        <button class="btn btn-outline-dark btn-sm quantity-btn"
-                          onclick="quantityChanger('<%= data._id %>',1)" data-item-id="<%= data._id %>"
-                          style="height: 30px; width: 2rem;">+</button>
-
-                          <div class="col-lg col-sm-6 p-0 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end cart-remove">
-                            <div class="float-md-end">
-                              <button> class="btn btn-light border px-2 icon-hover-primary"><i
-                                  class="fas fa-heart fa-lg px-1 text-secondary"></i></button>
-                              <a href="" class="btn btn-light border text-danger icon-hover-danger"
-                                onclick="removeFromCart('<%= data.product._id  %>')">
-                              
-                                Remove</a>
-                            </div>
-                          </div>
-                        
-                          
-                          
+                <div class="card-body">
+                  <div class="row" style="align-items: center; ">
+                    <div class="col-lg-3 col-md-12 mb-4 mb-lg-0 ">
+                      <!-- Image -->
+                      <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                        <a href="/user-productDetails/<%=data.product._id %>"> <img src="/productImages/<%= data.product.images[0] %>"
+                            style="height: 200px; width: 200px;" alt="Blue Jeans Jacket" /> </a>
+                        <a href="">
+                          <!-- <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div> -->
+                        </a>
                       </div>
+                      <!-- Image -->
+                    </div>
+                    <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                      <!-- Data -->
+                      <p> <a class="text-decoration-none  fw-bold text-dark"  href="/user-productDetails/<%=data.product._id %>" > name:<%= data.product.name%></a>
+                      </p>
+                      <p>Color: <%= data.product.color %>
+                      </p>
+                      <p>Size: <%= data.size %>
+                      </p>
+                      <p>Quantity: <%= data.quantity %>
+                      </p>
+                      <p>Price:<strong>₹ <%=data.product.price %></strong>
+                      </p>
+                      <p class="mt-2">
+                       Total Price:<strong>₹ <%=EachAmount[i].total %></strong>
+                      </p>
+                      <div style="height: 2px; " class="">
+                        <span id="errorMessage" style="color: rgb(207, 0, 0);font-weight: bold;"  ></span>
+                     </div>
+                      <div>
 
+                      </div>
+                      <!-- Data -->
+                    </div>
+                    <button class="btn btn-outline-dark btn-sm quantity-btn " <% if (data.quantity==1) { %>
+                     disabled
+                    <% } %>
+                      onclick="changeQuantity('<%=data._id%>','<%=data.product._id%>','<%=data.size%>',-1,'<%=data.quantity%>')"
+                      style="height: 30px; width: 2rem;">-</button>
 
+                    <span id="quantity_<%= data._id %>"
+                      style="border: 0.5px solid black; height: 30px;width: 4rem; text-align: center;border-radius: 4px;margin-left: 5px;margin-right: 5px;">
+                      <%= data.quantity %>
+                    </span>
+
+                    <button class="btn btn-outline-dark btn-sm quantity-btn"
+                    onclick="changeQuantity('<%=data._id%>','<%=data.product._id%>','<%=data.size%>',1,'<%=data.quantity%>')"
+                    style="height: 30px; width: 2rem;">+</button>
+
+                      <div class="col-lg col-sm-6 p-0 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end cart-remove">
+                        <div class="float-md-end">
+                          <a href="#" class="btn btn-light border px-2 icon-hover-primary"><i
+                              class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
+                          <a href="#" class="btn btn-light border text-danger icon-hover-danger"
+                            onclick="removeFromCart('<%= data.product._id %>','<%= data.size %>')">
+                          Remove</a>
+                        </div>
+                      </div>
+                    
                       
-
-                    </div>
+                      
                   </div>
-                  <% }) }%>
-                    <div class="card mb-4">
-                      <div class="card-body">
-                        <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 3-7 days</p>
-                        <p class="text-muted">
-                          All services required to transport products purchased online from a retailer to
-                          the
-                          customer's delivery destination. With the right store, our shipping can be
-                          manageable, affordable, and fast.
-                        </p>
 
-                      </div>
-                    </div>
 
-          </div>
+                  
 
-          <style>
-            @media (max-width: 992px) { 
-              .cart-remove{
-                margin-top: 10px;
-              }
-            }
-          </style>
-
-          <!-- summary -->
-          <div class="col-lg-3 ">
-            <div>
-
-            </div>
-            <div class="card mb-3 border shadow-0" style="margin-top: 55px">
-              <div class="card-body">
-                <form>
-                  <div class="form-group ">
-                    <label class="form-label"><strong>Have coupon?</strong></label>
-                    <div class="input-group">
-                      <input type="text" class="form-control border" name="" placeholder="Coupon code" />
-                      <button class="btn btn-success  text-white">Apply</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div class="card shadow-0 border">
-              <div class="card-body">
-                <div class="d-flex justify-content-between">
-                  <p class="mb-2">Total price:</p>
-                  <p class="mb-2">₹.00</p>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="mb-2">Discount:</p>
-                  <p class="mb-2 text-success">-₹0.00</p>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <p class="mb-2">GST:</p>
-                  <p class="mb-2">₹
-                  </p>
-                </div>
-                <hr />
-                <div class="d-flex justify-content-between">
-                  <p class="mb-2">Total price:</p>
-                  <p class="mb-2 fw-bold">₹
-                  </p>
-                </div>
-
-                <div class="mt-3">
-                  <a href="javascript:void(0);"  class="btn btn-success w-100 shadow-0 mb-2">
-                    Check out now </a>
-                    <a href="/user-viewallProduct" class="btn btn-light w-100 border mt-2"> Back to shop </a>
                 </div>
               </div>
+            <% }) %>
+
+             
+            
+                <div class="card mb-4">
+                  <div class="card-body">
+                    <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 3-7 days</p>
+                    <p class="text-muted">
+                      All services required to transport products purchased online from a retailer to
+                      the
+                      customer's delivery destination. With the right store, our shipping can be
+                      manageable, affordable, and fast.
+                    </p>
+
+                  </div>
+                </div>
+
+      </div>
+
+      <style>
+        @media (max-width: 992px) { 
+          .cart-remove{
+            margin-top: 10px;
+          }
+        }
+      </style>
+
+      <!-- summary -->
+      <div class="col-lg-3 ">
+       
+        <div class="card mb-3 border shadow-0" style="margin-top: 55px">
+          <div class="card-body">
+            <form>
+              <div class="form-group ">
+                <label class="form-label"><strong>Have coupon?</strong></label>
+                <div class="input-group">
+                  <input type="text" class="form-control border" name="" placeholder="Coupon code" />
+                  <button class="btn btn-success  text-white">Apply</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card shadow-0 border">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2">₹ <%=total[0].total %></p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Discount:</p>
+              <p class="mb-2 text-success">-₹0.00</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">GST:</p>
+              <p class="mb-2">₹<%=tax %>
+              </p>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 fw-bold">₹<%=totalPrice %>
+              </p>
+            </div>
+
+            <div class="mt-3">
+              <a href="/user-checkout"  class="btn btn-success w-100 shadow-0 mb-2">
+                Check out now </a>
+                <a href="/user-viewallProduct" class="btn btn-light w-100 border mt-2"> Back to shop </a>
             </div>
           </div>
+        </div>
+      </div>
 
 
+          <% } else{%>
+            <div class="card mb-4">
+              <!-- Image Container -->
+              <div class="position-relative">
+                  <div class="image-container d-flex align-items-center justify-content-center" style="height: 400px;">
+                      <img src="https://www.adasglobal.com/img/empty-cart.png" alt="Cart image" class="img-fluid" />
+                  </div>
+                  <!-- Button Container -->
+                  <div class="position-absolute top-50 start-50 translate-middle" style="margin-top: 160px;" >
+                      <a href="/user-viewallProduct" class="btn btn-primary">Start Shopping</a>
+                  </div>
+                  </div>
+              </div>
+          </div>
+              
+            <%}%>
+              
     </section>
 
   </body>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0"></script>
+  
 
   <script>
-   
-   function removeFromCart(itemId) {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'You won\'t be able to revert this!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Call your delete function here
-      deleteItem(itemId);
-    }
-  });
-  
-  // Prevent the default behavior of the anchor tag
-  event.preventDefault();
-}
-
-// Function to delete item
-function deleteItem(itemId) {
-  
-  fetch(`/user-deletefromCart/${itemId}`, {
-    method: 'DELETE', 
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle success or show a success message
+    function removeFromCart(productId, size) {
       Swal.fire({
-        title: 'Deleted!',
-        text: 'Your item has been deleted.',
-        icon: 'success',
-      });
-
-      // Optionally, you can remove the deleted item from the UI
-      document.getElementById(`card_${itemId}`).remove();
-    })
-    .catch((error) => {
-      console.error('Error deleting item:', error);
-      // Handle error or show an error message
-      Swal.fire({
-        title: 'Error!',
-        text: 'Something went wrong. Please try again later.',
-        icon: 'error',
-      });
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/user-deletefromCart/${productId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ size }),
+          })
+          .then((response) => response.json())
+.then((data) => {
+  if (data.success) {
+    Swal.fire({
+      title: 'Deleted!',
+      text: 'Your item has been deleted.',
+      icon: 'success',
+      timer:1000,
+      showConfirmButton: false,
+    }).then(() => {
+     
+        window.location.reload();
     });
-}
+  }
+              else {
+                console.error('Error removing product from the cart:', data.message);
+                showAlert('Error removing product from the cart: ' + data.message, 'danger');
+              }
+            })
+            .catch((error) => {
+              console.error('Error removing product from the cart:', error);
+              showAlert('Error removing product from the cart: ' + error.message, 'danger');
+            });
+        }
+      });
+    }
+  
+    
+    // Function to show a simple alert
+    function showAlert(message, type) {
+      Swal.fire({
+        title: 'Alert!',
+        text: message,
+        icon: type || 'info',
+      });
+    }
 
-  </script>
+   
+
+    function changeQuantity(cartid,productid,size,count,quantity){
+
+      const datas={
+      cartData:cartid,
+      product:productid,
+      count:count,
+      size:size,
+      quantity:quantity
+    }
+
+ 
+
+      fetch('/change-productQuantity',{
+      method:"POST",
+      headers:{
+         "Content-Type": "application/json"
+
+      },
+      body:JSON.stringify(datas)
+      }).then(response=>response.json())
+      .then(data=>{
+       
+        
+          
+        if(data.success){
+          window.location.reload()
+          console.log("success");
+        }else{
+          
+          Toastify({
+  text: data.error,
+  duration: 2000,
+  gravity: "top", 
+  position: "center", 
+  style: {
+    background:'red',
+    marginTop:'80px'
+  },
+}).showToast();
+
+          
+        }
+      }).catch(error => {
+       console.error(error);
+   });
+      }
+   </script>
+
 
   <%-include('../partials/userPartials/user-footer')%>

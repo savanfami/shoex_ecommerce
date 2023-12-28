@@ -36,38 +36,45 @@
 
 <div class="product-text-container container" style="display: flex; justify-content: space-between;">
   <h4 style="    margin-top: 11px;" id="ManageProduct-text"> ADD PRODUCT</h4>
-
+  
+ </div>
 </div>
 <div class="container mt-5">
 
   <!-- Bootstrap form with grid layout -->
-  <form action="/admin/add-Product " method="POST" id="form" enctype="multipart/form-data">
+  <form action="/admin/add-Product " onchange="return validateForm()" method="POST" id="form" enctype="multipart/form-data">
 
       <!-- General Information Section -->
       <div class="row mb-4">
           <div class="col-md-6">
               <label for="productName" class="form-label">Product Name</label>
               <input type="text" class="form-control" id="productName" name="name" placeholder="Product name" required>
-          </div>
+              <p style="color: rgb(252, 56, 56);" id="productNameError"></p>
+            </div>
           <div class="col-md-6">
               <label for="productPrice" class="form-label">Price</label>
               <input type="number" class="form-control" id="productPrice" name="price" placeholder="Price" required>
-          </div>
+              <p style="color: rgb(252, 56, 56);" id="productPriceError"></p>
+            </div>
       </div>
 
       <div class="row mb-4">
           <div class="col-md-6">
               <label for="productDescription" class="form-label">Product Description</label>
               <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" rows="3" required></textarea>
-          </div>
+              <p style="color: rgb(252, 56, 56);" id="productDescriptionError"></p>
+            </div>
           <div class="col-md-6">
             <label for="productColor" class="form-label">Color</label>
             <input type="text" class="form-control" id="productColor" name="color" placeholder="Color">
-        </div>
+            <p style="color: rgb(252, 56, 56);" id="productColorError"></p>
+
+          </div>
         <div class="col-md-6">
           <label for="productColor" class="form-label">Brand</label>
-          <input type="text" class="form-control" id="productColor" name="brand" placeholder="brand name">
-      </div>
+          <input type="text" class="form-control" id="Brand" name="brand" placeholder="brand name">
+          <p style="color: rgb(252, 56, 56);" id="productBrandError"></p>
+        </div>
       <div class="col-md-6">
       <label for="productColor" class="form-label">Category</label>
       <select class="form-select form-select-input form-select-sm shadow-none" name="category" id="category"
@@ -86,10 +93,10 @@
         <div class="col-md-12 d-flex justify-content-center">
             <button type="button" class="btn btn-primary" id="addVariant">Add Variant</button>
         </div>
+        <p style="color: rgb(252, 56, 56); text-align: center;" id="variantError"></p>
     </div>
     
-    <!-- Size and Color Section -->
-<!-- Size and Quantity Section -->
+  
 <div id="variantSection">
   <!-- Variant Template -->
   <div class="variant-row row mb-4" data-variant-index="0">
@@ -117,6 +124,7 @@
       <!-- Image Upload Section -->
       <div class="row mb-4">
         <div class="mb-3">
+          <p id="imageError1" style="color: rgb(252, 56, 56);"></p>
           <label for="imageInput1"  class="form-label">Main Image</label>
           <input type="file" class="form-control" id="imageInput1" name="mainImage" accept="image/*" required>
           <img id="imagePreview1" src="" class="img-thumbnail mt-2" alt="Preview" style="width: 150px; height: 150px;">
@@ -157,7 +165,7 @@
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary">Add Product</button>
+      <button type="submit" id="submitButton" class="btn btn-primary">Add Product</button>
       <a href="/admin/manage-Product" class="btn btn-secondary">Back to Product</a>
 
   </form>
@@ -165,17 +173,13 @@
 </div>
 <script>
   document.getElementById('addVariant').addEventListener('click', function () {
-    // Clone the existing variant section and append it to the variantSection div
     var index = document.querySelectorAll('#variantSection .variant-row').length;
     var newVariantSection = document.querySelector('#variantSection .variant-row').cloneNode(true);
   
-    // Update the variant index in the new variant section
     newVariantSection.setAttribute('data-variant-index', index);
   
-    // Enable the remove button in the new variant section
     newVariantSection.querySelector('button').removeAttribute('disabled');
   
-    // Clear input values in the new variant section
     newVariantSection.querySelectorAll('input').forEach(input => {
       input.value = '';
     });
@@ -186,84 +190,148 @@
   function removeVariant(button) {
     var variantSection = document.getElementById('variantSection');
   
-    // Ensure at least one variant is always present
     if (variantSection.querySelectorAll('.variant-row').length > 1) {
-      // Remove the parent row of the clicked button
       button.closest('.variant-row').remove();
     }
   }
   </script>
-    <!-- <script>
-      function previewImage(input, previewId) {
-        const preview = document.getElementById(previewId);
-        while (preview.firstChild) {
-          preview.removeChild(preview.firstChild);
-        }
+   
   
-        const files = input.files;
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const inputIds = ["1", "2", "3", "4", "5"];
   
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const reader = new FileReader();
-  
-          reader.onload = function (e) {
-            const img = document.createElement("img");
-            img.className = "preview-image";
-            img.src = e.target.result;
-            preview.appendChild(img);
-          };
-  
-          reader.readAsDataURL(file);
-        }
-      }
-  
-      document.getElementById("mainImage").addEventListener("change", function () {
-        previewImage(this, "mainImagePreview");
-      });
-  
-      document.getElementById("categoryImage1").addEventListener("change", function () {
-        previewImage(this, "categoryImagePreview1");
-      });
-  
-      document.getElementById("categoryImage2").addEventListener("change", function () {
-        previewImage(this, "categoryImagePreview2");
-      });
-  
-      document.getElementById("categoryImage3").addEventListener("change", function () {
-        previewImage(this, "categoryImagePreview3");
-      });
-  
-      document.getElementById("categoryImage4").addEventListener("change", function () {
-        previewImage(this, "categoryImagePreview4");
-      });
-    </script> -->
-  
-  <script>
-    // JavaScript to handle image preview and delete
-    const inputIds = ["1", "2", "3", "4","5"];
-
-    inputIds.forEach((id) => {
+      inputIds.forEach((id) => {
         const input = document.getElementById(`imageInput${id}`);
         const preview = document.getElementById(`imagePreview${id}`);
         const deleteButton = document.getElementById(`deleteButton${id}`);
-
-        input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    preview.src = event.target.result;
-                    deleteButton.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        const imageErrorMessage = document.getElementById(`imageError${id}`);
+  
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            if (!file.type.startsWith("image/")) {
+              input.value = "";
+              preview.src = "";
+              deleteButton.style.display = "none";
+              imageErrorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF)';
+            } else if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/avif'].includes(file.type)) {
+              input.value = "";
+              preview.src = "";
+              deleteButton.style.display = "none";
+              imageErrorMessage.textContent = 'Please add a valid image with supported formats (JPEG, PNG, WebP, GIF, SVG, TIFF, AVIF).';
+            } else {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                preview.src = event.target.result;
+                deleteButton.style.display = "block";
+                imageErrorMessage.textContent = '';
+              };
+              reader.readAsDataURL(file);
             }
+          }
         });
-
-        deleteButton.addEventListener('click', () => {
-            input.value = '';
-            preview.src = '';
-            deleteButton.style.display = 'none';
+  
+        deleteButton.addEventListener("click", () => {
+          input.value = "";
+          preview.src = "";
+          deleteButton.style.display = "none";
+          imageErrorMessage.textContent = '';
         });
+      });
     });
+  </script>
+  
+<script>
+  document.addEventListener("DOMContentLoaded",function() {
+  document.getElementById('productName').addEventListener('input',validateForm)
+  document.getElementById('productDescription').addEventListener('input',validateForm)
+  document.getElementById('productColor').addEventListener('input',validateForm)
+  document.getElementById('Brand').addEventListener('input',validateForm)
+  document.getElementById('productPrice').addEventListener('input', validateForm);
+  document.querySelectorAll('.variant-row input[name^="variant[size]"]').forEach(function (input) {
+      input.addEventListener('input', validateForm);
+    });
+    document.querySelectorAll('.variant-row input[name^="variant[quantity]"]').forEach(function (input) {
+      input.addEventListener('input', validateForm);
+    })
+
+  })
+  function validateForm(){
+    var productName=document.getElementById('productName').value.trim()
+    var productDescription = document.getElementById('productDescription').value.trim();
+    var productColor = document.getElementById('productColor').value.trim();
+    var productBrand = document.getElementById('Brand').value.trim();
+    var productPrice = document.getElementById('productPrice').value.trim();
+  
+    var submitButton=document.getElementById('submitButton')
+    if(productName===''){
+      document.getElementById('productNameError').innerHTML='product name is required'
+      submitButton.disabled=true
+    }else{
+      document.getElementById('productNameError').innerHTML=""
+      submitButton.disabled=false
+    }
+
+    if (productDescription === '') {
+        document.getElementById('productDescriptionError').innerHTML = 'description is required';
+        submitButton.disabled = true;
+    } else {
+        document.getElementById('productDescriptionError').innerHTML = "";
+    }
+    if (productColor === '') {
+        document.getElementById('productColorError').innerHTML = 'color is required';
+        submitButton.disabled = true;
+    } else {
+        document.getElementById('productColorError').innerHTML = "";
+    }
+    if (productBrand === '') {
+        document.getElementById('productBrandError').innerHTML = 'brand is required';
+        submitButton.disabled = true;
+    } else {
+        document.getElementById('productBrandError').innerHTML = "";
+    }
+    if (productPrice === '' || parseFloat(productPrice) < 0) {
+      document.getElementById('productPriceError').innerHTML = 'Price must be a non-negative number';
+      submitButton.disabled = true;
+    } else {
+      document.getElementById('productPriceError').innerHTML = '';
+    }
+
+    var variantInputs = document.querySelectorAll('.variant-row');
+    var invalidVariant = false;
+    variantInputs.forEach(function (variantInput) {
+      var sizeInput = variantInput.querySelector('input[name^="variant[size]"]');
+      var quantityInput = variantInput.querySelector('input[name^="variant[quantity]"]');
+
+      if (sizeInput.value.trim() === '' || parseFloat(sizeInput.value.trim()) < 0 || 
+          quantityInput.value.trim() === '' || parseFloat(quantityInput.value.trim()) < 0) {
+        invalidVariant = true;
+      }
+    });
+
+    if (invalidVariant) {
+      document.getElementById('variantError').innerHTML = 'Size and Stock Quantity must be non-negative numbers';
+      submitButton.disabled = true;
+    } else {
+      document.getElementById('variantError').innerHTML = '';
+    }
+
+    // clearErrorMessages(document.getElementById('productNameError'), 1500);
+    // clearErrorMessages(document.getElementById('productDescriptionError'), 1500);
+    // clearErrorMessages(document.getElementById('productColorError'), 1500);
+    // clearErrorMessages(document.getElementById('productBrandError'), 1500);
+    // clearErrorMessages(document.getElementById('productPriceError'), 1500);
+    // clearErrorMessages(document.getElementById('variantError'), 1500);
+
+  }
+
+  // function clearErrorMessages(element, delay = 0) {
+  //   setTimeout(function () {
+  //     if (element) {
+  //       element.innerHTML = '';
+  //     }
+  //   }, delay);
+  // }
 </script>
 <%-include("../partials/adminPartials/footer")%>

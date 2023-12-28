@@ -16,7 +16,7 @@ const checkBlock = async (req, res, next) => {
                 }
             });
         } else {
-            next();
+         next();
         }
     } catch (error) {
         console.error('Error checking user status:', error);

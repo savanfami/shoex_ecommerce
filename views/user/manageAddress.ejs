@@ -2,7 +2,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
     .product-text-container {
-        /* background-color: aqua; */
+      
         border-radius: 12px;
         height: 56px;
         margin-top: 53px;
@@ -18,9 +18,9 @@
 </style>
 <body>
   <% if(message){%>
-<p class="text-center mt-4 " id="errorShow" style="color: red;font-weight: bold; font-family: 'Merriweather', serif;  ;">
+<span class="text-center mt-4 " id="errorShow" style="color: red;font-weight: bold; font-family: 'Merriweather', serif;  ;">
   <%=message%>
-  </p>
+</span>
 <%}%>
 <script>
   setTimeout(function () {
