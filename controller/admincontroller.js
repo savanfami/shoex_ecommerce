@@ -8,7 +8,6 @@ const users = require('../model/userSchema')
 const fs = require('fs')
 const path = require('path');
 const { ObjectId } = require("mongodb");
-const orders = require("../model/orderSchema");
 
 
 
@@ -346,12 +345,6 @@ const tomanageOrders = async (req, res) => {
     try {
         var i = 0
         const orderDatas = await order.find().populate({path:'userId', select:'username'}).populate({path:'items.productId'}).sort({ orderDate: -1 });
-        console.log(orderDatas, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        orderDatas.forEach(order => {
-            order.items.forEach(item => {
-                console.log(item, "orderdatasssssssss");
-            });
-        });
         res.render('./admin/orderlisting', { orderDatas, i, user })
 
     } catch (error) {
@@ -363,14 +356,29 @@ const tomanageOrders = async (req, res) => {
 const orderDetails=async(req,res)=>{
     try{
         const id=req.params.id
-        console.log(id,"1111111111111111111111111111111");
-        const orderData=await orders.find({_id:id})
-        console.log(orderData,"orddddddddddddddddddddddddd");
-        res.render('/admin/orderDetails',{orderData})
+        const orderData=await order.find({_id:id}).populate('items.productId')   
+        res.render('./admin/orderDetails',{orderData})
 
     }catch(error){
         console.error(error)
     }
+}
+
+const changeorderStatus=async(req,res)=>{
+    try{
+        const newStatus=req.body.status
+        const id=req.params.orderId
+        
+        const orderData=await order.findByIdAndUpdate(id,{status:newStatus})
+        if(orderData){
+            res.json({success:true})
+        }else{
+            res.json({success:false})
+        }
+    }catch(error){
+        console.error(error)
+    }
+
 }
 
 module.exports = {
@@ -391,5 +399,6 @@ module.exports = {
     deleteimage,
     toDashboard,
     tomanageOrders,
-    orderDetails
+    orderDetails,
+    changeorderStatus
 }

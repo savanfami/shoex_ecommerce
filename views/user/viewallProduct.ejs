@@ -1,113 +1,222 @@
-
-<%-include('../partials/userPartials/user-nav')%>
+<%- include('../partials/userPartials/user-nav') %>
 <style>
-    
-.custom-a a {
-  text-decoration: none;
-}
+    #productListContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
 
-.custom-card-container {
-  width: 12rem;
-  height: 16.25rem;
-  background-color: #ffffff;
-  position: relative;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  overflow: hidden;
-  filter: blur(10px 30px) blur(42px);
-  transition: transform 0.3s;
-}
+    .custom-a a {
+        text-decoration: none;
+    }
 
+    .custom-card-container {
+        width: 12rem;
+        height: 16.25rem;
+        background-color: #ffffff;
+        position: relative;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        filter: blur(10px 30px) blur(42px);
+        transition: transform 0.3s;
+    }
 
-.custom-card-container:hover {
-  transform: scale(1.05);
-  box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
-}
+    .custom-card-container:hover {
+        transform: scale(1.05);
+        box-shadow: 10px 30px 42px rgba(0, 0, 0, 0.2);
+    }
 
-.custom-icon-heart,
-.custom-icon-cart {
-  position: absolute;
-  font-size: 24px;
-  color: #000000;
-}
+    .custom-icon-heart,
+    .custom-icon-cart {
+        position: absolute;
+        font-size: 24px;
+        color: #000000;
+    }
 
-.custom-icon-heart {
-  bottom: 10px;
-  right: 10px;
-}
+    .custom-icon-heart {
+        bottom: 10px;
+        right: 10px;
+    }
 
-.custom-icon-cart {
-  bottom: 10px;
-  left: 10px;
-}
+    .custom-icon-cart {
+        bottom: 10px;
+        left: 10px;
+    }
 
-.custom-additional-info {
-  background-color: #fff;
-  padding: 1rem;
-  margin-top: 1px;
-  width: 12rem;
-  margin-left: 10px;
-}
+    .custom-additional-info {
+        background-color: #fff;
+        padding: 1rem;
+        margin-top: 1px;
+        width: 12rem;
+        margin-left: 10px;
+    }
 
-.custom-additional-info p {
-  font-size: 11.5px;
-  font-weight: 300;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  margin: 0;
-  margin-left: 0;
-  margin-top: 0;
-}
+    .custom-additional-info p {
+        font-size: 11.5px;
+        font-weight: 300;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        margin: 0;
+        margin-left: 0;
+        margin-top: 0;
+    }
 
-.custom-icon-cart:hover{
-  color: #014122;
-}
+    .custom-icon-cart:hover {
+        color: #014122;
+    }
 
-.custom-icon-heart:hover{
-  color: red;
-}
+    .custom-icon-heart:hover {
+        color: red;
+    }
+
+    #filteredProductContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    #filteredProductContainer .imgviv {
+        display: flex;
+        flex-wrap: wrap;
+    }
 </style>
 <div class="container">
     <div class="row custom-a">
-      <% productData.forEach((data)=> { %>
-        <div class="col d-flex justify-content-around flex-wrap col-lg-3">
-          <div class="custom-card-container ms-5 mt-5">
-            <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
-            <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
-            <a href="/user-productDetails/<%-data._id %>">
-              <img class="card-img-top" src="/productImages/<%=data.images[0]%>" alt="Card image cap"
-                height="190px" width="210px">
-            </a>
-          </div>
-          <div class="custom-additional-info ms-5">
-            <a href=" /user/product/details/">
-              <p>
-                <%=data.name%>
-              </p>
-            </a>
-            <p class="custom-p">₹ <%=data.price%> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i>
-            </p>
-          </div>
+        <div class="col-lg-3">
+            <div style="border-radius: 10px;">
+                <label for="brandSelect" class="form-label mt-2">Select a Brand:</label>
+                <form id="productFilters">
+                    <select class="form-select" id="brandSelect">
+                        
+                        <option value="ALL">All Brands</option>
+                        <% productbrand.forEach(x => { %>
+                            <option value="<%= x %>"><%=x %></option>
+                         
+                        <% }) %>
+                    
+                    </select>
+
+                    <label for="sizeSelect" class="form-label mt-2">Select a Size:</label>
+                    <select class="form-select" id="sizeSelect">
+                        <option value="ALL">All Categories</option>
+                        <% productCategory.forEach(x => { %>
+                            <option value="<%= x %>"><%=x %></option>
+                         
+                        <% }) %>
+                    </select>
+                    <br>
+
+                    <label for="priceRangeSelect" class="form-label mt-2">Select Price Range:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="0-2500" id="priceRange1">
+                        <label class="form-check-label" for="priceRange1">Below ₹2,000</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="2500-5000" id="priceRange2">
+                        <label class="form-check-label" for="priceRange2">₹2000 - ₹5000</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="5000-7500" id="priceRange3">
+                        <label class="form-check-label" for="priceRange3">₹5000 - ₹7500</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="7500-10000" id="priceRange4">
+                        <label class="form-check-label" for="priceRange4">₹7500 - ₹10000</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="priceRange" value="10000-0" id="priceRange5">
+                        <label class="form-check-label" for="priceRange5">₹10000 above</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Apply Filter</button>
+                </form>
+            </div>
         </div>
+
+        <!-- Display original products -->
+        <% productData.forEach((data) => { %>
+            <div class="col maindiv justify-content-around flex-wrap col-lg-3 imgviv" style="display: flex;" data-brand="<%= data.brand %>"
+                data-category="<%= data.category %>" data-price="<%= data.price %>">
+                <div class="custom-card-container ms-5 mt-5">
+                    <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+                    <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
+                    <a href="/user-productDetails/<%- data._id %>">
+                        <img class="card-img-top" src="/productImages/<%= data.images[0] %>" alt="Card image cap"
+                            height="190px" width="210px">
+                    </a>
+                </div>
+                <div class="custom-additional-info ms-5">
+                    <a href="/user/product/details/">
+                        <p><%= data.name %></p>
+                    </a>
+                    <p class="custom-p">₹ <%= data.price %> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i></p>
+                </div>
+            </div>
         <% }) %>
+        <nav aria-label="Page navigation example" class="d-flex justify-content-end mt-3" id="pagination-navbar">
+            <ul class="pagination">
+                <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="<%= page <= 1 ? '#' : '/user-viewallProduct?page=' + (page - 1) %>" style="color: black;" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="/user-viewallProduct?page=<%= page %>" style="color: black"><%= page %></a>
+                </li>
+                <li class="page-item <%= page >= count ? 'disabled' : '' %>">
+                    <a class="page-link" href="<%= page >= count ? '#' : '/user-viewallProduct?page=' + (page + 1) %>" style="color: black;" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Display filtered products -->
+        <div id="filteredProductContainer"></div>
     </div>
+</div>
+<script>
+  window.addEventListener('load', (event) => {
+    const allProductItems = document.querySelectorAll('.imgviv');
+    const productFilters = document.getElementById('productFilters');
+    const currentPage=1
+    productFilters.addEventListener('submit', function (event) {
+        event.preventDefault();
 
-  </div>
+        const brandFilter = document.getElementById('brandSelect').value;
+        const categoryFilter = document.getElementById('sizeSelect').value;
+        const checkedPriceRange = document.querySelector('input[name="priceRange"]:checked');
+        const priceRangeFilter = checkedPriceRange ? checkedPriceRange.value : 'ALL';
 
+        const queryString = `brand=${brandFilter}&size=${categoryFilter}&priceRange=${priceRangeFilter}&page=${currentPage}`;
 
+        fetch(`/user/filterProducts?${queryString}`)
+            .then(response => response.json())
+            .then(products => {
+                console.log("Filtered Products:", products);
 
+                allProductItems.forEach(item => {
+                    const dataBrand = item.getAttribute('data-brand');
+                    const dataSize = item.getAttribute('data-category'); 
+                    console.log(dataSize,"size");
+                    const dataPrice = item.getAttribute('data-price');
 
+                    const isVisible = (brandFilter === 'ALL' || dataBrand === brandFilter) &&
+                        (categoryFilter === 'ALL' || dataSize === categoryFilter) &&
+                        (priceRangeFilter === 'ALL' || checkPriceRange(dataPrice, priceRangeFilter));
 
+                    item.style.display = isVisible ? 'flex' : 'none';
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    });
+});
 
+// Function to check if the price is within the specified range
+function checkPriceRange(price, range) {
+    const [min, max] = range.split('-').map(Number);
+    return price >= min && (price < max || max === 0);
+}
 
+</script>
 
-
-
-
-
-
-
-
-
-
-
-<%-include('../partials/userPartials/user-footer')%>
+<%- include('../partials/userPartials/user-footer') %>

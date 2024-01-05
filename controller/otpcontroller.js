@@ -47,4 +47,9 @@ const sendOtp=async (email)=>{
     }
 }
 
+
+
+
+
+
 module.exports=sendOtp

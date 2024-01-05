@@ -38,7 +38,9 @@ router.get('/user-productDetails/:id',userAuth.verifyUser,userController.getProd
 router.get('/user-productDetailshome/:id',userController.getProductDetailshome)
 router.get('/user-viewallProduct',userAuth.verifyUser,userController.viewallProduct)
 router.get('/user-viewallProducthome',userController.viewallProducthome)
-
+router.get('/user-categoryList/:categoryId',userAuth.verifyUser,userController.categoryList)
+router.get('/user/filterProducts',userAuth.verifyUser,userController.filterProducts)
+router.get('/user/searchProducts',userController.searchProduct)
 
 //route for userprofile
 
@@ -67,4 +69,13 @@ router.get('/user-Orderconfirmation',userAuth.verifyUser,orderController.orderCo
 router.post('/user-placeOrder',userAuth.verifyUser,orderController.placeOrder)
 router.get('/user-orders',userAuth.verifyUser,orderController.toOrderlisting)
 router.get('/user-orderDetails/:id',userAuth.verifyUser,orderController.orderDetails)
+router.patch('/user-cancelOrder/:orderId',orderController.usercancelOrder)
+router.patch('/cancelOne-order',orderController.cancelOneOrder)
+router.post('/downloadinvoice',userAuth.verifyUser,orderController.generateInvoices)
+router.get('/downloadinvoice/:orderId',userAuth.verifyUser,orderController.downloadInvoice)
+
+
+
+//error page
+
 module.exports=router

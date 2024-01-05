@@ -39,17 +39,29 @@
                     </div>
                     <% if(x.status=="return"){%>
                       <h5 style="color: brown;">Product Return</h5>
-                    
-                    <% }else if(orderData[0].Status=="Delivered" ){ %>
-                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <button class="btn small btn-danger"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                         id="returnOrderBtn" data-item-id="<%= x._id %> " data-order-id="<%=orderData[0]._id%>">Return</button>
-                      </div>
+                    <% }else if(orderData[0].status=="Order Delivered" ){ %>
+                      
                       <% }else{%>
-                    
-                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <button class="btn small btn-danger"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .80rem;" id="cancelOrderBtn" data-item-id="<%= x._id %> " data-order-id="<%=orderData[0]._id%>">Cancel Order</button>
-                      </div>
+                    <% if (orderData[0].status==="Cancelled") { %>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <p class="text-danger" style="font-family:'Times New Roman', Times, serif;font-size: 15px;font-weight: bold;">Order Cancelled</p>
+                    </div>
+                    <% }else{%>
+
+                      <% if (x.status !== "rejected") { %>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <button class="btn small btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .80rem;"
+                                id="cancelOrderBtn" data-item-id="<%= x._id %>" data-order-id="<%= orderData[0]._id %>">Cancel Order</button>
+                        </div>
+                    <% } else { %>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-danger" style="font-family:'Times New Roman', Times, serif;font-size: 15px;font-weight: bold;">Order Cancelled</p>
+                        </div>
+                    <% } %>
+
+                    <%} %>
+                       
+                      
                   </div>
                  <% } %>
                   <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
@@ -91,12 +103,34 @@
                 <p class=" mb-0">Order ID : <%=orderData[0]._id%></p>
                 <!-- <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p> -->
               </div> 
-  
-              <div class="d-flex justify-content-between mb-5">
-                <p class=" mb-0"><b>Order Status : <%=orderData[0].status%></b></p>
-                <!-- <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p> -->
-              </div> 
+              
+              <% const allItemsRejected = orderData[0].items.every(item => item.status === 'rejected'); %>
+
+<div class="d-flex mb-5">
+    <p class="mb-0">
+        <b>Order Status:  
+            <span class="
+                <% if (allItemsRejected) { %> text-danger 
+                <% } else if (orderData[0].status === 'Pending') { %> text-warning 
+                <% } else if (orderData[0].status === 'Processing') { %> text-info 
+                <% } else if (orderData[0].status === 'Order Placed') { %> text-primary 
+                <% } else if (orderData[0].status === 'Shipped') { %> text-secondary 
+                <% } else if (orderData[0].status === 'Order Delivered') { %> text-success 
+                <% } else if (orderData[0].status === 'Returned') { %> text-warning 
+                <% } else if (orderData[0].status === 'Cancelled') { %> text-danger 
+                <% } %>">
+                <% if (allItemsRejected) { %> Cancelled<% } else { %> <%= orderData[0].status %> <% } %>
+            </span>
+        </b>
+    </p>
+</div>
+
+
               <h5 style="text-decoration: underline;">Order Address</h5>
+              <div class="d-flex justify-content-between pt-2">
+                <p class=" mb-0"><%=orderData[0].address[0].name%></p>
+                
+              </div>
               <div class="d-flex justify-content-between pt-2">
                 <p class=" mb-0"><%=orderData[0].address[0].address%></p>
                 
@@ -157,90 +191,49 @@
   </div>
 </div>
 
+
+</body>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  // const returnOrderButtons = document.querySelectorAll('#returnOrderBtn');
-  const returnOrderButtons = document.querySelectorAll('#returnOrderBtn');
+  document.addEventListener('DOMContentLoaded', function () {
+    const cancelOrderButton = document.querySelectorAll('#cancelOrderBtn');
 
-console.log("..................",returnOrderButtons);
-  returnOrderButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const orderId = button.getAttribute('data-order-id');
-      const itemId = button.getAttribute('data-item-id');
-      console.log(",,,,,,,,,,,,,,,,,,",orderId);
-      console.log('...............',itemId);
-      // Show the modal
-      $('#returnOrderModal').modal('show');
-    
-      console.log("..................midal opened.");
-      // Handle the confirmation inside the modal
-       document.getElementById('confirmReturnBtn').addEventListener('click', () => {
-        const returnReason = document.getElementById('returnReason').value;
-        const returnDescription = document.getElementById('returnDescription').value;
-
-        fetch('/return-order', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId, itemId, returnReason, returnDescription }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              alert(`Order has been returned successfully.`);
-              $('#returnOrderModal').modal('hide');
-              window.location.reload()
-            } else {
-              alert(`Error: ${data.message}`);
-            }
-          })
-          .catch((error) => {
-            console.error('Error returning the order:', error);
-            alert('An error occurred while returning the order.');
-          })
-          
+    cancelOrderButton.forEach((button) => {
+      button.addEventListener('click', () => {
+        const orderId = button.getAttribute('data-order-id');
+        const itemId = button.getAttribute('data-item-id');
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'You won\'t be able to revert this!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch('/cancelOne-order', {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ orderId, itemId })
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  window.location.reload();
+                } else {
+                  console.log("Failed to cancel order");
+                }
+              });
+          }
+        });
       });
     });
   });
-});
 </script>
-
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const cancelOrderButtons = document.querySelectorAll('#cancelOrderBtn');
-
-    cancelOrderButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const orderId = button.getAttribute('data-order-id');
-            const itemId = button.getAttribute('data-item-id');
-            const userConfirmed = confirm('Are you sure you want to cancel this order?');
-            console.log(orderId,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            if (userConfirmed) {
-                fetch('/Onecancel-order', { 
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ orderId, itemId }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            alert(`Order with ID ${orderId} and Item ID ${itemId} has been canceled.`);
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error canceling the order:', error);
-                    });
-            }
-        });
-    });
-});
-</script>
-</body>
 
 
 <%-include('../partials/userPartials/user-footer')%>

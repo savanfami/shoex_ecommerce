@@ -47,6 +47,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
 
+app.use('/*',(req,res)=>{
+    res.render('./user/404')
+})
+
+
 app.listen(PORT, () => {
     console.log(`server start running at http://localhost:${PORT}`)
 });

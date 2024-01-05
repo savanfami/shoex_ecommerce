@@ -279,9 +279,10 @@ const getProductDetailshome = async (req, res) => {
     try {
         const id = req.params.id
         const productData = await product.findOne({ _id: id })
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
         const relatedData = await product.find({ brand: productData.brand, category: productData.category }).limit(4)
         const RelatedDatas = relatedData.filter(item => item._id.toString() !== productData._id.toString());
-        res.render('./user/productDetails', { productData, RelatedDatas })
+        res.render('./user/productDetails', { productData, RelatedDatas,cartcount })
 
     } catch (err) {
         console.log(err);
@@ -294,6 +295,30 @@ const getProductDetailshome = async (req, res) => {
 
 const viewallProduct=async (req,res)=>{
   try{
+   
+    const page=parseInt(req.query.page)||1
+    const count=await product.find().count()
+    console.log(count);
+    const pagesize=15
+    const totaldata=Math.ceil(count/pagesize)
+    const skip=(page-1)*pagesize
+    const productbrand=await product.distinct('brand')
+    const productCategory=await product.distinct('category')
+    const productData=await product.find({status:true}).skip(skip).limit(pagesize)
+    const cartcount=await helpers.getCartCount(req,res,req.session.email)
+    res.render('./user/viewallProduct',{productData,cartcount,
+    count:totaldata,
+    page:page,
+    productbrand,
+    productCategory
+})
+}catch(err){
+    console.log(err);
+}}
+
+
+const viewallProducthome=async (req,res)=>{
+  try{
     const productData=await product.find({status:true}).limit(16)
     const cartcount=await helpers.getCartCount(req,res,req.session.email)
     res.render('./user/viewallProduct',{productData,cartcount})
@@ -301,23 +326,101 @@ const viewallProduct=async (req,res)=>{
     console.log(err);
 }}
 
-const viewallProducthome=async (req,res)=>{
-  try{
-    const productData=await product.find({status:true}).limit(16)
 
-    res.render('./user/viewallProduct',{productData})
-}catch(err){
-    console.log(err);
-}}
+const categoryList=async(req,res)=>{
+    try{
+        const categoryId=req.params.categoryId
+        const categoryData=await category.findById(categoryId)
+        const  categoryname=categoryData.name
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
+        const productDatass=await product.find({category:categoryname})
+        res.render('./user/viewallcategoryproduct',{productDatass,cartcount})
+        
+     
+    
+
+    }catch(err){
+        console.error(err)
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 
 
 
+const filterProducts=async(req,res)=>{
+    try {
+        const brandFilter = req.query.brand;
+        const categoryFilter = req.query.category;
+        const priceRangeFilter = req.query.priceRange;
+        const page=req.query.page
+        const itemsperPage=4
+        const skip=(parseInt(page)-1)*itemsperPage
 
+        const query = {};
 
+        if (brandFilter && brandFilter !== 'ALL') {
+            query.brand = brandFilter;
+        }
 
+        if (categoryFilter && categoryFilter !== 'ALL') {
+            query.category= categoryFilter;
+        }
 
+        if (priceRangeFilter && priceRangeFilter !== 'ALL') {
+            const [minPrice, maxPrice] = priceRangeFilter.split('-');
+            query.price = { $gte: Number(minPrice), $lte: Number(maxPrice) };
+        }
 
+        const products = await product.find(query)
+        console.log(products);
+          res.json(products);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+   
+
+}
+
+const searchProduct=async(req,res)=>{
+    try{
+        console.log("111111111111111111");
+        const query=req.query.query
+        console.log(query);
+        console.log(req.query.page);
+        const page=parseInt(req.query.page)||1
+        const pagesize=15
+        const skip=(page-1)*pagesize
+        if (!query) {
+            return res.status(400).send('Bad Request: Missing query parameter');
+        }
+        const cartcount=await helpers.getCartCount(req,res,req.session.email)
+        const searchResults = await product.find({
+            $or: [
+              { name: { $regex: query, $options: 'i' } },  
+              { brand: { $regex: query, $options: 'i' } },  
+              { category: { $regex: query, $options: 'i' } },  
+              { color: { $regex: query, $options: 'i' } },  
+             
+               
+            ]
+          })
+          .skip(skip)
+            .limit(pagesize)
+        const count= await product.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { brand: { $regex: query, $options: 'i' } },
+                { category: { $regex: query, $options: 'i' } },
+                { color: { $regex: query, $options: 'i' } },
+            ]
+        });
+        res.render('./user/searchProduct',{searchResults,cartcount,count:Math.ceil(count /pagesize),
+            page,query})           
+    }catch(err){
+        console.error('Error during search:', err);    }
+}
 
 
 
@@ -445,7 +548,6 @@ const editAddress = async (req, res) => {
             pincode: req.body.pincode,
             phone: req.body.phone
         }
-        // console.log(addressData,id,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
         const users = await user.findOneAndUpdate(
             { 'address._id': id },
             { $set: { 'address.$': addressData } },
@@ -514,11 +616,10 @@ const editprofileImage = async (req, res) => {
 const changePassword=async(req,res)=>{
     try{
         const email=req.session.email
-        // console.log(email,"sedsssionnnnnnnnnnnnemaiilllllllllllllllllllllll");
+        
         const check=await user.findOne({email})
         console.log("userrrr",check);
-        // console.log(req.body.oldPassword,"dddddddddddddddddddddddddddddddddddd");
-        // console.log(req.body.newPassword,"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+       
         if(check){
             const checkPassword=await bcrypt.compare(req.body.oldPassword,check.password)
             // console.log("password is matched",checkPassword);
@@ -561,7 +662,11 @@ module.exports = {
     viewallProducthome,
     getProductDetailshome,
     changePassword,
-    addnewAddress
+    addnewAddress,
+    categoryList,
+    filterProducts,
+    searchProduct
+
     // toForgotPassword,
     // forgotPass,
 }

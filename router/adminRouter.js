@@ -60,5 +60,5 @@ router.delete('/delete-image/:id/:index',adminAuth.verifyAdmin,adminController.d
 
 router.get('/manageOrders',adminAuth.verifyAdmin,adminController.tomanageOrders)
 router.get('/order-Details/:id',adminAuth.verifyAdmin,adminController.orderDetails)
-
+router.put('/change-Orderstatus/:orderId',adminController.changeorderStatus)
 module.exports=router

@@ -35,13 +35,13 @@
         <h3 class="text-center sub-headi" style="color: #014122; text-decoration: underline; font-size: 2.5rem;">Popular
           Categories</h3>
       </header>
-
+      
       <div class="row my-5 ">
         <div class="col  d-flex justify-content-around flex-wrap">
           <% categoryData.forEach(data=> { %>
             <div class="card my-2 shadow-0 custom-card  mx-auto shadow p-3 mb-5 bg-white">
-              <a href="#" class="">
-                <img src="/uploadedImages/<%=data.image %>" class="card-img-top rounded-2 custom-image">
+              <a href="/user-categoryList/<%= data._id %>" class="">
+                <img src="/uploadedImages/<%= data.image %>" class="card-img-top rounded-2 custom-image">
               </a>
               <div class="card-body p-0 pt-2 custom-button">
                 <button class="btn btn " style="color: white; padding-bottom:10px;">
