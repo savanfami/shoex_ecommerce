@@ -19,23 +19,27 @@
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
                 <% if (userData.profilePhoto) { %>
-                  <img src="/profileImages/<%=userData.profilePhoto%>" alt="Profile Pic"
-                    class="rounded-circle" style="width: 200px;height: 200px; object-fit: cover;">
-                 
-                <% } else{%>
-                  <img src="https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg" alt="Profile Pic"
-                  class="rounded-circle" style="width: 200px;height: 200px; object-fit: cover;">
-                <%}%>
-                  <div class="d-flex justify-content-center mt-3">
-                    <label for="imageInput" class="btn btn-primary btn-rounded">
-                      choose File
-                      <input type="file" id="imageInput" name="profileimage" accept="image/*" style="display: none;" onchange="uploadprofiepic(event)">
-                    </label>
-                  </div>
-                <div class="mt-3">
-                  <h4><%=userData.username%></h4>
+                  <img src="/profileImages/<%=userData.profilePhoto%>" alt="Profile Pic" class="rounded-circle"
+                    style="width: 200px;height: 200px; object-fit: cover;">
 
-                </div>
+                  <% } else{%>
+                    <img
+                      src="https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg"
+                      alt="Profile Pic" class="rounded-circle" style="width: 200px;height: 200px; object-fit: cover;">
+                    <%}%>
+                      <div class="d-flex justify-content-center mt-3">
+                        <label for="imageInput" class="btn btn-primary btn-rounded">
+                          choose File
+                          <input type="file" id="imageInput" name="profileimage" accept="image/*" style="display: none;"
+                            onchange="uploadprofiepic(event)">
+                        </label>
+                      </div>
+                      <div class="mt-3">
+                        <h4>
+                          <%=userData.username%>
+                        </h4>
+
+                      </div>
               </div>
             </div>
 
@@ -53,11 +57,10 @@
                   <%= userData.username %>
                     <!-- Button trigger modal for changing username--------------- -->
 
-                    <a href="" class="text-white float-end" data-bs-toggle="modal"
-                      data-bs-target="#staticBackdrop">
+                    <a href="" class="text-white float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                       <i class="fa-solid fa-pen-to-square fa-xl" style="color: #000000;"></i>
                                   </a>
-<!---------------------------------Modal for changingg username------------------------------------------->
+                    <!---------------------------------Modal for changingg username------------------------------------------->
                     <div class="modal fade " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
                       tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered ">
@@ -97,77 +100,77 @@
               <hr>
               <div class="row">
                 <% if(userData.address &&userData.address.length>0){ %>
-                <div class="col-sm-3">
-                  <h6 class="mb-0">Mobile</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                 +91<%=userData.address[0].phone%>
-                </div>
-              
-              <hr>
-          
-                <div class="col-sm-3">
-                  <h6 class="mb-0">Address</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  <%=userData.address[0].address %>
-                </div>
-                <% }else { %>
-                         
-                <div class="col-sm-3">
-                  <h6 class="mb-0">Address</h6>
-                </div>
-                <div class="col-sm-9 text-secondary">
-                  Address information is not available
-                </div> 
-                  
-                <% } %>
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Mobile</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    +91<%=userData.address[0].phone%>
+                  </div>
+
+                  <hr>
+
+                  <div class="col-sm-3">
+                    <h6 class="mb-0">Address</h6>
+                  </div>
+                  <div class="col-sm-9 text-secondary">
+                    <%=userData.address[0].address %>
+                  </div>
+                  <% }else { %>
+
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      Address information is not available
+                    </div>
+
+                    <% } %>
               </div>
               <hr>
               <div class="row">
- <!------------------------------------------change password modal --------------------------------------------------------------------->
-                <button type="button" class="btn btn-outline-primary mb-2 w-25" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Change Password</button>
-              
+                <!------------------------------------------change password modal --------------------------------------------------------------------->
+                <button type="button" class="btn btn-outline-primary mb-2 w-25" data-bs-toggle="modal"
+                  data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Change Password</button>
+
               </div>
-              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModal">Change Password</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="password-form">
-                                <div class="mb-3">
-                                    <label for="old-password" class="col-form-label">Old Password:</label>
-                                    <input type="password" class="form-control" id="oldPassword">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="new-password" class="col-form-label">New Password:</label>
-                                    <input type="password" class="form-control" id="newPassword">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="confirm-password" class="col-form-label">Confirm Password:</label>
-                                    <input type="password" class="form-control" id="confirmPassword">
-                                </div>
-                                <div id="passwordWarning" style="color: red;"></div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
-                        </div>
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModal">Change Password</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                      <form id="password-form">
+                        <div class="mb-3">
+                          <label for="old-password" class="col-form-label">Old Password:</label>
+                          <input type="password" class="form-control" id="oldPassword">
+                        </div>
+                        <div class="mb-3">
+                          <label for="new-password" class="col-form-label">New Password:</label>
+                          <input type="password" class="form-control" id="newPassword">
+                        </div>
+                        <div class="mb-3">
+                          <label for="confirm-password" class="col-form-label">Confirm Password:</label>
+                          <input type="password" class="form-control" id="confirmPassword">
+                        </div>
+                        <div id="passwordWarning" style="color: red;"></div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <style>
-        
-
         .list-group-item {
           cursor: pointer;
           transition: background-color 0.3s, color 0.3s;
@@ -202,6 +205,11 @@
               <i class="fa-solid fa-address-book"></i>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+              onclick="window.location.href='/user-wallet'">
+              <h6 class="mb-0">Wallet</h6>
+              <i class="fa-solid fas fa-wallet"></i>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center p-3"
               onclick="window.location.href='/user/logout'">
               <h6 class="mb-0">Logout</h6>
               <i class="fa-solid fa-arrow-right-from-bracket text-danger "></i>
@@ -214,96 +222,96 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
+  <script>
 
- function uploadprofiepic(event) {
-  const fileInput = event.target;
-  if (fileInput.files && fileInput.files[0]) {
+    function uploadprofiepic(event) {
+      const fileInput = event.target;
+      if (fileInput.files && fileInput.files[0]) {
 
-    const formData = new FormData();
-    formData.append('profileimage', fileInput.files[0]);
-    fetch('/user-profileImage', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(res => {
-      if (res.ok) {
-        console.log("File uploaded successfully");
-        window.location.reload();
-      } else {
-        console.error("Upload failed");
-      }
-    })
-    .catch(err => console.error('Error uploading files', err));
-  }
-}
-
-function changePassword() {
-  const oldPassword = document.getElementById('oldPassword').value;
-  const newPassword = document.getElementById('newPassword').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
-  const passwordWarning = document.getElementById('passwordWarning');
-
-  if (!oldPassword) {
-    passwordWarning.textContent = "old password is required";
-  } else if (!newPassword) {
-    passwordWarning.textContent = "new password is required";
-  } else if (!confirmPassword) {
-    passwordWarning.textContent = "Confirm password is required";
-  } else if (newPassword !== confirmPassword) {
-    passwordWarning.textContent = "Passwords do not match";
-  } else if (
-    newPassword.length < 8 ||
-    !/[0-9]/.test(newPassword) ||
-    !/[A-Z]/.test(newPassword) ||
-    !/[a-z]/.test(newPassword) ||
-    !/[$&+,:;=?@#|'<>.^*()%!-]/.test(newPassword)
-  ) {
-    passwordWarning.textContent =
-      "Password should contain at least one uppercase letter, one lowercase letter, a special character (@#$%^&+=!), and a number. Password length should be between 8 and 20 characters.";
-  } else {
-    const data = {
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    };
-
-    fetch('/user-changePassword', {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then(response => response.json())
-      .then(response => {
-        console.log("responmsee",response);
-        if (response.success) {
-          Swal.fire({
-            icon: "success",
-            title: "Password changed Successfully",
-            showConfirmButton: false,
-            timer: 2000,
-          }).then(()=>{
-            window.location.reload()
+        const formData = new FormData();
+        formData.append('profileimage', fileInput.files[0]);
+        fetch('/user-profileImage', {
+          method: 'POST',
+          body: formData,
+        })
+          .then(res => {
+            if (res.ok) {
+              console.log("File uploaded successfully");
+              window.location.reload();
+            } else {
+              console.error("Upload failed");
+            }
           })
-          $('#exampleModal').modal('hide')
-         
-        } else{
-          Swal.fire({
-            icon: 'error',
-            title: response.error,
-            showConfirmButton: false,
-            timer: 2500,
+          .catch(err => console.error('Error uploading files', err));
+      }
+    }
+
+    function changePassword() {
+      const oldPassword = document.getElementById('oldPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const passwordWarning = document.getElementById('passwordWarning');
+
+      if (!oldPassword) {
+        passwordWarning.textContent = "old password is required";
+      } else if (!newPassword) {
+        passwordWarning.textContent = "new password is required";
+      } else if (!confirmPassword) {
+        passwordWarning.textContent = "Confirm password is required";
+      } else if (newPassword !== confirmPassword) {
+        passwordWarning.textContent = "Passwords do not match";
+      } else if (
+        newPassword.length < 8 ||
+        !/[0-9]/.test(newPassword) ||
+        !/[A-Z]/.test(newPassword) ||
+        !/[a-z]/.test(newPassword) ||
+        !/[$&+,:;=?@#|'<>.^*()%!-]/.test(newPassword)
+      ) {
+        passwordWarning.textContent =
+          "Password should contain at least one uppercase letter, one lowercase letter, a special character (@#$%^&+=!), and a number. Password length should be between 8 and 20 characters.";
+      } else {
+        const data = {
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+        };
+
+        fetch('/user-changePassword', {
+          method: "post",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then(response => response.json())
+          .then(response => {
+            console.log("responmsee", response);
+            if (response.success) {
+              Swal.fire({
+                icon: "success",
+                title: "Password changed Successfully",
+                showConfirmButton: false,
+                timer: 2000,
+              }).then(() => {
+                window.location.reload()
+              })
+              $('#exampleModal').modal('hide')
+
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: response.error,
+                showConfirmButton: false,
+                timer: 2500,
+              });
+            }
+          })
+          .catch(error => {
+            console.error(error);
           });
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-}
+      }
+    }
 
 
-</script>
+  </script>
 
   <%-include('../partials/userPartials/user-footer')%>

@@ -313,7 +313,7 @@ const deleteProduct = async (req, res) => {
     try {
         const id = req.params.id
         const deleteProduct = await product.deleteOne({ _id: id })
-        res.redirect('./admin/manage-Product')
+        res.redirect('/admin/manage-Product')
     } catch (err) {
         console.log(err)
     }

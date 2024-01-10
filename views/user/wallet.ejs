@@ -1,0 +1,129 @@
+<%-include('../partials/userPartials/user-nav') %>
+
+
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        /* margin-top: 10vh; */
+    }
+
+    header {
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .wallet-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
+
+    .balance {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center; /* Center-align the balance text */
+    }
+
+    .history {
+        border-top: 1px solid #ccc;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+
+    .transaction {
+        margin-bottom: 10px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        width: 33.33%; /* Equal width for each column */
+    }
+</style>
+</head>
+<body>
+
+<div class="container-fluid">
+<div style="height: 5vh;">
+
+</div>
+<div class="wallet-container">
+    <div>
+        <h1 style="font-family: l;">WALLET  <img src="https://cdn-icons-png.flaticon.com/128/60/60484.png"  style="width: 35px;height:35px;"></h1>
+        
+    </div>
+    <div style="background-color: black; border-radius: 10px;">
+        <div class="balance" style="color: white; height: 200px;">
+            <br>
+            <br>
+            <p style="font-size: medium;">Available Balance:</p>
+            <% if (userData.wallet.balanceAmount!=0) { %>
+                <p>₹ <%-userData.wallet.balanceAmount %></p>
+
+            <% }else{%>
+                <p>₹ 0</p>
+           <% } %>
+        </div>
+    </div>
+    <div class="history">
+        <h2>Wallet History :</h2>
+        <hr>
+        <table>
+            <thead >
+                <tr style="color: black;">
+                    <th><p>Type</p></th>
+                    <th><p>Amount</p></th>
+                    <th><p>Description</p></th>
+                    <th><p>Date</p></th>
+                </tr>
+            </thead>
+            <tbody style="font-weight: 600;">
+                <% userData.wallet.transactions.forEach(x => { %>
+                    <tr>
+                        <td><%-x.transactionType %></td>
+                        <% if (x.transactionType==='credit') { %>
+                            <td style="color: green;font-weight: bold;">+ <%-x.amount %></td>
+                            
+                        <% }else{%>
+                            <td style="color:red;">- <%-x.amount %></td>
+                        <%} %>
+                        <td style="white-space: nowrap;"><%-x.description %></td>
+                        <td style="white-space: nowrap;"><%-new Date(x.timestamp).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })%> </td>
+                    </tr>
+                <% }) %>
+                
+            </tbody>
+        </table>
+       
+    </div>
+</div>
+<div style="height: 5vh;">
+
+</div>
+</div>
+
+
+
+
+
+
+
+<%-include('../partials/userPartials/user-footer')%>

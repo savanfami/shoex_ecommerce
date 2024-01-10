@@ -81,7 +81,17 @@
         flex-wrap: wrap;
     }
 </style>
+<div style="width: 150px;" class="float-end">
+    <form id="sortForm" action="/user/viewallProduct" method="GET">
+        <select class="form-select mt-1" name="sortSelect" id="sortSelect" style="width: 100%; padding: 0.375rem 0.75rem; font-size: 85%;">
+            <option value="none" selected disabled>Select Sorting</option>
+            <option value="lowToHigh">Price: Low to High</option>
+            <option value="highToLow">Price: High to Low</option>
+        </select>
+    </form>
+</div>
 <div class="container">
+    
     <div class="row custom-a">
         <div class="col-lg-3">
             <div style="border-radius: 10px;">
@@ -97,7 +107,7 @@
                     
                     </select>
 
-                    <label for="sizeSelect" class="form-label mt-2">Select a Size:</label>
+                    <label for="sizeSelect" class="form-label mt-1">Select a Size:</label>
                     <select class="form-select" id="sizeSelect">
                         <option value="ALL">All Categories</option>
                         <% productCategory.forEach(x => { %>
@@ -107,7 +117,7 @@
                     </select>
                     <br>
 
-                    <label for="priceRangeSelect" class="form-label mt-2">Select Price Range:</label>
+                    <label for="priceRangeSelect" class="form-label">Select Price Range:</label>
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="priceRange" value="0-2500" id="priceRange1">
                         <label class="form-check-label" for="priceRange1">Below ₹2,000</label>
@@ -128,7 +138,10 @@
                         <input class="form-check-input" type="radio" name="priceRange" value="10000-0" id="priceRange5">
                         <label class="form-check-label" for="priceRange5">₹10000 above</label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Apply Filter</button>
+                  
+                    
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Apply Filter</button>
+                    <button type="button" class="btn btn-primary w-100 mt-2" id="ClearFilterButton">Clear Filter</button>
                 </form>
             </div>
         </div>
@@ -136,7 +149,7 @@
         <!-- Display original products -->
         <% productData.forEach((data) => { %>
             <div class="col maindiv justify-content-around flex-wrap col-lg-3 imgviv" style="display: flex;" data-brand="<%= data.brand %>"
-                data-category="<%= data.category %>" data-price="<%= data.price %>">
+                data-category="<%= data.category %>" data-price="<%= data.price %>"  data-sort="<%=data.sort %>">
                 <div class="custom-card-container ms-5 mt-5">
                     <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
                     <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
@@ -175,48 +188,84 @@
     </div>
 </div>
 <script>
-  window.addEventListener('load', (event) => {
-    const allProductItems = document.querySelectorAll('.imgviv');
-    const productFilters = document.getElementById('productFilters');
-    const currentPage=1
-    productFilters.addEventListener('submit', function (event) {
+    window.addEventListener('load', (event) => {
+        const allProductItems = document.querySelectorAll('.imgviv');
+        const productFilters = document.getElementById('productFilters');
+        const clearFilterButton=document.getElementById('ClearFilterButton')
+
+        productFilters.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const brandFilter = document.getElementById('brandSelect').value;
+            const categoryFilter = document.getElementById('sizeSelect').value;
+            console.log(categoryFilter, "size filter");
+            const checkedPriceRange = document.querySelector('input[name="priceRange"]:checked');
+            const priceRangeFilter = checkedPriceRange ? checkedPriceRange.value : 'ALL';
+
+            const queryString = `brand=${brandFilter}&size=${categoryFilter}&priceRange=${priceRangeFilter}`;
+
+            fetch(`/user/filterProducts?${queryString}`)
+                .then(response => response.json())
+                .then(products => {
+                    console.log("Filtered Products:", products);
+
+                    allProductItems.forEach(item => {
+                        const dataBrand = item.getAttribute('data-brand');
+                        const dataSize = item.getAttribute('data-category');
+                        console.log(dataSize, "size");
+                        const dataPrice = item.getAttribute('data-price');
+
+                        const isVisible = (brandFilter === 'ALL' || dataBrand === brandFilter) &&
+                            (categoryFilter === 'ALL' || dataSize === categoryFilter) &&
+                            (priceRangeFilter === 'ALL' || checkPriceRange(dataPrice, priceRangeFilter));
+
+                        item.style.display = isVisible ? 'flex' : 'none';
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        });
+
+        clearFilterButton.addEventListener('click', function (event) {
         event.preventDefault();
 
-        const brandFilter = document.getElementById('brandSelect').value;
-        const categoryFilter = document.getElementById('sizeSelect').value;
-        const checkedPriceRange = document.querySelector('input[name="priceRange"]:checked');
-        const priceRangeFilter = checkedPriceRange ? checkedPriceRange.value : 'ALL';
-
-        const queryString = `brand=${brandFilter}&size=${categoryFilter}&priceRange=${priceRangeFilter}&page=${currentPage}`;
-
-        fetch(`/user/filterProducts?${queryString}`)
-            .then(response => response.json())
-            .then(products => {
-                console.log("Filtered Products:", products);
-
-                allProductItems.forEach(item => {
-                    const dataBrand = item.getAttribute('data-brand');
-                    const dataSize = item.getAttribute('data-category'); 
-                    console.log(dataSize,"size");
-                    const dataPrice = item.getAttribute('data-price');
-
-                    const isVisible = (brandFilter === 'ALL' || dataBrand === brandFilter) &&
-                        (categoryFilter === 'ALL' || dataSize === categoryFilter) &&
-                        (priceRangeFilter === 'ALL' || checkPriceRange(dataPrice, priceRangeFilter));
-
-                    item.style.display = isVisible ? 'flex' : 'none';
-                });
-            })
-            .catch(error => console.error('Error fetching products:', error));
+       window.location.reload()
     });
-});
+    });
 
-// Function to check if the price is within the specified range
-function checkPriceRange(price, range) {
-    const [min, max] = range.split('-').map(Number);
-    return price >= min && (price < max || max === 0);
-}
+   
+
+    function checkPriceRange(price, range) {
+        const [min, max] = range.split('-').map(Number);
+        return price >= min && (price < max || max === 0);
+    }
 
 </script>
 
+<script>
+    // Add an event listener for select change
+    document.getElementById('sortSelect').addEventListener('change', function () {
+        const sortOption = this.value;
+        const queryString = `sort=${sortOption}`;
+
+        // Redirect to the new URL with the sorting criteria
+        window.location.href = `/user-viewallProduct?${queryString}`;
+    });
+</script>
+
+<script>
+    document.getElementById('pagination-navbar').addEventListener('click', function (event) {
+    event.preventDefault();
+
+    const nextPageLink = event.target.closest('a');
+    if (nextPageLink) {
+        const nextPageUrl = nextPageLink.getAttribute('href');
+
+        const currentSortingCriteria = window.location.search.match(/sort=([^&]*)/);
+        const sortingQueryString = currentSortingCriteria ? `&${currentSortingCriteria[0]}` : '';
+
+        window.location.href = `${nextPageUrl}${sortingQueryString}`;
+    }
+});
+
+</script>
 <%- include('../partials/userPartials/user-footer') %>

@@ -4,11 +4,15 @@ const productUpload = require('../model/productSchema')
 const users = require('../model/userSchema')
 const helpers = require('../controller/helpers')
 const order = require('../model/orderSchema');
+const orders=require('../model/orderSchema')
 const product = require('../model/productSchema');
+const Razorpay=require('../service/Razorpay')
 const path = require('path')
 const fs = require('fs')
-const { generateInvoice } = require('../service/easyinvoice')
-
+const crypto=require('crypto')
+const { generateInvoice } = require('../service/easyinvoice');
+const { default: mongoose } = require('mongoose');
+require('dotenv').config()
 
 
 
@@ -18,7 +22,7 @@ const orderConfirmation = async (req, res) => {
 
 }
 
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res,next) => {
     try {
         const user = await users.findOne({ email: req.session.email })
         const userId = user._id
@@ -54,6 +58,7 @@ const placeOrder = async (req, res) => {
             userId,
             items,
             paymentMethod,
+            paymentStatus:"pending",
             address: {
                 name: selectedAddress.name,
                 address: selectedAddress.address,
@@ -86,7 +91,7 @@ const placeOrder = async (req, res) => {
             }
 
         }
-        console.log("minusdd");
+        // console.log("minusdd");
         if (paymentMethod == "COD") {
             console.log("payment is cod");
             res.json({
@@ -94,22 +99,67 @@ const placeOrder = async (req, res) => {
                 message: "order Success"
             })
 
+        }else if(paymentMethod=="Online"){
+            console.log("payment is online");
+            const order = {
+                amount: totalAmount * 100, 
+                currency: 'INR', 
+                receipt: saveOrder._id,
+                payment_capture: 1, 
+            }
+            await Razorpay.createOrder(order)
+            .then((createdOrder)=>{
+                res.json({online:true,createdOrder})
+            })
+            .catch((err)=>{
+                console.log(err,"error happend in razorpay");
+            })
         }
 
     } catch (err) {
         console.error(err)
+        next(err)
     }
 }
 
 
+const verifyPayment=async(req,res,next)=>{
+
+    try{
+        const{order,payment}=req.body
+        let hmac=crypto.createHmac('sha256',process.env.KEY_SECRET)
+        hmac.update(req.body.payment.razorpay_order_id+"|"+req.body.payment.razorpay_payment_id)
+        hmac=hmac.digest('hex')
+        if(hmac===req.body.payment.razorpay_signature){
+           const orderId=new mongoose.Types.ObjectId(order['createdOrder']['receipt'])
+        
+        const updateOrder=await orders.findByIdAndUpdate(orderId,{
+            paymentMethod:"Online",
+            paymentStatus:"Paid"
+
+        })
+        res.json({success:true})
+    }else{
+
+         res.json({ success: false, message: "Payment verification failed" });    }
+    }catch(err){
+        console.log(err);
+        next(err)
+    }
+}
+
 const toOrderlisting = async (req, res) => {
     try {
+        const page=parseInt(req.query.page)||1
+        const count=await product.find().count()
+        const pagesize=5 
+        const totaldata=Math.ceil(count/pagesize)
+        const skip=(page-1)*pagesize
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
         const userData = await users.findOne({ email: req.session.email })
         const userId = userData._id
-        const orderDetails = await order.find({ userId }).populate('items.productId').sort({ orderDate: -1 })
-
-        res.render('./user/orderlisting', { cartcount, orderDetails })
+        const orderDetails = await order.find({ userId }).populate('items.productId').sort({ orderDate: -1 }).skip(skip).limit(pagesize)
+        res.render('./user/orderlisting', { cartcount, orderDetails,page,count:totaldata })
     } catch (error) {
         console.error(error)
     }
@@ -130,14 +180,26 @@ const orderDetails = async (req, res) => {
     }
 }
 
-const usercancelOrder = async (req, res) => {
+const usercancelOrder = async (req, res,next) => {
     try {
         const id = req.params.orderId
         const orderData = await order.findById(id)
-
+        console.log(orderData);
         if (orderData.status !== 'Order Delivered') {
             orderData.status = 'Cancelled'
-
+            if(orderData.paymentMethod==='Online'){
+                const userData=await users.findOne({email:req.session.email})
+                console.log(userData,"4444444444444444444");
+                userData.wallet.balanceAmount+=orderData.totalPrice
+                userData.wallet.transactions.push({
+                    amount:orderData.totalPrice,
+                    transactionType:'credit',
+                    timestamp:new Date(),
+                    description:'Order cancellation refund'
+                })
+                console.log("amount creditt to wallelt");
+                await userData.save()
+            }
             await orderData.save()
             for (const item of orderData.items) {
                 if (item.productId) {
@@ -157,7 +219,7 @@ const usercancelOrder = async (req, res) => {
             res.json({ success: false, message: "Cannot cancell the Delivered Order" })
         }
     } catch (err) {
-        console.error(err)
+       next(err)
     }
 }
 
@@ -185,14 +247,11 @@ const cancelOneOrder = async (req, res) => {
         }
 
         const cancelledItem = orderData.items.find(item => item._id.toString() === itemid);
-        console.log(cancelledItem, "cancelled item");
         if (cancelledItem.status === 'rejected') {
             const adjustamount = cancelledItem.price * cancelledItem.quantity
             const taxtotalAmount = (Math.round(adjustamount * 18 / 100))
-            console.log(taxtotalAmount, "tottla tax amount");
-            console.log(adjustamount, "calicutated amount");
+           
             const updatedTotalPrice = (orderData.totalPrice - (adjustamount + taxtotalAmount))
-            console.log(updatedTotalPrice, "updatedtotal amount");
             await order.findByIdAndUpdate(
                 orderId,
                 { $set: { totalPrice: updatedTotalPrice } },
@@ -260,5 +319,6 @@ module.exports = {
     usercancelOrder,
     cancelOneOrder,
     downloadInvoice,
-    generateInvoices
+    generateInvoices,
+    verifyPayment
 }

@@ -11,6 +11,7 @@ const{v4:uuidv4}=require('uuid')
 const morgan=require("morgan")
 const nocache=require('nocache')
 const flash=require('connect-flash')
+const { ErrorHandler }=require('./middleWares/errorhandling')
 const PORT=process.env.PORT
 connectDB
 
@@ -51,6 +52,7 @@ app.use('/*',(req,res)=>{
     res.render('./user/404')
 })
 
+app.use(ErrorHandler)
 
 app.listen(PORT, () => {
     console.log(`server start running at http://localhost:${PORT}`)

@@ -41,7 +41,6 @@ router.get('/user-viewallProducthome',userController.viewallProducthome)
 router.get('/user-categoryList/:categoryId',userAuth.verifyUser,userController.categoryList)
 router.get('/user/filterProducts',userAuth.verifyUser,userController.filterProducts)
 router.get('/user/searchProducts',userController.searchProduct)
-
 //route for userprofile
 
 router.get('/user-profile',userAuth.verifyUser,userController.touserProfile)
@@ -52,7 +51,7 @@ router.post('/user-editAddress/:id',userController.editAddress)
 router.post('/user-deleteAddress/:id',userController.deleteAddress)
 router.post('/user-profileImage',upload.single('profileimage'),userController.editprofileImage)
 router.post('/user-changePassword',userController.changePassword)
-
+router.get('/user-wallet',userAuth.verifyUser,userController.toWallet)
 
 //routes for cart
 router.get('/user-addtoCart',userAuth.verifyUser,cartController.getaddtoCart)
@@ -67,13 +66,14 @@ router.post('/user-Newaddress',userController.addnewAddress)
 //router for order
 router.get('/user-Orderconfirmation',userAuth.verifyUser,orderController.orderConfirmation)
 router.post('/user-placeOrder',userAuth.verifyUser,orderController.placeOrder)
+router.post('/verify-Payment',userAuth.verifyUser,orderController.verifyPayment)
 router.get('/user-orders',userAuth.verifyUser,orderController.toOrderlisting)
 router.get('/user-orderDetails/:id',userAuth.verifyUser,orderController.orderDetails)
 router.patch('/user-cancelOrder/:orderId',orderController.usercancelOrder)
 router.patch('/cancelOne-order',orderController.cancelOneOrder)
 router.post('/downloadinvoice',userAuth.verifyUser,orderController.generateInvoices)
 router.get('/downloadinvoice/:orderId',userAuth.verifyUser,orderController.downloadInvoice)
-
+ 
 
 
 //error page

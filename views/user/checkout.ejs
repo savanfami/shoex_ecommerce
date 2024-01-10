@@ -136,7 +136,7 @@
                                                     <input  class="form-check-input" type="radio"
                                                     name="Address" id="flexRadioDefault" required
                                                     value="<%=data._id %>" />
-                                                <label class="form-check-label" for="flexRadioDefault">
+                                                <label class="form-check-label" for="flexRadioDefault1">
                                                     Address No: <strong><%=++i%></strong><br /><br>
                                                         
                                                         <small class="text-muted" >
@@ -197,19 +197,27 @@
                                                     </small><br>
                                                     <small class="text-muted">Type: Hand to hand</small>
                                                 </label>
-                                                <!-- <div class="p-3">
-                                                    <input  class="form-check-input" type="radio"
-                                                        name="payment" id="flexRadioDefault3"
-                                                        
-                                                        value= Online  />
-                                                <label class="form-check-label" for="flexRadioDefault3">
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="form-check h-100 border rounded-3">
+                                            <div class="p-3">
+                                                <input  class="form-check-input" type="radio"
+                                                    name="payment" id="flexRadioDefault4" required
+                                                    
+                                                    value= Online />
+                                                    
+                                                <label class="form-check-label" for="flexRadioDefault4">
                                                     <strong>
-                                                     Online Payment
+                                                    Online
                                                     </strong> <br />
-                                                    <small class="text-muted">Payment: 
+                                                    <small class="text-muted">Payment: Razorpay
                                                     </small><br>
-                                                    <small class="text-muted">Type: Hand to hand</small>
-                                                </label> -->
+                                                    <small class="text-muted">Type: Online Payment</small>
+                                                </label>
+                                            
                                             </div>
                                         </div>
                                     </div>
@@ -388,6 +396,8 @@
         });
     }
     </script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
    <script>
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -420,12 +430,72 @@
             const result = await response.json();
       if (result.codSuccess) {
         window.location = '/user-Orderconfirmation';
+      }else if(result.online){
+        console.log("online payment");
+        razorpayPayment(result)
       }
         } catch (error) {
            
             console.error('Error during fetch:', error);
         }
     });
+    function razorpayPayment(order){
+      var options = {
+    "key": "rzp_test_IHHPfyYcwpvmzU", // Enter the Key ID generated from the Dashboard
+    "amount": order.createdOrder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Shoex ", //your business name
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id":order.createdOrder.id , //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+        console.log(order,response,"22222222222222222222222d............");
+        verifyPayment(response,order)
+    },
+    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+        "name": "Gaurav Kumar", //your customer's name
+        "email": "gaurav.kumar@example.com", 
+        "contact": "9000090000"  //Provide the customer's phone number for better conversion rates 
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+  };
+  var rzp1 = new Razorpay(options);
+  rzp1.open();
+    }
+
+    function verifyPayment(payment,order){
+      const data={
+        order,payment
+      }
+      fetch('/verify-Payment',{
+        method:"POST",
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(data)
+
+      }).then(response=>response.json())
+      .then(data=>{
+        if(data.success){
+          window.location = '/user-Orderconfirmation';
+
+        }else{
+          window.location = '';
+
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+    });
+    }
 </script>
 
 

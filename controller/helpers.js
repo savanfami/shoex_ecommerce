@@ -10,6 +10,9 @@ const getCartCount = async (req, res, userId) => {
 
         let count = 0
         const userData = await user.findOne({ email: userId })
+        if(!userData){
+            return count
+        }
         const cartData = await cart.findOne({ userId: new ObjectId(userData._id) })
         if (cartData) {
             count = cartData.products.length
@@ -17,8 +20,7 @@ const getCartCount = async (req, res, userId) => {
         }
 
     } catch (err) {
-        console.error(err)
-    }
+console.log(err);    }
 }
 
 const totalAmount = async (user) => {
@@ -67,7 +69,8 @@ const cartProductData = async (user) => {
     const cartData = await cart.aggregate([
         {
             $match: { userId: new ObjectId(user) }
-        }, {
+        },
+        {
             $unwind: '$products'
         },
         {
@@ -78,8 +81,7 @@ const cartProductData = async (user) => {
             }
         },
         {
-            $lookup:
-            {
+            $lookup: {
                 from: 'products',
                 localField: 'item',
                 foreignField: '_id',
@@ -93,11 +95,16 @@ const cartProductData = async (user) => {
                 size: 1,
                 product: { $arrayElemAt: ['$cartItems', 0] }
             }
+        },
+        {
+            $match: {
+                'product.status': true
+            }
         }
+    ]);
+    return cartData;
+};
 
-    ])
-    return cartData
-}
 
 
 const priceofEachitem = async (user) => {

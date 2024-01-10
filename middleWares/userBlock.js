@@ -2,7 +2,6 @@ const user = require('../model/userSchema');
 
 const checkBlock = async (req, res, next) => {
     try {
-        console.log("djasofhi...............................");
         const check = await user.findOne({ email: req.session.email });
 
         if (check && check.status == false) {

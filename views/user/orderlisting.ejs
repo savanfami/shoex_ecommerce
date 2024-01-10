@@ -4,24 +4,25 @@
     <div class="container py-5 h-100" style="font-family: 'Times New Roman', Times, serif;">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col">
+         
           <% if (orderDetails.length> 0) { %>
             <% orderDetails.forEach((x)=> { %>
               <div class="card card-stepper p-4 shadow" style="border-radius: 10px;">
                 <div class="card-body p-4">
                   <div class="row">
-                    <% const allItemsRejected = orderDetails[0].items.every(item => item.status === 'rejected'); %>
+                    <% const allItemsRejected = x.items.every(item => item.status === 'rejected'); %>
                     <div class="col-md-4">
                       <span class="lead fw-normal" ><strong>   <p class=" mb-0"><b>Order Status :  <span class="
                         <% if (allItemsRejected) { %> text-danger 
-                          <% } else if (orderDetails[0].status === 'Pending') { %> text-warning 
-                          <% } else if (orderDetails[0].status === 'Processing') { %> text-info 
-                          <% } else if (orderDetails[0].status === 'Order Placed') { %> text-primary 
-                          <% } else if (orderDetails[0].status === 'Shipped') { %> text-secondary 
-                          <% } else if (orderDetails[0].status === 'Order Delivered') { %> text-success 
-                          <% } else if (orderDetails[0].status === 'Returned') { %> text-warning 
-                          <% } else if (orderDetails[0].status === 'Cancelled') { %> text-danger 
+                          <% } else if (x.status === 'Pending') { %> text-warning 
+                          <% } else if (x.status === 'Processing') { %> text-info 
+                          <% } else if (x.status === 'Order Placed') { %> text-primary 
+                          <% } else if (x.status === 'Shipped') { %> text-secondary 
+                          <% } else if (x.status === 'Order Delivered') { %> text-success 
+                          <% } else if (x.status === 'Returned') { %> text-warning 
+                          <% } else if (x.status === 'Cancelled') { %> text-danger 
                           <% } %>">
-                          <% if (allItemsRejected) { %>Cancelled<% } else { %> <%= orderDetails[0].status %> <% } %>
+                          <% if (allItemsRejected) { %>Cancelled<% } else { %> <%= x.status %> <% } %>
                   
               </span> </b></p></strong> </span>
                       <br>
@@ -58,7 +59,7 @@
                   <% if(x.status=="Return"){ %>
                   <h3>Order Returned</h3>
                     <% }else{ %>
-                      <% const allItemsRejected = orderDetails[0].items.every(item => item.status === 'rejected'); %>
+                      <% const allItemsRejected = x.items.every(item => item.status === 'rejected'); %> %>
                       <% if (allItemsRejected) { %>
                        
                       
@@ -163,7 +164,25 @@
               </div>
 
               <br>
+            
               <% }); %>
+              <nav aria-label="Page navigation example"  class="d-flex justify-content-end mt-3" id="pagination-navbar">
+                <ul class="pagination">
+                    <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= page <= 1 ? '#' : '/user-orders?page=' + (page - 1) %>" style="color: black;" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="/user-orders?page=<%= page %>" style="color: black"><%= page %></a>
+                    </li>
+                    <li class="page-item <%= page >= count ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= page >= count ? '#' : '/user-orders?page=' + (page + 1) %>" style="color: black;" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
                 <% } else { %>
                     <div class="card mb-4">
                         <!-- Image Container -->
