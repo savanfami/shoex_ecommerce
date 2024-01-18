@@ -1,6 +1,24 @@
 <%-include('../partials/userPartials/user-nav') %>
 <link rel="stylesheet" href="/css/orders.css">
 <section style="background-color: #fff;">
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reason for Cancellation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="cancellationReason" class="form-control" rows="3" placeholder="Enter your reason for cancellation"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitCancellationReason()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class="container py-5 h-100" style="font-family: 'Times New Roman', Times, serif;">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col">
@@ -142,7 +160,7 @@
                                     <% if (allItemsRejected) { %>
                                         <p class="text-danger fw-bold" style="font-size: 20px;font-family:Georgia, 'Times New Roman', Times, serif" > </p>
                                     <% } else { %>
-                                        <button class="btn btn-danger" onclick="cancelOrder('<%= x._id %>')">Cancel Order</button>
+                                        <button class="btn btn-danger" onclick="openCancelOrderModal('<%= x._id %>')">Cancel Order</button>
                                     <% } %>
                                   <% } %>
                               </div>
@@ -207,12 +225,33 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+<!-- Bootstrap JavaScript and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
 
 <script>
+  let orderIdForCancellation;
 
+  function openCancelOrderModal(orderId) {
+    orderIdForCancellation = orderId;
+    $('#cancellationReason').val(''); // Clear the textarea on each open
+    $('#cancelOrderModal').modal('show');
+  }
 
-function cancelOrder(orderId) {
-  Swal.fire({
+  function submitCancellationReason() {
+    const cancellationReason = $('#cancellationReason').val();
+    if (cancellationReason.trim() !== '') {
+      $('#cancelOrderModal').modal('hide');
+      showCancelConfirmation(orderIdForCancellation, cancellationReason);
+    } else {
+      // Show an error message or handle it as needed
+      alert('Please enter a reason for cancellation.');
+    }
+  }
+
+  function showCancelConfirmation(orderId, cancellationReason) {
+    Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
       icon: 'warning',
@@ -220,13 +259,14 @@ function cancelOrder(orderId) {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, cancel it!'
-  }).then((result) => {
+    }).then((result) => {
       if (result.isConfirmed) {
-          fetch(`/user-cancelOrder/${orderId}`, {
+        fetch(`/user-cancelOrder/${orderId}`, {
               method: 'PATCH',
               headers: {
                   'Content-Type': 'application/json'
               },
+              body: JSON.stringify({ cancellationReason })
           })
               .then(response => {
                   if (!response.ok) {
@@ -255,9 +295,26 @@ function cancelOrder(orderId) {
                       icon: 'error'
                   });
               });
+        // Proceed with cancellation logic, passing the orderId and cancellationReason
+        cancelOrder(orderId, cancellationReason);
       }
-  });
-}
+    });
+  }
+
+  function cancelOrder(orderId, cancellationReason) {
+    // Here, you can handle the cancellation logic
+    // Use the orderId and cancellationReason as needed
+    // This function is called after the user confirms the cancellation
+    // Example:
+    console.log('Cancel Order:', orderId);
+    console.log('Cancellation Reason:', cancellationReason);
+    
+    // Add your fetch logic or other operations here
+    // ...
+
+    // Reload the page or update the UI as needed
+    window.location.reload();
+  }
 </script>
 
 <script>

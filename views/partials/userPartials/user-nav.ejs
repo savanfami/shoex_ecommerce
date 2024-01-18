@@ -1,4 +1,5 @@
 <%-include("../userPartials/header")%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <nav class="newnavbar navbar navbar-expand-lg bg-black sticky-top navbar-dark p-3 shadow-sm navbar-color ">
   <div class="container-fluid">
@@ -17,7 +18,7 @@
     <div class=" collapse navbar-collapse" id="navbarNavDropdown">
       
       <div class="ms-auto d-none d-lg-block">
-        <form action="/user/searchProducts">
+        <form action="/user/searchProducts" onsubmit="return validateSearchForm()">
         <div class="input-group">
           <span class="border-dark input-group-text bg-dark text-white search-icon">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -59,7 +60,7 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link mx-2 text-uppercase" href="#"><i class=" fas fa-heart me-1 text-white"></i></a>
+          <a class="nav-link mx-2 text-uppercase" href="/user-wishlist"><i class=" fas fa-heart me-1 text-white"></i></a>
         </li>
         <li class="nav-item">
           <a class="nav-link mx-2 text-uppercase" href="/user-addtoCart">
@@ -80,7 +81,24 @@
     </div>
   </div>
 </nav>
+<script>
+function validateSearchForm() {
+  const searchQuery = document.getElementById('navbarSearchInput').value.trim();
 
+  if (searchQuery === '') {
+    // Use SweetAlert for a nicer notification
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Search field cannot be empty',
+    });
+    return false; // Stop form submission if the query is empty
+  }
+
+  // If the query is not empty, you can proceed with the form submission
+  return true;
+}
+  </script>
 <!-- <script>
   function performNavbarSearch() {
     const searchQuery = document.getElementById('navbarSearchInput').value;

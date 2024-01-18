@@ -54,6 +54,7 @@ const placeOrder = async (req, res,next) => {
             }
             items.push(item)
         }
+        
         const newOrder = new order({
             userId,
             items,
@@ -114,6 +115,24 @@ const placeOrder = async (req, res,next) => {
             .catch((err)=>{
                 console.log(err,"error happend in razorpay");
             })
+        }else if(paymentMethod==='Wallet'){
+            console.log("payment method is wallet");
+            const totalPrice=totalAmount
+            user.wallet.balanceAmount-=totalPrice
+            user.wallet.transactions.push({
+                amount:totalPrice,
+                description:'Order Payment',
+                transactionType:'debit',
+                timestamp:new Date()
+            })
+            user.save()
+            newOrder.paymentStatus='Paid',
+            newOrder.paymentMethod='Wallet'
+            await newOrder.save()
+            console.log("wallet payment success");
+            res.json({walletSuccess:true,message:"Order Success"})
+            
+
         }
 
     } catch (err) {
@@ -184,12 +203,12 @@ const usercancelOrder = async (req, res,next) => {
     try {
         const id = req.params.orderId
         const orderData = await order.findById(id)
-        console.log(orderData);
         if (orderData.status !== 'Order Delivered') {
-            orderData.status = 'Cancelled'
-            if(orderData.paymentMethod==='Online'){
+            orderData.status = 'Cancelled',
+            orderData.reason=req.body.cancellationReason
+            if(orderData.paymentMethod==='Online'||orderData.paymentMethod==='Wallet'){
                 const userData=await users.findOne({email:req.session.email})
-                console.log(userData,"4444444444444444444");
+               
                 userData.wallet.balanceAmount+=orderData.totalPrice
                 userData.wallet.transactions.push({
                     amount:orderData.totalPrice,
@@ -197,7 +216,6 @@ const usercancelOrder = async (req, res,next) => {
                     timestamp:new Date(),
                     description:'Order cancellation refund'
                 })
-                console.log("amount creditt to wallelt");
                 await userData.save()
             }
             await orderData.save()
@@ -242,12 +260,30 @@ const cancelOneOrder = async (req, res) => {
         }
 
         const orderData = await order.findById(orderId);
+        const userData=await users.findOne({email:req.session.email})
+        console.log(userData);
+        console.log(orderData,"orderDDDDDDDddddd");
+        if(orderData)
         if (!orderData) {
             return res.json({ message: "Order not found" });
         }
 
         const cancelledItem = orderData.items.find(item => item._id.toString() === itemid);
+        const fullamt = cancelledItem.price * cancelledItem.quantity
+        console.log(fullamt,"toatal amount qunat");
+        const gst=(Math.round(fullamt*18)/100)
+        const gstPrice=fullamt+gst
         if (cancelledItem.status === 'rejected') {
+            if(orderData.paymentStatus==='Paid'||orderData.paymentMethod==='Wallet'){
+                userData.wallet.balanceAmount+=gstPrice
+                userData.wallet.transactions.push({ 
+                    amount:gstPrice,
+                    transactionType:'credit',
+                    timestamp:new Date(),
+                    description:'Order cancellation refund'
+                })
+                await userData.save()
+            }
             const adjustamount = cancelledItem.price * cancelledItem.quantity
             const taxtotalAmount = (Math.round(adjustamount * 18 / 100))
            

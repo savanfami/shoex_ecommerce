@@ -221,6 +221,29 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="form-check h-100 border rounded-3">
+                                            <div class="p-3">
+                                                <input  class="form-check-input" type="radio"
+                                                    name="payment" id="flexRadioDefault5" required
+                                                    
+                                                    value= Wallet />
+                                                    
+                                                <label class="form-check-label" for="flexRadioDefault5" data-wallet-amount="<%=userWallet%>" id="<%=totalPrice%>">
+                                                    <strong>
+                                                    Wallet
+                                                    </strong> <br />
+                                                    <small class="text-muted">Payment: Razorpay
+                                                    </small><br>
+                                                    <small class="text-muted">Type: Online Payment</small>
+                                                    <br>
+                                                    <small class="mb-2" style="font-weight:500;">Balance:</small>
+                                      <small class="mb-2 text-success" style="font-weight: bold;">₹<%=userWallet%></small>
+                                                </label>
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
 
                       
                                    
@@ -288,16 +311,14 @@
                                       <p class="mb-2">Discount:</p>
                                       <p class="mb-2 text-success">-₹0.00</p>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                      <p class="mb-2">GST:</p>
-                                      <p class="mb-2">₹
-                                      </p>
-                                    </div>
+                                  
                                     <div class="d-flex justify-content-between">
                                       <p class="mb-2">Payment Type:</p>
                                       <p class="mb-2" id="selectedPaymentMethod">Not Selected
                                       </p>
                                     </div>
+                                 
+                            
                                     <hr />
                                     <div class="d-flex justify-content-between">
                                       <p class="mb-2">Total price:</p>
@@ -396,6 +417,7 @@
         });
     }
     </script>
+
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
    <script>
@@ -406,7 +428,23 @@
         console.log(selectedAddressValue,"selectedaddress");
         const paymentMethod = document.querySelector('input[name="payment"]:checked');
         const selectedPaymentvalue = paymentMethod ? paymentMethod.value : null;
+        console.log(selectedPaymentvalue,"selectedpaymnent value");
+        if(selectedPaymentvalue==="Wallet"){
+          const labelElement = document.querySelector('label[for="flexRadioDefault5"]');
 
+          const walletAmountValue = parseInt(labelElement.getAttribute('data-wallet-amount'));
+        const totalAmount = parseInt(labelElement.getAttribute('id'));
+   
+        if(walletAmountValue < totalAmount){
+          console.log("inside if");
+          Swal.fire({
+            icon: "error",
+            title: "Insufficient Wallet Balance",
+            // text: "Your wallet balance is not sufficient for this transaction.",
+        });
+        return;
+        }
+        }
         // if (!selectedAddress || !selectedPaymentvalue) {
         //     Swal.fire({
         //         icon: 'error',
@@ -433,6 +471,9 @@
       }else if(result.online){
         console.log("online payment");
         razorpayPayment(result)
+      }else if(result.walletSuccess){
+        console.log("Wallet payment");
+        window.location='/user-Orderconfirmation'
       }
         } catch (error) {
            

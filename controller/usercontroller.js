@@ -6,9 +6,10 @@ const category = require('../model/categorySchema')
 const generateOTP = require('../util/otpgenerator')
 const sendMail = require('../util/mail')
 const product = require('../model/productSchema')
-const { error } = require('console')
+const { error, timeStamp } = require('console')
 const helpers = require('../controller/helpers')
-
+const mongoose = require('mongoose');
+const wishlists=require('../model/wishlistSchema')
 //get for user home not logged in
 const home = async (req, res, next) => {
     try {
@@ -96,9 +97,8 @@ const otpSender = async (req, res) => {
         if (req.session.signOtp || req.session.forgot) {
             try {
                 const email = req.session.email
-                // console.log(email);
                 const otpsending = await sendOTP(email)
-                // console.log("session before verifiying otp");
+              
 
                 res.status(200).redirect('/user/toOtp')
             } catch (err) {
@@ -129,6 +129,38 @@ const resendOtp = async (req, res) => {
 
 
 const otpConformation = async (req, res) => {
+    if(req.session.forgot){
+        console.log(req.body,"forgeotttt");
+    try{
+        const email=req.session.email
+        console.log(email,"enmaiiiiiiiiiii");
+        const data =req.session.data;
+        console.log(req.session.data,"dataaaaaaaaaaaaaaa");
+        const Otp= await OTP.findOne({email:data.email})
+        console.log(Otp.expireAt);
+        if (Date.now() > Otp.expireAt) {
+            await OTP.deleteOne({ email });
+        } else {
+            const hashedOtp = Otp.otp
+            const userEnteredOtp = req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
+            const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
+            req.session.email = data.email;
+            if (compareOtp) {
+               req.session.forgot=false
+               const message = req.flash('success')
+
+               res.render('./user/resetPassword',{message})
+            }
+            else {
+                req.session.err = "Invalid OTP"
+                console.log("erro 1");
+                res.render("./user/otp", { err: "invalid OTP" })
+            }
+        }
+    }catch(err){
+        console.error(err)
+    }
+    }else if(req.session.signOtp){
     try {
         const data = req.session.data;
         const Otp = await OTP.findOne({ email: data.email })
@@ -140,7 +172,6 @@ const otpConformation = async (req, res) => {
             const userEnteredOtp = req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
             const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
             req.session.email = data.email;
-            // console.log(req.session.email)
             if (compareOtp) {
                 const newUser = await user.create([data])
                 req.session.userlogged = true;
@@ -159,54 +190,77 @@ const otpConformation = async (req, res) => {
         // res.render("./user/otp")
     }
 }
+}
 
 
 
 
-//to forgot password
+// to forgot password
 
-// const toForgotPassword = (req, res) => {
-//     req.session.forgot = true
-//     res.render('./user/forgetPassword')
-// }
+const toForgotPassword = (req, res) => {
+    req.session.forgot = true
+    res.render('./user/forgetPassword')
+}
 
 
 //post for forgot password
 
-// const forgotPass = async (req, res) => {
-//     try {
-//         console.log(req.body);
-//         const check = await user.findOne({ email: req.body.email })
-//         req.session.email = check.email
+const forgotPass = async (req, res) => {
+    try {
+        console.log(req.body);
+        const check = await user.findOne({ email: req.body.email })
+       
+        req.session.email = check.email
 
-//         if (check) {
-//             console.log("good to go:", check);
-//             const userdata = {
-//                 email: check.email,
-//                 userName: check.userName,
-//                 _id: check._id,
-//             }
-//             const email = req.body.email
-//             console.log("Email::: ", email);
-//             req.session.userdata = userdata;
-//             req.session.email = email
-//             console.log("Sessiosiiii: ", req.session.email)
-//             res.redirect("/user/otp-senting")
-//         }
-//         else {
-//             console.log(check);
-//             req.session.err = "no email found"
-//             res.redirect("/user/forget-pass");
-//         }
-//     } catch (err) {
-//         console.log(err);
-//         req.session.err = "no email found"
-//         res.redirect("/user/forget-pass")
-//     }
+        if (check) {
+         
+            const userdata = {
+                email: check.email,
+                userName: check.username,
+                _id: check._id,
+            }
+            const email = req.body.email
+        
+            req.session.data = userdata;
+            req.session.email = email
+         
+            res.redirect("/user/otpSending")
+        }
+        else {
+            console.log(check);
+            req.session.err = "no email found"
+            res.redirect("/user/forget-pass");
+        }
+    } catch (err) {
+        console.log(err);
+        req.session.err = "no email found"
+        res.redirect("/user/forget-pass")
+    }
 
-// }
+}
 
+//post for resetPassword
 
+const resetPassword=async(req,res,next)=>{
+    try{
+        const password1=req.body.password
+        const confirmPassword=req.body.confirmPassword
+        if(password1===confirmPassword){
+            const password=await bcrypt.hash(req.body.password,10)
+            const email=req.session.email
+            const updatePassword=await user.updateOne({email:email},{$set:{password:password}})
+            res.redirect('/tologin')
+        }else{
+            req.flash("password do not match")
+           res.redirect('/user/toOtp')
+        }
+
+      
+    }catch(err){
+        console.error(err)
+        next(err)
+    }
+}
 
 
 // post for userlogin
@@ -341,12 +395,36 @@ const viewallProducthome = async (req, res, next) => {
 
 const categoryList = async (req, res) => {
     try {
+        const ITEMS_PER_PAGE = 7; 
+        const page=parseInt(req.query.page)||1
+      
         const categoryId = req.params.categoryId
+      
+        const sort=req.query.sort
+     
+        const sortOptions = {
+            'lowToHigh': { price: 1 },
+            'highToLow': { price: -1 },
+        };
+
+        const sortCriteria = sortOptions[sort] || {};
+       
+        
+
+        
+ 
         const categoryData = await category.findById(categoryId)
+        const productbrand = await product.distinct('brand')
+      
+        const productCategory = await product.distinct('category')
         const categoryname = categoryData.name
+        const productDataCount=await product.find({ category: categoryname }).count()
+        const totalPages = Math.ceil(productDataCount/ITEMS_PER_PAGE);
+        const skip=(page-1)*ITEMS_PER_PAGE
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
-        const productDatass = await product.find({ category: categoryname })
-        res.render('./user/viewallcategoryproduct', { productDatass, cartcount })
+        const productDatass = await product.find({ category: categoryname }).sort(sortCriteria).skip(skip).limit(ITEMS_PER_PAGE)
+       
+        res.render('./user/viewallcategoryproduct', { productDatass, cartcount,productCategory,productbrand,categoryId,page,count:totalPages,sortOptions })
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -630,7 +708,6 @@ const changePassword = async (req, res) => {
         const email = req.session.email
 
         const check = await user.findOne({ email })
-        console.log("userrrr", check);
 
         if (check) {
             const checkPassword = await bcrypt.compare(req.body.oldPassword, check.password)
@@ -654,9 +731,9 @@ const changePassword = async (req, res) => {
 const toWallet=async(req,res,next)=>{
     try{
         const userData=await user.findOne({email:req.session.email})
+        
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
 
-        console.log(userData,"userrr");
         res.render('./user/wallet',{userData,cartcount})
 
     }catch(err){
@@ -665,6 +742,85 @@ const toWallet=async(req,res,next)=>{
     }
 }
 
+const towishList=async(req,res,next)=>{
+    try{
+        const cartcount = await helpers.getCartCount(req, res, req.session.email)
+        const userData=await user.findOne({email:req.session.email})
+        const userId=userData._id
+        const productDatas=await wishlists.find({userId}).populate('products.productId')
+       
+        res.render('./user/wishlist',{cartcount,productDatas})
+    }catch(err){
+        console.error(err)
+        next(err)
+    }
+}
+
+//post for wishlist 
+
+const wishlist = async (req, res) => {
+    try {
+        const productId = req.query.productId;
+        const userData = await user.findOne({ email: req.session.email });
+        const userId = userData._id;
+        let wishlistData = await wishlists.findOne({ userId });
+
+        if (!wishlistData) {
+          
+            wishlistData = await wishlists.create({
+                userId,
+                products: [{ productId: productId }]
+            });
+            res.json({ success: true, message: "created wishlist" });
+        } else {
+           
+            const isProductInWishlist = wishlistData.products.some(product => product.productId.toString() === productId);
+
+            if (isProductInWishlist) {
+                res.json({ success: false, message: "Product is already in the wishlist" });
+               
+            } else {
+             
+                wishlistData.products.push({
+                    productId: productId
+                });
+                await wishlistData.save();
+                res.json({ success: true, message: "updated wishlist" });
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
+
+
+const removeproduct=async(req,res)=>{
+
+    try{
+        const userData=await user.findOne({email:req.session.email})
+        const userId=userData._id
+   
+        const productIds=req.params.orderId
+
+        
+        const wishlistData = await wishlists.findOneAndUpdate(
+            { userId },
+            {
+              $pull: {
+                products: { productId:productIds }
+              }
+            },
+            { new: true }
+          );
+        
+
+        res.json({success:true,message:"deleted successfully"})
+           
+    }catch(err){
+        console.log(err);
+    }
+}
 module.exports = {
     home,
     tologin,
@@ -693,8 +849,11 @@ module.exports = {
     categoryList,
     filterProducts,
     searchProduct,
-    toWallet
-
-    // toForgotPassword,
-    // forgotPass,
+    toWallet,
+    toForgotPassword,
+    forgotPass,
+    resetPassword,
+    towishList,
+    wishlist,
+    removeproduct
 }

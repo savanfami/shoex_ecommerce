@@ -30,8 +30,9 @@ router.get('/user/resendOtp',userAuth.existingUser,userController.otpSender)
 
 //router for forget Password
 
-// router.get('/user/forgetPassword',userController.toForgotPassword)
-
+router.get('/user/forgetPassword',userAuth.existingUser,userController.toForgotPassword)
+router.post('/user/forgetPassword',userAuth.existingUser,userController.forgotPass)
+router.post('/user/resetPassword',userAuth.existingUser,userController.resetPassword)
 //router for product details
 
 router.get('/user-productDetails/:id',userAuth.verifyUser,userController.getProductDetails)
@@ -53,6 +54,10 @@ router.post('/user-profileImage',upload.single('profileimage'),userController.ed
 router.post('/user-changePassword',userController.changePassword)
 router.get('/user-wallet',userAuth.verifyUser,userController.toWallet)
 
+//routes for wishlist
+router.get('/user-wishlist',userAuth.verifyUser,userController.towishList)
+router.post('/user-addToWishlist',userAuth.verifyUser,userController.wishlist)
+router.delete('/user-removewishlist/:orderId',userAuth.verifyUser,userController.removeproduct)
 //routes for cart
 router.get('/user-addtoCart',userAuth.verifyUser,cartController.getaddtoCart)
 router.post('/user-addtoCart',userAuth.verifyUser,cartController.addtoCart)

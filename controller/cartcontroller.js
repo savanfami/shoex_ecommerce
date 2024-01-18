@@ -161,9 +161,12 @@ const changeQuantity = async (req, res) => {
     }
 }
 
-const checkout = async (req, res) => {
+const checkout = async (req, res,next) => {
+    try{
     const user = await users.findOne({ email: req.session.email });
     const userId = user._id;
+    const userWallet=user.wallet.balanceAmount
+    console.log(userWallet,"userwallet");
     var i = 0
     const cartcount = await helpers.getCartCount(req, res, req.session.email)
     const cartProductData = await helpers.cartProductData(userId)
@@ -181,8 +184,11 @@ const checkout = async (req, res) => {
 
     req.session.totalAmount = totalPrice
     const message = req.flash('success')
-    res.render('./user/checkout', { cartcount, totalPrice, user, i, message, cartProductData })
-
+    res.render('./user/checkout', { cartcount, totalPrice, user, i, message, cartProductData,userWallet })
+}catch(err){
+    console.log(err)
+    next(err)
+}
 }
 
 

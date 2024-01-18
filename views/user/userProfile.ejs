@@ -1,4 +1,11 @@
 <%-include('../partials/userPartials/user-nav')%>
+<!-- Include Cropper.js -->
+<!-- Normalize CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- Cropper CSS -->
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/cropper/2.3.4/cropper.min.css'>
+<!-- Cropper JS -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/cropperjs/0.8.1/cropper.min.js'></script>
   <link rel="stylesheet" href="/css/userProfile.css">
 
   <div class="container ">
@@ -29,9 +36,9 @@
                     <%}%>
                       <div class="d-flex justify-content-center mt-3">
                         <label for="imageInput" class="btn btn-primary btn-rounded">
-                          choose File
+                          Choose File
                           <input type="file" id="imageInput" name="profileimage" accept="image/*" style="display: none;"
-                            onchange="uploadprofiepic(event)">
+                            onchange="initCropper(event)">
                         </label>
                       </div>
                       <div class="mt-3">
@@ -88,6 +95,7 @@
 
                 </div>
               </div>
+              
               <hr>
               <div class="row">
                 <div class="col-sm-3">
@@ -180,6 +188,7 @@
           background-color: #f8f9fa;
           color: red;
         }
+       
       </style>
       <div class="card col-md-4 mb-5">
         <div class="card-body p-0">
@@ -219,17 +228,65 @@
       </div>
     </div>
   </div>
+
+  <!-- ... (previous code) ... -->
+
+<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-large">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-center w-100" >
+          <img id="cropperImage" class="imagecropper" src="" alt="Croppable Image" >
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveCroppedImage()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ... (remaining code) ... -->
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script>
-
-    function uploadprofiepic(event) {
+    let cropper;
+  
+    function initCropper(event) {
       const fileInput = event.target;
       if (fileInput.files && fileInput.files[0]) {
-
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $('#cropperImage').attr('src', e.target.result);
+          $('#cropperModal').modal('show');
+          cropper = new Cropper(document.getElementById('cropperImage'), {
+            aspectRatio: 1,
+            viewMode: 1,
+          });
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+  
+    function saveCroppedImage() {
+      const canvas = cropper.getCroppedCanvas();
+      const croppedBlob = new Promise(resolve => {
+        canvas.toBlob(blob => {
+          resolve(blob);
+        });
+      });
+  
+      croppedBlob.then(blob => {
         const formData = new FormData();
-        formData.append('profileimage', fileInput.files[0]);
+        formData.append('profileimage', blob);
+  
         fetch('/user-profileImage', {
           method: 'POST',
           body: formData,
@@ -242,8 +299,12 @@
               console.error("Upload failed");
             }
           })
-          .catch(err => console.error('Error uploading files', err));
-      }
+          .catch(err => console.error('Error uploading files', err))
+          .finally(() => {
+            $('#cropperModal').modal('hide');
+            cropper.destroy();
+          });
+      });
     }
 
     function changePassword() {
@@ -310,7 +371,6 @@
           });
       }
     }
-
 
   </script>
 

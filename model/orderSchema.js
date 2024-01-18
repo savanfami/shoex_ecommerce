@@ -8,7 +8,8 @@ const orderSchema=new mongoose.Schema({
     userId:{type:mongoose.Schema.ObjectId, ref:'user'},
     items:[{
         status:{type:String,
-        default:"Ordered"
+        default:"Ordered",
+        reason: { type: String }
     },
     price:{type:Number},
     productId:{type:mongoose.Schema.ObjectId, ref:'product'},
@@ -29,6 +30,7 @@ const orderSchema=new mongoose.Schema({
     orderDate:{type:Date},
     arrivingDate:{type:Date},
     paymentId:{type:Number},
+    reason: { type: String,default:"Not Cancelled" }
     
 })
 

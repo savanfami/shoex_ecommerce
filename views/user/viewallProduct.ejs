@@ -149,9 +149,10 @@
         <!-- Display original products -->
         <% productData.forEach((data) => { %>
             <div class="col maindiv justify-content-around flex-wrap col-lg-3 imgviv" style="display: flex;" data-brand="<%= data.brand %>"
-                data-category="<%= data.category %>" data-price="<%= data.price %>"  data-sort="<%=data.sort %>">
+                data-category="<%= data.category %>" data-price="<%= data.price %>"  data-sort="<%=data.sort %>" data-product-id="<%=data._id%>" >
                 <div class="custom-card-container ms-5 mt-5">
-                    <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+                    <button class="custom-icon-heart"  style="border: none; background: none; padding: 0; font: inherit; cursor: pointer;"> <i class="fa-regular fa-heart" style="font-size: 25px;"></i></button>
+
                     <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
                     <a href="/user-productDetails/<%- data._id %>">
                         <img class="card-img-top" src="/productImages/<%= data.images[0] %>" alt="Card image cap"
@@ -162,7 +163,7 @@
                     <a href="/user/product/details/">
                         <p><%= data.name %></p>
                     </a>
-                    <p class="custom-p">₹ <%= data.price %> | 5.0 <i class="fa-solid fa-star" style="color: #F5D426;"></i></p>
+                    <p class="custom-p">₹ <%= data.price %> </i></p>
                 </div>
             </div>
         <% }) %>
@@ -267,5 +268,45 @@
     }
 });
 
+</script>
+
+<script>
+    window.addEventListener('load', (event) => {
+    const allProductItems = document.querySelectorAll('.imgviv');
+  
+
+    
+    allProductItems.forEach(item => {
+        const heartIcon = item.querySelector('.custom-icon-heart');
+        heartIcon.addEventListener('click', function (event) {
+            event.preventDefault();
+
+         
+            const productId = item.getAttribute('data-product-id');
+
+            
+            addToWishlist(productId);
+        });
+    });
+
+    function addToWishlist(productId){
+        fetch(`/user-addToWishlist?productId=${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+
+    })
+    .then(response => response.json())
+    .then(result => {
+        window.location.reload()
+        console.log('Product added to wishlist:', result);
+       
+    })
+    .catch(error => console.error('Error adding product to wishlist:', error));
+    }
+
+    // ... rest of your existing code ...
+});
 </script>
 <%- include('../partials/userPartials/user-footer') %>
