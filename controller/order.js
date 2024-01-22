@@ -92,7 +92,7 @@ const placeOrder = async (req, res,next) => {
             }
 
         }
-        // console.log("minusdd");
+        
         if (paymentMethod == "COD") {
             console.log("payment is cod");
             res.json({
@@ -191,7 +191,10 @@ const orderDetails = async (req, res) => {
         const orderId = req.params.id
         const orderData = await order.find({ _id: orderId }).populate('items.productId')
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
-
+        console.log(orderData);
+        orderData[0].items.map((item, itemIndex) => {
+            console.log(`  Item ${itemIndex + 1}:`, item);
+          });
         res.render('./user/orderDetails', { orderData, userData, cartcount })
 
     } catch (error) {
@@ -245,6 +248,7 @@ const usercancelOrder = async (req, res,next) => {
 const cancelOneOrder = async (req, res) => {
     try {
         const { orderId, itemId } = req.body;
+   
         const itemid = itemId.trim();
 
 
@@ -254,6 +258,7 @@ const cancelOneOrder = async (req, res) => {
             { $set: { 'items.$.status': 'rejected' } }
         );
 
+  
 
         if (result.nModified === 0) {
             return res.json({ message: "Order item not found or already canceled" });
@@ -261,8 +266,7 @@ const cancelOneOrder = async (req, res) => {
 
         const orderData = await order.findById(orderId);
         const userData=await users.findOne({email:req.session.email})
-        console.log(userData);
-        console.log(orderData,"orderDDDDDDDddddd");
+   
         if(orderData)
         if (!orderData) {
             return res.json({ message: "Order not found" });
@@ -270,7 +274,6 @@ const cancelOneOrder = async (req, res) => {
 
         const cancelledItem = orderData.items.find(item => item._id.toString() === itemid);
         const fullamt = cancelledItem.price * cancelledItem.quantity
-        console.log(fullamt,"toatal amount qunat");
         const gst=(Math.round(fullamt*18)/100)
         const gstPrice=fullamt+gst
         if (cancelledItem.status === 'rejected') {
@@ -344,7 +347,27 @@ const downloadInvoice = async (req, res) => {
 }
 
 
+const returnOrder=async(req,res)=>{
+    try{
 
+        const { itemId, orderId,returnReason } = req.body;
+   
+        const itemid=itemId.trim()
+        const update = await order.updateOne(
+            { _id: orderId, 'items._id': itemid },
+            { $set: { 'items.$.status': 'return requested','items.$.Returnreason':returnReason } }
+        );
+        if(update){
+            console.log("updted successfully",update);
+            res.json({success:true,message:"return requested successfully"})
+        }else{
+            res.json({success:false,message:"failed to return order"})
+        }
+    
+    }catch(err){
+        console.error(err)
+    }
+}
 
 
 module.exports = {
@@ -356,5 +379,6 @@ module.exports = {
     cancelOneOrder,
     downloadInvoice,
     generateInvoices,
-    verifyPayment
+    verifyPayment,
+    returnOrder
 }

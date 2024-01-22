@@ -78,8 +78,7 @@ router.patch('/user-cancelOrder/:orderId',orderController.usercancelOrder)
 router.patch('/cancelOne-order',orderController.cancelOneOrder)
 router.post('/downloadinvoice',userAuth.verifyUser,orderController.generateInvoices)
 router.get('/downloadinvoice/:orderId',userAuth.verifyUser,orderController.downloadInvoice)
- 
-
+router.patch('/return-Order',userAuth.verifyUser,orderController.returnOrder)
 
 //error page
 

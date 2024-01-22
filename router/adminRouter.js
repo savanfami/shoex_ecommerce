@@ -61,4 +61,9 @@ router.delete('/delete-image/:id/:index',adminAuth.verifyAdmin,adminController.d
 router.get('/manageOrders',adminAuth.verifyAdmin,adminController.tomanageOrders)
 router.get('/order-Details/:id',adminAuth.verifyAdmin,adminController.orderDetails)
 router.put('/change-Orderstatus/:orderId',adminController.changeorderStatus)
+router.get('/returned-Orders',adminAuth.verifyAdmin,adminController.toreturnOrders)
+router.patch('/update-ReturnStatus/:orderId',adminAuth.verifyAdmin,adminController.updateReturnStatus)
+router.get('/return-accepted',adminAuth.verifyAdmin,adminController.toreturnaccepted)
+router.get('/return-rejected',adminAuth.verifyAdmin,adminController.toreturnrejecred)
+
 module.exports=router

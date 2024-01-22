@@ -1,4 +1,9 @@
 <%-include('../partials/userPartials/user-nav') %>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <body>
 
@@ -37,10 +42,16 @@
                     <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                       <p class=" mb-0 small">Price: <%= x.productId.price %></p>
                     </div>
-                    <% if(x.status=="return"){%>
-                      <h5 style="color: brown;">Product Return</h5>
-                    <% }else if(orderData[0].status=="Order Delivered" ){ %>
-                      
+                    <% if(x.status=="return requested"){%>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <p  style="color: red;">Return Requested</p>
+
+                      </div>
+                    <% }else if(orderData[0].status=="Order Delivered" &&(x.status=="Ordered") ){ %>
+                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                        <button class="btn small btn-warning" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .80rem;"
+                            id="returnOrder" onclick="openreturnOrdermodal('<%= x._id %>','<%= orderData[0]._id %>')" data-item-id="<%= x._id %>" data-order-id="<%= orderData[0]._id %>">Return Order</button>
+                    </div>
                       <% }else{%>
                     <% if (orderData[0].status==="Cancelled") { %>
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
@@ -48,14 +59,14 @@
                     </div>
                     <% }else{%>
 
-                      <% if (x.status !== "rejected") { %>
+                      <% if (x.status == "Ordered") { %>
                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                             <button class="btn small btn-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .80rem;"
                                 id="cancelOrderBtn" data-item-id="<%= x._id %>" data-order-id="<%= orderData[0]._id %>">Cancel Order</button>
                         </div>
                     <% } else { %>
                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                            <p class="text-danger" style="font-family:'Times New Roman', Times, serif;font-size: 15px;font-weight: bold;">Order Cancelled</p>
+                            <p class="text-danger" style="font-family:'Times New Roman', Times, serif;font-size: 15px;font-weight: bold;"><%=x.status %></p>
                         </div>
                     <% } %>
 
@@ -89,19 +100,11 @@
               </div>
               
   
-              <!-- <div class="d-flex justify-content-between pt-2">
-                <p class="fw-bold mb-0">Order Details</p>
-                <p class="text-muted mb-0"><span class="fw-bold me-4">Total</span> $898.00</p>
-              </div>
-  
-              <div class="d-flex justify-content-between pt-2">
-                <p class="text-muted mb-0">Invoice Number : 788152</p>
-                
-              </div>-->
+            
               <div style="font-family: 'Times New Roman', Times, serif;">
               <div class="d-flex justify-content-between" >
                 <p class=" mb-0">Order ID : <%=orderData[0]._id%></p>
-                <!-- <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p> -->
+            
               </div> 
               
               <% const allItemsRejected = orderData[0].items.every(item => item.status === 'rejected'); %>
@@ -164,28 +167,19 @@
     </div>
   </section>
 <!-- Add this to your HTML file before the closing body tag -->
-<div class="modal fade" id="returnOrderModal" tabindex="-1" role="dialog" aria-labelledby="returnOrderModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="returnOrderModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="returnOrderModalLabel">Return Order</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title" id="exampleModalLabel">Reason for OrderReturn</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="returnReason">Reason:</label>
-          <input type="text" class="form-control" id="returnReason" placeholder="Enter reason" required>
-        </div>
-        <div class="form-group">
-          <label for="returnDescription">Description:</label>
-          <textarea class="form-control" id="returnDescription" placeholder="Enter description" required></textarea>
-        </div>
+        <textarea id="returnReason" class="form-control" rows="3" placeholder="Enter your reason for return"></textarea>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="confirmReturnBtn">Confirm Return</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitReturnReason()">Submit</button>
       </div>
     </div>
   </div>
@@ -196,8 +190,74 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
+
+  let itemIdForReturn  
+  let orderIdForReturn  
+
+
+  function openreturnOrdermodal(itemId,orderId){
+    itemIdForReturn=itemId
+    orderIdForReturn=orderId
+    $('#returnReason').val(''); // Clear the textarea on each open
+    $('#returnOrderModal').modal('show');
+  }
+  function submitReturnReason() {
+    const returnReason = $('#returnReason').val();
+    if (returnReason.trim() !== '') {
+      $('#returnOrderModal').modal('hide');
+      showreturnReason(itemIdForReturn,orderIdForReturn,returnReason);
+    } else {
+      // Show an error message or handle it as needed
+      alert('Please enter a reason for cancellation.');
+    }
+  }
+
+  function showreturnReason(itemId,orderId,returnReason){
+
+
+  // const returnOrderButton=document.querySelectorAll('#returnOrder')
+
+// returnOrderButton.forEach((button)=>{
+//   button.addEventListener('click',()=>{
+//     const orderId=button.getAttribute('data-order-id')
+//     const itemId=button.getAttribute('data-item-id')
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        fetch('/return-Order',{
+          method:"PATCH",
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({itemId,orderId,returnReason})
+
+        }).then(response=>response.json())
+        .then((data)=>{
+          if(data.success){
+            window.location.reload()
+            console.log("successfull");
+          }else{
+            console.log("failed");
+          }
+        })
+
+      }})
+//   })
+// })
+}
+</script>
+<script>
   document.addEventListener('DOMContentLoaded', function () {
     const cancelOrderButton = document.querySelectorAll('#cancelOrderBtn');
+   
 
     cancelOrderButton.forEach((button) => {
       button.addEventListener('click', () => {

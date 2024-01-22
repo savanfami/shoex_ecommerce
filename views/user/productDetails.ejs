@@ -1,4 +1,71 @@
 <%-include('../partials/userPartials/user-nav')%>
+<!-- Include jQuery Migrate first -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.4.1.js"></script>
+
+<!-- Then, include jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Finally, include ElevateZoom -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+<style>
+  .zoomContainer {
+      overflow: hidden;
+      position: relative;
+  }
+
+  .zoomLens {
+      border: 2px solid #aaa;
+      cursor: crosshair;
+  }
+
+  .zoomWindow {
+      background: #fff;
+      border: 0px solid #aaa;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var thumbnailImages = document.querySelectorAll('.thumbnail-image-container img');
+      var selectedImage = document.getElementById('selected-image');
+
+      thumbnailImages.forEach(function (thumbnail) {
+          thumbnail.addEventListener('click', function () {
+              var newImageSrc = thumbnail.getAttribute('src');
+              selectedImage.setAttribute('src', newImageSrc);
+             
+              initializeImageZoom();
+          });
+      });
+
+      initializeImageZoom();
+  });
+
+  function initializeImageZoom() {
+      $('#selected-image').elevateZoom({
+          zoomType: "inner",
+          cursor: "crosshair",
+          responsive: true,
+          borderSize: 0,
+          easing: true,
+          gallery: 'multi-item-example',
+          galleryActiveClass: 'active',
+          lensBorderSize: 1,
+          lensShape: 'round',
+          containLensZoom: true,
+      
+      });
+  }
+</script>
+
+<script>
+
+</script>
   <link href="/css/productDetails.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
@@ -12,7 +79,7 @@
             <aside class="col-lg-6">
 
               <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image">
+                <a  class="rounded-4" target="_blank" >
                   <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit "
                     id="selected-image" src="/productImages/<%= productData.images[0] %>">
                 </a>

@@ -8,6 +8,8 @@ const users = require('../model/userSchema')
 const fs = require('fs')
 const path = require('path');
 const { ObjectId } = require("mongodb");
+const helpers = require('../controller/helpers')
+
 
 
 
@@ -344,7 +346,7 @@ const deleteimage = async (req, res) => {
 const tomanageOrders = async (req, res) => {
     try {
         var i = 0
-        const orderDatas = await order.find().populate({path:'userId', select:'username'}).populate({path:'items.productId'}).sort({ orderDate: -1 });
+        const orderDatas = await order.find().populate({ path: 'userId', select: 'username' }).populate({ path: 'items.productId' }).sort({ orderDate: -1 });
         res.render('./admin/orderlisting', { orderDatas, i, user })
 
     } catch (error) {
@@ -353,34 +355,137 @@ const tomanageOrders = async (req, res) => {
 }
 
 
-const orderDetails=async(req,res)=>{
-    try{
-        const id=req.params.id
-        const orderData=await order.find({_id:id}).populate('items.productId')   
-        res.render('./admin/orderDetails',{orderData})
+const orderDetails = async (req, res) => {
+    try {
+        const id = req.params.id
 
-    }catch(error){
+
+        const orderData = await order.find({ _id: id }).populate('items.productId')
+
+        res.render('./admin/orderDetails', { orderData })
+
+    } catch (error) {
         console.error(error)
     }
 }
 
-const changeorderStatus=async(req,res)=>{
-    try{
-        const newStatus=req.body.status
-        const id=req.params.orderId
-        
-        const orderData=await order.findByIdAndUpdate(id,{status:newStatus})
-        if(orderData){
-            res.json({success:true})
-        }else{
-            res.json({success:false})
+const changeorderStatus = async (req, res) => {
+    try {
+        const newStatus = req.body.status
+        const id = req.params.orderId
+
+        const orderData = await order.findByIdAndUpdate(id, { status: newStatus })
+        if (orderData) {
+            res.json({ success: true })
+        } else {
+            res.json({ success: false })
         }
-    }catch(error){
+    } catch (error) {
         console.error(error)
     }
 
 }
 
+
+
+const toreturnOrders = async (req, res, next) => {
+    try {
+        var i = 0
+        const orderDatas = await helpers.productData()
+        res.render('./admin/returnOrders', { orderDatas, i, user })
+    } catch (err) {
+        console.error(err)
+        next(err)
+    }
+
+}
+
+
+const updateReturnStatus = async (req, res, next) => {
+
+    try {
+
+        const orderId = req.params.orderId
+        const itemId = req.body.itemId
+        const orderData = await order.findById({ _id: orderId })
+        const orderDetails = orderData.items.find(item => item._id.toString() === itemId);
+        const productData=await product.findById({_id:orderDetails.productId})
+        const taxrate = 18
+        const  totalAmount=orderDetails.price*orderDetails.quantity
+        const taxPrice = Math.round((totalAmount * taxrate) / 100);
+        const totalPrice = taxPrice + totalAmount
+  
+        const userId = req.body.userId
+        let status = req.body.action
+        if (status == 'accept') {
+
+            const userData = await user.findById({ _id: userId })
+            userData.wallet.balanceAmount += totalPrice
+            userData.wallet.transactions.push({
+                amount: totalPrice,
+                transactionType: 'credit',
+                timestamp: new Date(),
+                description: 'Product Return refund'
+            })
+            await userData.save()
+            const update = await order.updateOne(
+                { _id: orderId, 'items._id': itemId },
+                { $set: { 'items.$.status': 'return Accepted' } }
+
+            );
+
+
+       
+            const size = orderData.items.find(item => item._id.toString() === itemId).size;
+            const quantity = orderData.items.find(item => item._id.toString() === itemId).quantity;
+            const productId = orderData.items.find(item => item._id.toString() === itemId).productId;
+    
+            await product.findOneAndUpdate(
+                { _id: productId, 'variant.size': size },
+                { $inc: { 'variant.$.quantity': quantity } }
+            );
+      
+         
+        
+            res.json({ success: true, message: "return accepted successfully" })
+        } else if (status = 'reject') {
+            const update = await order.updateOne(
+                { _id: orderId, 'items._id': itemId },
+                { $set: { 'items.$.status': 'return rejected' } }
+
+            );
+            res.json({ success: true, message: 'Return rejected successfully.' });
+        } else {
+            res.status(400).json({ success: false, message: 'Invalid action parameter.' });
+        }
+
+    } catch (err) {
+        console.error(err)
+        next(err)
+    }
+}
+
+const toreturnaccepted = async (req, res) => {
+    try {
+        var i = 0
+        const orderDatas = await helpers.returnData()
+        res.render('./admin/returnaccepted', { orderDatas, i })
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+
+const toreturnrejecred = async (req, res) => {
+    try {
+        var i = 0
+        const orderDatas = await helpers.rejectedData()
+        res.render('./admin/returnrejected', { orderDatas, i })
+
+    } catch (err) {
+        console.error(err)
+    }
+}
 module.exports = {
     toadminLogin,
     usermanagement,
@@ -400,5 +505,9 @@ module.exports = {
     toDashboard,
     tomanageOrders,
     orderDetails,
-    changeorderStatus
+    changeorderStatus,
+    toreturnOrders,
+    updateReturnStatus,
+    toreturnaccepted,
+    toreturnrejecred
 }

@@ -195,6 +195,218 @@ const orderDataforInvoice = async (orderId) => {
     return orderData;
 }
 
+
+
+const productData = async () => {
+    const productData = await order.aggregate([
+        {
+          $match: {
+            'items.status': 'return requested',
+          },
+        },
+        {
+          $unwind: '$items',
+        },
+        {
+          $match: {
+            'items.status': 'return requested',
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'items.productId',
+            foreignField: '_id',
+            as: 'productDetails',
+          },
+        },
+        {
+          $unwind: '$productDetails',
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: '$userDetails',
+        },
+        {
+          $project: {
+            orderId: '$_id',
+            orderStatus: '$status',
+            username: '$userDetails.username',
+            userId:'$userId',
+            productDetails: {
+              _id: '$items._id',
+              name: '$productDetails.name',
+              image:'$productDetails.images',
+              price: '$items.price',
+              size: '$items.size',
+              quantity: '$items.quantity',
+              status: '$items.status',
+              Returnreason: '$items.Returnreason',
+            },
+            address: '$address',
+            paymentMethod: '$paymentMethod',
+            paymentStatus: '$paymentStatus',
+            totalPrice: '$totalPrice',
+            orderDate: '$orderDate',
+            arrivingDate: '$arrivingDate',
+            reason: '$reason',
+            
+          },
+        },
+      ]);
+    
+        return productData      
+      
+  };
+
+
+  const returnData = async () => {
+    const returnData = await order.aggregate([
+        {
+          $match: {
+            'items.status': 'return Accepted',
+          },
+        },
+        {
+          $unwind: '$items',
+        },
+        {
+          $match: {
+            'items.status': 'return Accepted',
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'items.productId',
+            foreignField: '_id',
+            as: 'productDetails',
+          },
+        },
+        {
+          $unwind: '$productDetails',
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: '$userDetails',
+        },
+        {
+          $project: {
+            orderId: '$_id',
+            orderStatus: '$status',
+            username: '$userDetails.username',
+            userId:'$userId',
+            productDetails: {
+              _id: '$items._id',
+              name: '$productDetails.name',
+              image:'$productDetails.images',
+              price: '$items.price',
+              size: '$items.size',
+              quantity: '$items.quantity',
+              status: '$items.status',
+              Returnreason: '$items.Returnreason',
+            },
+            address: '$address',
+            paymentMethod: '$paymentMethod',
+            paymentStatus: '$paymentStatus',
+            totalPrice: '$totalPrice',
+            orderDate: '$orderDate',
+            arrivingDate: '$arrivingDate',
+            reason: '$reason',
+            
+          },
+        },
+      ]);
+ 
+        return returnData      
+      
+  };
+
+
+  const rejectedData = async () => {
+    const rejectedData = await order.aggregate([
+        {
+          $match: {
+            'items.status': 'return rejected',
+          },
+        },
+        {
+          $unwind: '$items',
+        },
+        {
+          $match: {
+            'items.status': 'return rejected',
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'items.productId',
+            foreignField: '_id',
+            as: 'productDetails',
+          },
+        },
+        {
+          $unwind: '$productDetails',
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userDetails',
+          },
+        },
+        {
+          $unwind: '$userDetails',
+        },
+        {
+          $project: {
+            orderId: '$_id',
+            orderStatus: '$status',
+            username: '$userDetails.username',
+            userId:'$userId',
+            productDetails: {
+              _id: '$items._id',
+              name: '$productDetails.name',
+              image:'$productDetails.images',
+              price: '$items.price',
+              size: '$items.size',
+              quantity: '$items.quantity',
+              status: '$items.status',
+              Returnreason: '$items.Returnreason',
+            },
+            address: '$address',
+            paymentMethod: '$paymentMethod',
+            paymentStatus: '$paymentStatus',
+            totalPrice: '$totalPrice',
+            orderDate: '$orderDate',
+            arrivingDate: '$arrivingDate',
+            reason: '$reason',
+            
+          },
+        },
+      ]);
+        console.log(rejectedData,"rejected datas");
+        return rejectedData      
+      
+  };
+
+
 module.exports = {
     orderDataforInvoice
 };
@@ -207,5 +419,9 @@ module.exports = {
     totalAmount,
     priceofEachitem,
     cartProductData,
-    orderDataforInvoice
+    orderDataforInvoice,
+    productData,
+    returnData,
+    rejectedData
+
 } 

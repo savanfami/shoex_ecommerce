@@ -130,22 +130,27 @@ const resendOtp = async (req, res) => {
 
 const otpConformation = async (req, res) => {
     if(req.session.forgot){
-        console.log(req.body,"forgeotttt");
+        // console.log(req.body);
     try{
         const email=req.session.email
-        console.log(email,"enmaiiiiiiiiiii");
+
         const data =req.session.data;
-        console.log(req.session.data,"dataaaaaaaaaaaaaaa");
+        // console.log(req.session.data,"dataaaaaaaaaaaaaaa");
         const Otp= await OTP.findOne({email:data.email})
+        console.log(Otp);
         console.log(Otp.expireAt);
         if (Date.now() > Otp.expireAt) {
             await OTP.deleteOne({ email });
         } else {
             const hashedOtp = Otp.otp
+            // console.log(hashedOtp,"hasdhed otp");
             const userEnteredOtp = req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
+            // console.log(userEnteredOtp,"user entered otp");
             const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
+            // console.log(compareOtp,"compaaaaaaaaaaaaaaaaaaaaaaaa");
             req.session.email = data.email;
             if (compareOtp) {
+                // console.log("11111111111111111");
                req.session.forgot=false
                const message = req.flash('success')
 
@@ -153,7 +158,8 @@ const otpConformation = async (req, res) => {
             }
             else {
                 req.session.err = "Invalid OTP"
-                console.log("erro 1");
+                // console.log("22222222222222222222222");
+                console.log("invalid otp");
                 res.render("./user/otp", { err: "invalid OTP" })
             }
         }
@@ -199,7 +205,8 @@ const otpConformation = async (req, res) => {
 
 const toForgotPassword = (req, res) => {
     req.session.forgot = true
-    res.render('./user/forgetPassword')
+    const message = req.flash('success')
+    res.render('./user/forgetPassword',{message})
 }
 
 
@@ -209,8 +216,7 @@ const forgotPass = async (req, res) => {
     try {
         console.log(req.body);
         const check = await user.findOne({ email: req.body.email })
-       
-        req.session.email = check.email
+        // req.session.email = check.email
 
         if (check) {
          
@@ -227,9 +233,8 @@ const forgotPass = async (req, res) => {
             res.redirect("/user/otpSending")
         }
         else {
-            console.log(check);
-            req.session.err = "no email found"
-            res.redirect("/user/forget-pass");
+           req.flash("success", "No user found with this email Address")
+            res.redirect("/user/forgetPassword");
         }
     } catch (err) {
         console.log(err);
@@ -251,8 +256,9 @@ const resetPassword=async(req,res,next)=>{
             const updatePassword=await user.updateOne({email:email},{$set:{password:password}})
             res.redirect('/tologin')
         }else{
-            req.flash("password do not match")
-           res.redirect('/user/toOtp')
+            console.log("else worked");
+           
+           res.render('./user/resetPassword',{message:"New Password and Confirm Password does not match"})
         }
 
       
