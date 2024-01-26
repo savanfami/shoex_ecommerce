@@ -114,7 +114,7 @@
          
 
           <strong>
-            <% if (order.status !== 'Cancelled' && order.items.every(item => item.status === 'rejected')) { %>
+            <% if (order.status !== 'Cancelled' && order.items.every(item => item.status === 'order cancelled')) { %>
               <p class="text-danger" style="font-weight: bold;">Cancelled </p>
             <% } else if (order.status === 'Order Placed') { %>
               <i class="fas fa-shopping-basket"></i> Order Placed
@@ -131,7 +131,7 @@
         </td>
         <td>
           <div class="dropdown">
-            <% if (order.status !== 'Cancelled' && order.items.every(item => item.status === 'rejected')) { %>
+            <% if (order.status !== 'Cancelled' && order.items.every(item => item.status === 'order cancelled')) { %>
               <p class="text-danger" style="font-weight: bold;">Cancelled by User</p>
             <% } else if (order.status !== 'Cancelled') { %>
               <button id="orderStatus" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" <% if (order.status === 'Order Delivered' || order.status === 'Order Completed') { %>disabled<% } %>>

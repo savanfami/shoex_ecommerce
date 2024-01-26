@@ -3,6 +3,8 @@ const cart = require('../model/cartSchema')
 const product = require('../model/productSchema')
 const users = require('../model/userSchema')
 const helpers = require('../controller/helpers')
+const coupons=require('../model/coupon')
+
 
 //post for addtocart
 const addtoCart = async (req, res) => {
@@ -79,7 +81,6 @@ const getaddtoCart = async (req, res) => {
         const userId = user._id;
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
         const cartProductData = await helpers.cartProductData(userId)
-        // console.log(cartProductData,"cartproductData");
 
         if (cartProductData.length > 0) {
             const total = await helpers.totalAmount(userId)
@@ -166,7 +167,7 @@ const checkout = async (req, res,next) => {
     const user = await users.findOne({ email: req.session.email });
     const userId = user._id;
     const userWallet=user.wallet.balanceAmount
-    console.log(userWallet,"userwallet");
+ 
     var i = 0
     const cartcount = await helpers.getCartCount(req, res, req.session.email)
     const cartProductData = await helpers.cartProductData(userId)
@@ -181,14 +182,73 @@ const checkout = async (req, res,next) => {
         console.error('Error calculating tax: Invalid or missing total data.');
         totalPrice = 0;
     }
-
-    req.session.totalAmount = totalPrice
+    const grandTotal=req.session.grandtotal
+    console.log(grandTotal,"grandtotal");
+    const discountedAmount=req.session.discountedAmount
+    console.log(discountedAmount,"discountedAmount");
+req.session.totalAmount = totalPrice
     const message = req.flash('success')
-    res.render('./user/checkout', { cartcount, totalPrice, user, i, message, cartProductData,userWallet })
+    res.render('./user/checkout', { cartcount, totalPrice, user, i, message, cartProductData,userWallet,grandTotal,discountedAmount})
 }catch(err){
     console.log(err)
     next(err)
 }
+}
+
+const useCoupon=async(req,res,next)=>{
+    try{
+       
+        const {couponCode}=req.body
+        const userData=await users.findOne({email:req.session.email})
+        const cartData=await cart.findOne({userId:userData._id})
+        const totalAmount=req.session.totalAmount
+        const coupon=await coupons.findOne({couponCode})
+        const currentDate=Date.now()
+        if(currentDate>coupon.endDate){
+            return  res.json({success:false,message:'coupon has expired'})
+        }
+        if(!coupon){
+            console.log('coupon not found');
+            return  res.json({success:false,message:'coupon not found'})
+        }
+
+        const isCouponused=userData.usedCoupons.some(usedCoupon=>usedCoupon.couponCode===couponCode)
+        if(isCouponused){
+            console.log("coupon already usedd]");
+            return  res.json({success:false,message:"coupon already used"})
+        }
+        else if (totalAmount < coupon.minPurchaseAmount) {
+            console.log('purrchase amount not ');
+            return res.json({ success: false, message: 'Purchase amount does not meet the minimum requirement for the coupon' });
+          }
+          if (totalAmount < coupon.discountAmount) {
+            console.log('Purchase Amount must Greater Than Discount amount');
+            return res.json({ success: false, message: 'Purchase Amount must Greater Than Discount amount' });
+          }
+
+        
+          const totalAfterDiscount=totalAmount-coupon.discountAmount
+          console.log(totalAfterDiscount,"total after discound");
+          const discountAmount=coupon.discountAmount
+          req.session.discountedAmount=coupon.discountAmount
+          console.log(req.session.discountedAmount,"discountedAmount");
+          req.session.grandtotal=totalAfterDiscount
+          userData.usedCoupons.push({
+            couponCode,
+            discountAmount:coupon.discountAmount,
+            usedDate:new Date()
+          })
+          await userData.save()
+          return res.json({
+            success: true,
+            message: 'Coupon applied successfully',
+            discountedAmount: coupon.discountAmount,
+            grandTotal:totalAfterDiscount
+          });
+    }catch(err){
+        console.error(err)
+        next(err)
+    }
 }
 
 
@@ -198,5 +258,6 @@ module.exports = {
     deletefromCart,
     checkout,
     changeQuantity,
+    useCoupon
 
 }

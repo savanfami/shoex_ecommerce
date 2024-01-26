@@ -10,6 +10,7 @@ const { error, timeStamp } = require('console')
 const helpers = require('../controller/helpers')
 const mongoose = require('mongoose');
 const wishlists=require('../model/wishlistSchema')
+const coupons=require('../model/coupon')
 //get for user home not logged in
 const home = async (req, res, next) => {
     try {
@@ -30,7 +31,9 @@ const tologin = (req, res) => {
 
 //get for user signup
 const toSignup = (req, res) => {
-    res.render('./user/usersignup', { message: false })
+    const referal = req.query.ref;
+    
+    res.render('./user/usersignup', { message: false,referal})
 }
 
 //get for userhomepage when logged in
@@ -54,14 +57,16 @@ const signup = async (req, res) => {
         const userExist = await user.findOne({ email: email })
 
         if (userExist) {
-            res.render('./user/usersignup', { message: 'email already exists' })
+            const referal = req.query.ref;
+            res.render('./user/usersignup', { message: 'email already exists',referal })
         } else {
 
             const hashedPassword = await bcrypt.hash(password, 10)
             const newUser = ({
                 username: name,
                 email: email,
-                password: hashedPassword
+                password: hashedPassword,
+                referal:req.body.referal
             })
 
             req.session.data = newUser
@@ -130,12 +135,10 @@ const resendOtp = async (req, res) => {
 
 const otpConformation = async (req, res) => {
     if(req.session.forgot){
-        // console.log(req.body);
     try{
         const email=req.session.email
 
         const data =req.session.data;
-        // console.log(req.session.data,"dataaaaaaaaaaaaaaa");
         const Otp= await OTP.findOne({email:data.email})
         console.log(Otp);
         console.log(Otp.expireAt);
@@ -143,14 +146,11 @@ const otpConformation = async (req, res) => {
             await OTP.deleteOne({ email });
         } else {
             const hashedOtp = Otp.otp
-            // console.log(hashedOtp,"hasdhed otp");
+           
             const userEnteredOtp = req.body.otp1 + req.body.otp2 + req.body.otp3 + req.body.otp4;
-            // console.log(userEnteredOtp,"user entered otp");
             const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
-            // console.log(compareOtp,"compaaaaaaaaaaaaaaaaaaaaaaaa");
             req.session.email = data.email;
             if (compareOtp) {
-                // console.log("11111111111111111");
                req.session.forgot=false
                const message = req.flash('success')
 
@@ -158,7 +158,6 @@ const otpConformation = async (req, res) => {
             }
             else {
                 req.session.err = "Invalid OTP"
-                // console.log("22222222222222222222222");
                 console.log("invalid otp");
                 res.render("./user/otp", { err: "invalid OTP" })
             }
@@ -170,7 +169,6 @@ const otpConformation = async (req, res) => {
     try {
         const data = req.session.data;
         const Otp = await OTP.findOne({ email: data.email })
-        // console.log(Otp.expireAt);
         if (Date.now() > Otp.expireAt) {
             await OTP.deleteOne({ email });
         } else {
@@ -179,9 +177,24 @@ const otpConformation = async (req, res) => {
             const compareOtp = await bcrypt.compare(userEnteredOtp, hashedOtp)
             req.session.email = data.email;
             if (compareOtp) {
+                
                 const newUser = await user.create([data])
+                const updatedUserData = await user.findByIdAndUpdate(
+                    data.referal,
+                    {
+                      $inc: { 'wallet.balanceAmount': 100 },
+                      $push: {
+                        'wallet.transactions': {
+                          amount: 100,
+                          transactionType: 'credit',
+                          timestamp: new Date(),
+                          description: `referal bonus for referring ${data.username}`,
+                        },
+                      },
+                    },
+                    { new: true } 
+                  );
                 req.session.userlogged = true;
-                // console.log(result);
                 req.session.signOtp = false
                 res.redirect("/user/home")
             }
@@ -736,11 +749,18 @@ const changePassword = async (req, res) => {
 
 const toWallet=async(req,res,next)=>{
     try{
+        const page=parseInt(req.query.page)||1
         const userData=await user.findOne({email:req.session.email})
-        
+        const count=userData.wallet.transactions.length
+        const pagesize=7
+        const totaldata=Math.ceil(count/pagesize)
+        const skip=(page-1)*pagesize
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
-
-        res.render('./user/wallet',{userData,cartcount})
+        const transactions = userData.wallet.transactions || [];
+        transactions.sort((a, b) => b.timestamp - a.timestamp);
+        const totalAmount=userData.wallet.balanceAmount
+        const paginatedTransactions = transactions.slice(skip, skip + pagesize)
+        res.render('./user/wallet',{userData: { wallet: { transactions: paginatedTransactions } },cartcount, count: totaldata, page: page,totalAmount})
 
     }catch(err){
         console.error(err)
@@ -754,7 +774,6 @@ const towishList=async(req,res,next)=>{
         const userData=await user.findOne({email:req.session.email})
         const userId=userData._id
         const productDatas=await wishlists.find({userId}).populate('products.productId')
-       
         res.render('./user/wishlist',{cartcount,productDatas})
     }catch(err){
         console.error(err)
@@ -827,6 +846,28 @@ const removeproduct=async(req,res)=>{
         console.log(err);
     }
 }
+
+
+
+
+
+
+//route for coupon
+
+const toCoupon=async(req,res,next)=>{
+    try{
+        const couponData=await coupons.find({couponType:"public"})
+        const cartcount = await helpers.getCartCount(req, res, req.session.email)
+
+        res.render('./user/coupon',{couponData,cartcount})
+    }catch(err){
+        console.error(err)
+            next(err)
+        }
+    }
+
+
+
 module.exports = {
     home,
     tologin,
@@ -861,5 +902,6 @@ module.exports = {
     resetPassword,
     towishList,
     wishlist,
-    removeproduct
+    removeproduct,
+    toCoupon
 }

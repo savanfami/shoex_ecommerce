@@ -29,10 +29,16 @@ const placeOrder = async (req, res,next) => {
         const selectedAddressId = req.body.address
 
         const paymentMethod = req.body.paymentMethod
+        const grandTotal=req.session.grandtotal
         const cartData = await cart.findOne({ userId })
 
         const products = await helpers.cartProductData(userId)
-        const totalAmount = req.session.totalAmount
+        let totalAmount=null
+        if(grandTotal==null){
+            totalAmount=req.session.totalAmount
+        }else{
+            totalAmount=grandTotal
+        }
         const selectedAddress = user.address.find((x) => x._id == selectedAddressId)
         if (!selectedAddress) {
             res.status(400).json({ success: false, message: "selected address not found" })
@@ -54,7 +60,7 @@ const placeOrder = async (req, res,next) => {
             }
             items.push(item)
         }
-        
+        console.log(totalAmount,"toootal amount");
         const newOrder = new order({
             userId,
             items,
@@ -73,10 +79,12 @@ const placeOrder = async (req, res,next) => {
             arrivingDate
         })
 
-        console.log("order saved");
+        console.log(newOrder,"order saved");
 
         const saveOrder = await newOrder.save()
 
+        req.session.discountedAmount = undefined;
+        req.session.grandtotal = undefined;
         if (saveOrder) {
             await cart.findOneAndDelete({ userId })
 
@@ -115,7 +123,7 @@ const placeOrder = async (req, res,next) => {
             .catch((err)=>{
                 console.log(err,"error happend in razorpay");
             })
-        }else if(paymentMethod==='Wallet'){
+        }else if(paymentMethod==='wallet'){
             console.log("payment method is wallet");
             const totalPrice=totalAmount
             user.wallet.balanceAmount-=totalPrice
@@ -128,12 +136,13 @@ const placeOrder = async (req, res,next) => {
             user.save()
             newOrder.paymentStatus='Paid',
             newOrder.paymentMethod='Wallet'
-            await newOrder.save()
+            await newOrder.save()   
             console.log("wallet payment success");
             res.json({walletSuccess:true,message:"Order Success"})
             
 
         }
+     
 
     } catch (err) {
         console.error(err)
@@ -191,10 +200,6 @@ const orderDetails = async (req, res) => {
         const orderId = req.params.id
         const orderData = await order.find({ _id: orderId }).populate('items.productId')
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
-        console.log(orderData);
-        orderData[0].items.map((item, itemIndex) => {
-            console.log(`  Item ${itemIndex + 1}:`, item);
-          });
         res.render('./user/orderDetails', { orderData, userData, cartcount })
 
     } catch (error) {
@@ -255,7 +260,7 @@ const cancelOneOrder = async (req, res) => {
 
         const result = await order.updateOne(
             { _id: orderId, 'items._id': itemid },
-            { $set: { 'items.$.status': 'rejected' } }
+            { $set: { 'items.$.status': 'order cancelled' } }
         );
 
   
@@ -276,7 +281,7 @@ const cancelOneOrder = async (req, res) => {
         const fullamt = cancelledItem.price * cancelledItem.quantity
         const gst=(Math.round(fullamt*18)/100)
         const gstPrice=fullamt+gst
-        if (cancelledItem.status === 'rejected') {
+        if (cancelledItem.status === 'order cancelled') {
             if(orderData.paymentStatus==='Paid'||orderData.paymentMethod==='Wallet'){
                 userData.wallet.balanceAmount+=gstPrice
                 userData.wallet.transactions.push({ 

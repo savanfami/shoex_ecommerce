@@ -1,6 +1,10 @@
 <%-include('../partials/userPartials/user-nav') %>
+<!-- 
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 
-
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/searchbuilder/1.6.0/js/dataTables.searchBuilder.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script> -->
 
 
 
@@ -57,6 +61,16 @@
         text-align: left;
         width: 33.33%; /* Equal width for each column */
     }
+    table#wallet {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    table#wallet th, table#wallet td {
+        border: 1px solid #000;
+        padding: 8px; 
+        text-align: center; 
+    }
 </style>
 </head>
 <body>
@@ -75,8 +89,8 @@
             <br>
             <br>
             <p style="font-size: medium;">Available Balance:</p>
-            <% if (userData.wallet.balanceAmount!=0) { %>
-                <p>₹ <%-userData.wallet.balanceAmount %></p>
+            <% if (totalAmount) { %>
+                <p>₹ <%-totalAmount %></p>
 
             <% }else{%>
                 <p>₹ 0</p>
@@ -86,7 +100,7 @@
     <div class="history">
         <h2>Wallet History :</h2>
         <hr>
-        <table>
+        <table id="wallet" class="table-responsive">
             <thead >
                 <tr style="color: black;">
                     <th><p>Type</p></th>
@@ -115,15 +129,47 @@
        
     </div>
 </div>
+
 <div style="height: 5vh;">
 
 </div>
+<nav aria-label="Page navigation example" class="d-flex justify-content-end mt-3" id="pagination-navbar">
+    <ul class="pagination">
+        <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= page <= 1 ? '#' : '/user-wallet?page=' + (page - 1) %>" style="color: black;" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="/user-wallet?page=<%= page %>" style="color: black"><%= page %></a>
+        </li>
+        <li class="page-item <%= page >= count ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= page >= count ? '#' : '/user-wallet?page=' + (page + 1) %>" style="color: black;" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 </div>
 
 
+  
 
 
 
+  <style>
+
+
+    @media (max-width: 500px) {
+        table#wallet {
+            font-size: 10px; 
+        }
+
+        table#wallet th, table#wallet td {
+            padding: 4px; 
+        }
+    }
+</style>
 
 
 <%-include('../partials/userPartials/user-footer')%>

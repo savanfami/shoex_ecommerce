@@ -81,7 +81,7 @@
                 <p class="mb-0">
                     <b>Order Status:
                         <span class="
-                            <% if (orderData[0].items.every(item => item.status === 'rejected')) { %>
+                            <% if (orderData[0].items.every(item => item.status === 'order cancelled')) { %>
                                 text-danger
                             <% } else if (orderData[0].status === 'Pending') { %>
                                 text-warning
@@ -98,7 +98,7 @@
                             <% } else if (orderData[0].status === 'Cancelled') { %>
                                 text-danger
                             <% } %>">
-                            <% if (orderData[0].items.every(item => item.status === 'rejected')) { %>
+                            <% if (orderData[0].items.every(item => item.status === 'order cancelled')) { %>
                                 Cancelled
                             <% } else { %>
                                 <%= orderData[0].status %>

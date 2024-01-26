@@ -53,6 +53,7 @@
                                 <i class="fas fa-eye mt-4" id="eye-icon"></i>
                                 </span>
                             </div>
+                           
                            <p class="error" id="passwordError" style="color:red;"></p>
                            <div class="form-group" style="position: relative;">
                               <label for="exampleInputEmail1">Confirm Password</label>
@@ -63,7 +64,15 @@
               
                             </div>
                            <p class="error" id="passwordError" style="color: red;"></p>
-                          
+                           <% if(referal){ %>
+                            <div class="form-group">
+                              <label  for="exampleInputEmail1"> <strong>Referal Code </strong></label>
+                              <input type="text" name="referal" value="<%-referal%>"  class="form-control" id="referal" aria-describedby="emailHelp" placeholder="Enter your referal Code" readonly >
+                        
+  
+                           </div>
+                        <% } %>
+                        
                            <div class="col-md-12 text-center mt-4">
                               <button id="login-button"  type="submit" class="btn btn-block form-control">SIGN UP</button>
                            </div>

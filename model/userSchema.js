@@ -27,6 +27,12 @@ const userSchema = new mongoose.Schema({
         pincode: { type: String },
         phone: { type: Number }
     }],
+    usedCoupons:[{
+        couponCode:{type:String},
+        discountAmount:{type:Number},
+        usedDate:{type:Date}
+    }]
+  
    
 
 })

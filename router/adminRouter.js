@@ -5,7 +5,7 @@ const categoryController=require('../controller/categorycontroller')
 const adminAuth=require('../middleWares/adminAuth')
 const upload=require('../middleWares/addCategory-multer')
 const uploads=require('../middleWares/Product-multer')
-
+const couponController=require('../controller/coupon')
 
 
  const uploadfields=[
@@ -66,4 +66,13 @@ router.patch('/update-ReturnStatus/:orderId',adminAuth.verifyAdmin,adminControll
 router.get('/return-accepted',adminAuth.verifyAdmin,adminController.toreturnaccepted)
 router.get('/return-rejected',adminAuth.verifyAdmin,adminController.toreturnrejecred)
 
+
+//routes for coupon
+
+router.get('/managecoupon',adminAuth.verifyAdmin,couponController.toCoupon)
+router.get('/toaddcoupon',adminAuth.verifyAdmin,couponController.toaddCoupon)
+router.post('/addcoupon',adminAuth.verifyAdmin,couponController.addCoupon)
+router.get('/editcoupon/:id',adminAuth.verifyAdmin,couponController.editCoupon)
+router.patch('/editcoupon',adminAuth.verifyAdmin,couponController.editdcoupon)
+router.delete('/deletecoupon/:id',adminAuth.verifyAdmin,couponController.deleteCoupon)
 module.exports=router

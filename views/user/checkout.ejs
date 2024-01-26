@@ -7,12 +7,13 @@
 }
 
 </style>
+
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg  ">
       <div class="modal-content ">
         <div class="modal-header">
           <h1 class="modal-title fs-5 " id="staticBackdropLabel">ADD ADDRESS</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
         </div>
         <div class="container  mt-5 mb-5 ">
             <div class="row mx-0 justify-content-center">
@@ -24,39 +25,46 @@
                 >
                   <label class="d-block mb-4">
                     <span class="form-label d-block">Name</span>
-                    <input
+                    <input  id="addName"
                       name="name"
                       type="text"
                       class="form-control"
-                      placeholder="enter your name" required
+                      placeholder="enter your name" 
+                      onchange="validateAddAddressForm()"
                     />
+                     <div id="addNameError" style="color: red;"></div>
                   </label>
-          
+                  
                   <label class="d-block mb-4">
                     <span class="form-label d-block">Address line </span>
-                    <input
+                    <input id="addAddress"
                       name="address"
                       type="text"
                       class="form-control"
-                      placeholder="Address(Area and Street) "required
+                      placeholder="Address(Area and Street) " onchange="validateAddAddressForm()"
                     />
+                    <div id="addAddressError" style="color: red;"></div>
                   </label>
           
               
           
                   <label class="d-block mb-4">
                     <span class="form-label d-block">City</span>
-                    <input name="city" type="text" class="form-control" placeholder="City/District/Town" required/>
+                    <input id="addCity" name="city" type="text" class="form-control" placeholder="City/District/Town"  onchange="validateAddAddressForm()"/>
+                    <div id="addCityError" style="color: red;"></div>
                   </label>
           
                   <label class="d-block mb-4">
-                    <span class="form-label d-block">State/Province</span>
-                    <input name="state" type="text" class="form-control" placeholder="State" required/>
+                    <span  class="form-label d-block">State/Province</span>
+                    <input id="addState" name="state" type="text" class="form-control" placeholder="State" onchange="validateAddAddressForm()"/>
+                    <div id="addStateError" style="color: red;"></div>
+
                   </label>
           
                   <label class="d-block mb-4">
                     <span class="form-label d-block">Zip/Postal code</span>
-                    <input name="pincode" type="text" class="form-control" placeholder="Pincode" required/>
+                    <input id="addPincode" name="pincode" type="text" class="form-control" placeholder="Pincode" onchange="validateAddAddressForm()"/>
+                    <div id="addPincodeError" style="color: red;"></div>
                   </label>
           
                 
@@ -64,17 +72,20 @@
                   <label class="d-block mb-4">
                     <span class="form-label d-block">Phone</span>
                     <input
+                    id="addPhone"
                       name="phone"
                       type="text"
                       class="form-control"
-                      placeholder="10-digit mobile number" required
+                      placeholder="10-digit mobile number" onchange="validateAddAddressForm()"
                     />
+                    <div id="addPhoneError" style="color: red;"></div>
+
                   </label>
           
                  
           
                   <div class="mb-3  ">
-                    <button type="submit" class="btn btn-primary px-4 rounded-3">
+                    <button type="submit" class="btn btn-primary px-4 rounded-3"onclick="return validateAddAddressForm()" >
                       Save
                     </button>
                     <button type="button" class="btn btn-danger px-4 rounded-3" data-bs-dismiss="modal">Close</button>
@@ -91,12 +102,16 @@
       </div>
     </div>
   </div>
-<form id="checkout-form">
+
+
     <section class="bg-white py-5 ">
 
         <div class="container">
             <h4 class="card-title mb-4 ">Checkout
                <i class="fa-regular fa-money-bill-1  text-dark ms-2 fs-4" style="color: #000000;"></i>
+               <button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                ADD ADDRESS
+              </button>
                <% if(message){%>
                 <span class="text-center mt-4 " id="errorShow" style="color: red; font-family: 'Merriweather', serif;font-size: medium  ;font-weight: bold;">
                   <%=message%>
@@ -116,11 +131,10 @@
                     <!-- Checkout -->
                     <div class="card border rounded shadow">
                         <div class="p-4">
+                          <form id="checkout-form">
                             <h5 class="card-title mb-3">Select Address</h5>
                             <div class="  d-flex justify-content-end">
-                            <button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                ADD ADDRESS
-                              </button>
+                           
                               <!-- <a href="/user-manageAddress" class="btn btn-secondary " style="margin-left: 10px ;color: #fff; text-decoration: none;"> MANAGE ADDRESS</a> -->
                              
                             </div>
@@ -134,7 +148,7 @@
                                             <div class="form-check h-100 border rounded-3 shadow">
                                                 <div class="p-3" style="height: 290px;">
                                                     <input  class="form-check-input" type="radio"
-                                                    name="Address" id="flexRadioDefault" required
+                                                    name="Address" id="flexRadioDefault" 
                                                     value="<%=data._id %>" />
                                                 <label class="form-check-label" for="flexRadioDefault1">
                                                     Address No: <strong><%=++i%></strong><br /><br>
@@ -165,7 +179,7 @@
                                                 </div>
                                              <div class="" style="margin-bottom: 6px;margin-left: 180px;">
     
-                                               <button style="border: none;background-color: white;"><i class="fas fa-trash fa-lg" onclick="deleteAddress('<%= data._id %>')" style="color:red;"></i></button>
+                                               <button type="button" style="border: none;background-color: white;"><i class="fas fa-trash fa-lg" onclick="deleteAddress('<%= data._id %>')" style="color:red;"></i></button>
                                             </div>
                                             </div>
                                         </div>
@@ -185,7 +199,7 @@
                                         <div class="form-check h-100 border rounded-3">
                                             <div class="p-3">
                                                 <input  class="form-check-input" type="radio"
-                                                    name="payment" id="flexRadioDefault3" required
+                                                    name="paymentMethod" id="flexRadioDefault3" 
                                                     
                                                     value= COD />
                                                     
@@ -205,7 +219,7 @@
                                         <div class="form-check h-100 border rounded-3">
                                             <div class="p-3">
                                                 <input  class="form-check-input" type="radio"
-                                                    name="payment" id="flexRadioDefault4" required
+                                                    name="paymentMethod" id="flexRadioDefault4" 
                                                     
                                                     value= Online />
                                                     
@@ -225,11 +239,11 @@
                                         <div class="form-check h-100 border rounded-3">
                                             <div class="p-3">
                                                 <input  class="form-check-input" type="radio"
-                                                    name="payment" id="flexRadioDefault5" required
+                                                    name="paymentMethod"  
+                                                    id="'wallet"
+                                                    value= 'wallet' />
                                                     
-                                                    value= Wallet />
-                                                    
-                                                <label class="form-check-label" for="flexRadioDefault5" data-wallet-amount="<%=userWallet%>" id="<%=totalPrice%>">
+                                                <label class="form-check-label" for="wallet" data-walletAmount="<%=userWallet%>" id="<%=totalPrice%>">
                                                     <strong>
                                                     Wallet
                                                     </strong> <br />
@@ -238,7 +252,7 @@
                                                     <small class="text-muted">Type: Online Payment</small>
                                                     <br>
                                                     <small class="mb-2" style="font-weight:500;">Balance:</small>
-                                      <small class="mb-2 text-success" style="font-weight: bold;">₹<%=userWallet%></small>
+                                      <small class="mb-2 text-success"  style="font-weight: bold;">₹<%=userWallet%></small>
                                                 </label>
                                             
                                             </div>
@@ -248,38 +262,9 @@
                       
                                    
                             </div>
+                         
                             <hr>
-                            <!-- <h5 class="card-title mb-3">Choose Shipping Type</h5>
-                            <div class="row mb-3">
-                              
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="form-check h-100 border rounded-3">
-                                            <div class="p-3">
-                                                <input class="form-check-input" type="radio" name="shipping"
-                                                     id="flexRadioDefault3" required
-                                                    value="shoex" />
-                                                <label class="form-check-label" for="flexRadioDefault3">
-                                                    <strong>
-                                                      SHOEX
-                                                    </strong><br />
-                                                    <small class="text-muted">Partner: Shoex
-                                                    </small><br>
-                                                    <small class="text-muted">Type: Standard
-                                                    </small><br>
-                                                    <small class="text-muted">Shipping Charge: Free
-                                                    </small>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                
-                                   
-                            </div> -->
-                            <!-- <div class="float-end">
-                                <a href="/user/user-cart"><p class="btn btn-light border" style="margin-top: 15px;">Cancel </p></a>
-                                <button class="btn btn-success shadow-0 border" type="submit">Place Order</button>
-                            </div> -->
+                       
                         </div>
                     </div>
 
@@ -290,15 +275,15 @@
                         <div class="row ">
                                 <div class="card mb-3 border shadow-0" style="margin-top: 55px">
                                   <div class="card-body">
-                                    <form>
+                                  
                                       <div class="form-group ">
                                         <label class="form-label"><strong>Have coupon?</strong></label>
                                         <div class="input-group">
-                                          <input type="text" class="form-control border" name="" placeholder="Coupon code" />
-                                          <button class="btn btn-success  text-white">Apply</button>
+                                          <input type="text" class="form-control border" id="couponCode" name="" placeholder="Coupon code" />
+                                          <button type="button" class="btn btn-success  text-white" onclick="applyCoupon()">Apply</button>
                                         </div>
                                       </div>
-                                    </form>
+                                
                                   </div>
                                 </div>
                                 <div class="card shadow-0 border">
@@ -307,9 +292,15 @@
                                       <p class="mb-2">Total price:</p>
                                       <p class="mb-2">₹ <%=totalPrice %></p>
                                     </div>
+                                    
                                     <div class="d-flex justify-content-between">
                                       <p class="mb-2">Discount:</p>
-                                      <p class="mb-2 text-success">-₹0.00</p>
+                                      <% if (discountedAmount) { %>
+                                        <p  class="mb-2 text-success">₹<%=discountedAmount %></p>
+                                       
+                                      <% }else{%>
+                                        <p id="discount" class="mb-2 text-success">No discount</p>
+                                     <% } %>
                                     </div>
                                   
                                     <div class="d-flex justify-content-between">
@@ -322,8 +313,14 @@
                                     <hr />
                                     <div class="d-flex justify-content-between">
                                       <p class="mb-2">Total price:</p>
-                                      <p class="mb-2 fw-bold">₹<%=totalPrice %>
-                                      </p>
+                                      <% if (grandTotal===undefined) { %>
+                                        <p id="grandTotal" class="mb-2 fw-bold">₹<%= totalPrice %>
+                                        </p>
+                                        
+                                      <% }else{%>
+                                        <p id="grandTotal" class="mb-2 fw-bold">₹<%= grandTotal %>
+                                        </p>
+                                      <%}%>
                                     </div>
                         
                                     <div class="mt-3">
@@ -334,6 +331,7 @@
                                   </div>
                                 </div>
                               </div>
+                            </form>
                                 <hr />
 
                                 <h6 class="text-dark my-4">Items in cart</h6>
@@ -366,12 +364,91 @@
         </div>
 
     </section>
-</form>
+    <script>
+      // Function to validate the Add Address form
+      function validateAddAddressForm() {
+        console.log("hahahhaha");
+        const name = document.getElementById('addName').value.trim();
+        const address = document.getElementById('addAddress').value.trim();
+        const city = document.getElementById('addCity').value.trim();
+        const state = document.getElementById('addState').value.trim();
+        const pincode = document.getElementById('addPincode').value.trim();
+        const phone = document.getElementById('addPhone').value.trim();
+    
+        // Clear previous error messages
+        clearAddAddressFormErrors();
+    
+        let isValid = true;
+    
+        // Validate Name
+        if (name === '') {
+          displayAddAddressError('Name is required!', 'addNameError');
+          isValid = false;
+        }
+    
+        // Validate Address
+        if (address === '') {
+          displayAddAddressError('Address is required!', 'addAddressError');
+          isValid = false;
+        }
+    
+        // Validate City
+        if (city === '') {
+          displayAddAddressError('City is required!', 'addCityError');
+          isValid = false;
+        }
+    
+        // Validate State
+        if (state === '') {
+          displayAddAddressError('State is required!', 'addStateError');
+          isValid = false;
+        }
+    
+        // Validate Pincode
+        if (pincode === '') {
+          displayAddAddressError('Pincode is required!', 'addPincodeError');
+          isValid = false;
+        } else if (!/^\d{6}$/.test(pincode)) {
+          displayAddAddressError('Pincode must be 6 digits!', 'addPincodeError');
+          isValid = false;
+        }
+    
+        // Validate Phone
+        if (phone === '') {
+          displayAddAddressError('Phone is required!', 'addPhoneError');
+          isValid = false;
+        } else if (!/^\d{10}$/.test(phone)) {
+          displayAddAddressError('Phone must be 10 digits!', 'addPhoneError');
+          isValid = false;
+        }
+    
+        // Additional validation logic can be added here
+    
+        return isValid;
+      }
+    
+      // Function to display error messages for Add Address form
+      function displayAddAddressError(message, errorContainerId) {
+        const errorContainer = document.getElementById(errorContainerId);
+        errorContainer.innerText = message;
+      }
+    
+      // Function to clear error messages for Add Address form
+      function clearAddAddressFormErrors() {
+        const errorContainers = ['addNameError', 'addAddressError', 'addCityError', 'addStateError', 'addPincodeError', 'addPhoneError'];
+        errorContainers.forEach(containerId => {
+          const errorContainer = document.getElementById(containerId);
+          errorContainer.innerText = '';
+        });
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@clientIO/rave-js@3"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.querySelectorAll('input[name="payment"]').forEach(function (radio) {
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(function (radio) {
         radio.addEventListener('change', function () {
-            var selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
+            var selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
             var paymentTypeElement = document.getElementById('selectedPaymentMethod');
             paymentTypeElement.innerText = selectedPaymentMethod ? selectedPaymentMethod.value : 'Not selected';
         });
@@ -423,36 +500,40 @@
    <script>
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("form submitted");
         const selectedAddress = document.querySelector('input[name="Address"]:checked');
         const selectedAddressValue = selectedAddress ? selectedAddress.value : null;
-        console.log(selectedAddressValue,"selectedaddress");
-        const paymentMethod = document.querySelector('input[name="payment"]:checked');
-        const selectedPaymentvalue = paymentMethod ? paymentMethod.value : null;
-        console.log(selectedPaymentvalue,"selectedpaymnent value");
-        if(selectedPaymentvalue==="Wallet"){
-          const labelElement = document.querySelector('label[for="flexRadioDefault5"]');
+        const selectedPaymentMethod = $("input[name='paymentMethod']:checked").val();
 
-          const walletAmountValue = parseInt(labelElement.getAttribute('data-wallet-amount'));
+        if (!selectedAddress||!selectedPaymentMethod ) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select both address and a payment method before confirming the order ',
+            });
+            return;
+        }
+        const walletAmount= $("input[name='paymentMethod']:checked").val()
+
+        if(walletAmount==='wallet'){
+          const labelElement = document.querySelector('label[for="wallet"]');
+        const walletAmountValue = parseInt(labelElement.getAttribute('data-walletAmount'));
         const totalAmount = parseInt(labelElement.getAttribute('id'));
-   
+        console.log('hii');
+        console.log(totalAmount);
+        console.log(walletAmountValue);
         if(walletAmountValue < totalAmount){
-          console.log("inside if");
           Swal.fire({
             icon: "error",
             title: "Insufficient Wallet Balance",
-            // text: "Your wallet balance is not sufficient for this transaction.",
+            text: "Your wallet balance is not sufficient for this transaction.",
         });
         return;
         }
         }
-        // if (!selectedAddress || !selectedPaymentvalue) {
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Oops...',
-        //         text: 'Please select both address and a payment method before confirming the order ',
-        //     });
-        //     return;
-        // }
+
+      console.log(selectedPaymentMethod,"selectedpaymentmehtodddd");
+       
 
         try {
             const response = await fetch('/user-placeOrder', {
@@ -462,7 +543,7 @@
                 },
                 body: JSON.stringify({
                     address: selectedAddressValue,
-                    paymentMethod: selectedPaymentvalue
+                    paymentMethod: selectedPaymentMethod
                 })
             });
             const result = await response.json();
@@ -480,6 +561,7 @@
             console.error('Error during fetch:', error);
         }
     });
+
     function razorpayPayment(order){
       var options = {
     "key": "rzp_test_IHHPfyYcwpvmzU", // Enter the Key ID generated from the Dashboard
@@ -529,7 +611,7 @@
           window.location = '/user-Orderconfirmation';
 
         }else{
-          window.location = '';
+          window.location.href= '';
 
         }
       })
@@ -538,6 +620,50 @@
     });
     }
 </script>
+<script>
 
+
+  function applyCoupon(){
+
+    const discountedAmount=document.getElementById('discount')
+    const grandTotal=document.getElementById('grandTotal')
+    const couponCode=document.getElementById('couponCode').value
+    fetch('/apply-coupon',{
+      method:"post",
+      headers:{
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify({
+        couponCode:couponCode
+      })
+    }).then(response=>response.json())
+    .then((data) => {
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Coupon Applied!',
+          text: '',
+        
+        })
+        $('#grandTotal').text(data.grandTotal);
+        $('#discount').text(data.discountedAmount);
+    
+      }
+       else {
+        console.log('data is ',data.success);
+        Swal.fire({
+          icon: 'error',
+          title: 'Coupon Error',
+          text: data.message,
+         
+        });
+      }
+    })
+    .catch(error=>{
+      console.error(error)
+      
+    })
+  }
+</script>
 
 <%-include('../partials/userPartials/user-footer')%>

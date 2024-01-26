@@ -65,7 +65,7 @@
 
                       <div class="col-lg col-sm-6 p-0 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end cart-remove">
                         <div class="float-md-end">
-                          <a href="#" class="btn btn-light border px-2 icon-hover-primary"><i
+                          <a  onclick="addToWishlist('<%-data.product._id%>')" class="btn btn-light border px-2 icon-hover-primary"><i
                               class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
                           <a href="#" class="btn btn-light border text-danger icon-hover-danger"
                             onclick="removeFromCart('<%= data.product._id %>','<%= data.size %>')">
@@ -179,7 +179,24 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0"></script>
   
+<script>
+   function addToWishlist(productId){
+        fetch(`/user-addToWishlist?productId=${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
 
+    })
+    .then(response => response.json())
+    .then(result => {
+        window.location.reload()
+        console.log('Product added to wishlist:', result);
+       
+    })
+    .catch(error => console.error('Error adding product to wishlist:', error));
+    }
+</script>
   <script>
     function removeFromCart(productId, size) {
       Swal.fire({

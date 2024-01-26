@@ -178,7 +178,7 @@
                 <!-- col.// -->
 
               </div>
-              <button class="btn btn-primary shadow-0 mt-4 imgviv wishlist-icon "   data-product-id="<%=productData._id%>"> <i class="fa-solid fa-heart fa-lg "
+              <button class="btn btn-primary shadow-0 mt-4 imgviv wishlist-icon "  onclick="addToWishlist('<%-productData._id%>')" data-product-id="<%=productData._id%>"> <i class="fa-solid fa-heart fa-lg "
                   style="color: #ffffff;"></i> Add to wishlist</button>
               <button class="btn btn- shadow-0 mt-4" data-item-id="<%= productData._id %>"  id="addtoCart"
                 style="background-color: rgb(254, 167, 6);"> <i class="me-1 fa fa-shopping-basket fa-lg" 
@@ -229,6 +229,24 @@
       cursor: pointer;
     }
   </style>
+  <script>
+     function addToWishlist(productId){
+        fetch(`/user-addToWishlist?productId=${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+
+    })
+    .then(response => response.json())
+    .then(result => {
+        window.location.reload()
+        console.log('Product added to wishlist:', result);
+       
+    })
+    .catch(error => console.error('Error adding product to wishlist:', error));
+    }
+  </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Get all buttons with the class 'btn-size'

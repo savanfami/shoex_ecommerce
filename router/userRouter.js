@@ -80,6 +80,12 @@ router.post('/downloadinvoice',userAuth.verifyUser,orderController.generateInvoi
 router.get('/downloadinvoice/:orderId',userAuth.verifyUser,orderController.downloadInvoice)
 router.patch('/return-Order',userAuth.verifyUser,orderController.returnOrder)
 
-//error page
+//routes for coupon
+
+router.get('/user-coupon',userAuth.verifyUser,userController.toCoupon)
+router.post('/apply-coupon',userAuth.verifyUser,cartController.useCoupon)
+
+
+
 
 module.exports=router

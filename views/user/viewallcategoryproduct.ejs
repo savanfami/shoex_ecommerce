@@ -150,7 +150,7 @@
           <div class="col maindiv justify-content-around flex-wrap col-lg-3 imgviv" style="display: flex;" data-brand="<%= data.brand %>"
               data-category="<%= data.category %>" data-price="<%= data.price %>"  data-sort="<%=data.sort %>">
               <div class="custom-card-container ms-5 mt-5">
-                  <a href="#" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
+                  <a onclick="addToWishlist('<%-data._id%>')" style="cursor: pointer;" class="custom-icon-heart"><i class="fa-regular fa-heart"></i></a>
                   <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
                   <a href="/user-productDetails/<%- data._id %>">
                       <img class="card-img-top" src="/productImages/<%= data.images[0] %>" alt="Card image cap"
@@ -274,7 +274,25 @@
 
 </script>
 
+<script>
+     function addToWishlist(productId){
+        fetch(`/user-addToWishlist?productId=${productId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
 
+    })
+    .then(response => response.json())
+    .then(result => {
+        window.location.reload()
+        console.log('Product added to wishlist:', result);
+       
+    })
+    .catch(error => console.error('Error adding product to wishlist:', error));
+    }
+
+</script>
 
 
 

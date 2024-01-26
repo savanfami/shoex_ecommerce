@@ -136,6 +136,22 @@
               </div>
               <hr>
               <div class="row">
+                <div class="col-sm-3">
+                    <h6 >My Refferal Code</h6>
+                </div>
+                <div class="col-sm-9">
+                    
+                       
+                            <input class="border-0 text-dark fw-bold w-50"  type="text" id="textToCopy" value="http://localhost:3000/tosignup?ref=<%-userData.id%>" readonly>
+                        <a style="cursor: pointer;" onclick="copyToClipboard()" class="ms-2">
+                            <i class="fa-solid fa-copy  fa-xl text-success"></i>
+                        </a>
+
+                </div>
+            </div>
+     
+              <hr>
+              <div class="row">
                 <!------------------------------------------change password modal --------------------------------------------------------------------->
                 <button type="button" class="btn btn-outline-primary mb-2 w-25" data-bs-toggle="modal"
                   data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Change Password</button>
@@ -202,6 +218,11 @@
               onclick="window.location.href='/user-addtoCart'">
               <h6 class="mb-0">Cart</h6>
               <i class="fa-solid fa-cart-shopping"></i>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center p-3"
+              onclick="window.location.href='/user-coupon'">
+              <h6 class="mb-0">Coupons</h6>
+              <i class="fa-solid fa-ticket"></i>
             </li>
             <!-- <li class="list-group-item d-flex justify-content-between align-items-center p-3"
               onclick="window.location.href='/user-wish'">
@@ -373,5 +394,31 @@
     }
 
   </script>
+
+<script>
+  function copyToClipboard() {
+      const textToCopy = document.getElementById('textToCopy').value;
+
+      navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+              console.log('Code copied to clipboard:', textToCopy);
+
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Refferal Code Copied!',
+               
+              });
+          })
+          .catch(err => {
+              console.error('Unable to copy text to clipboard', err);
+
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error Copying Text',
+                  text: 'Please try again.',
+              });
+          });
+  }
+</script>
 
   <%-include('../partials/userPartials/user-footer')%>

@@ -35,7 +35,7 @@ module.exports={
                     "price": product.price
                 })) : [],
                 
-    
+                
                 "bottom-notice": "Thank You For Your Purchase",
                 "settings": {
                     "currency": "USD",

@@ -1,361 +1,346 @@
-  <%-include('../partials/userPartials/user-nav')%>
+<%-include('../partials/userPartials/user-nav')%>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap');
-      .product-text-container {
-        
-          border-radius: 12px;
-          height: 56px;
-          margin-top: 53px;
-          box-shadow: 0px 0px 7px -3px;
-      }
-      .data{
-        border-radius: 12px;
-        box-shadow: 0px 0px 7px -3px;
-      }
-      body{
-        overflow-x: hidden;
-      }
+
+    .product-text-container {
+
+      border-radius: 12px;
+      height: 56px;
+      margin-top: 53px;
+      box-shadow: 0px 0px 7px -3px;
+    }
+
+    .data {
+      border-radius: 12px;
+      box-shadow: 0px 0px 7px -3px;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
   </style>
 
+  <script>
+    // Function to validate the Edit Address form
+    function validateEditAddressForm(addressId) {
+      console.log('Validation function called');
 
+      const name = document.getElementById(`name_${addressId}`).value.trim();
+      const address = document.getElementById(`address_${addressId}`).value.trim();
+      const city = document.getElementById(`city_${addressId}`).value.trim();
+      const pincode = document.getElementById(`pincode_${addressId}`).value.trim();
+      const state = document.getElementById(`state_${addressId}`).value.trim();
+      const number = document.getElementById(`number_${addressId}`).value.trim();
+
+      const nameValidationMessage = document.getElementById(`name-validation-message_${addressId}`);
+      const addressValidationMessage = document.getElementById(`address-validation-message_${addressId}`);
+      const cityValidationMessage = document.getElementById(`city-validation-message_${addressId}`);
+      const pincodeValidationMessage = document.getElementById(`pincode-validation-message_${addressId}`);
+      const stateValidationMessage = document.getElementById(`state-validation-message_${addressId}`);
+      const numberValidationMessage = document.getElementById(`number-validation-message_${addressId}`);
+      const submitButton = document.getElementById(`submitButton_`);
+
+      let isValid = true;
+
+      if (!name) {
+        nameValidationMessage.textContent = 'Name is required';
+        isValid = false;
+      } else {
+        nameValidationMessage.textContent = '';
+      }
+
+      if (!address) {
+        addressValidationMessage.textContent = 'Address is required';
+        isValid = false;
+      } else {
+        addressValidationMessage.textContent = '';
+      }
+
+      if (!city) {
+        cityValidationMessage.textContent = 'City is required';
+        isValid = false;
+      } else {
+        cityValidationMessage.textContent = '';
+      }
+
+      if (!pincode) {
+        pincodeValidationMessage.textContent = 'Pincode is required';
+        isValid = false;
+      } else if (pincode.length < 6) {
+        pincodeValidationMessage.textContent = 'Pincode must be 6 digit required';
+        isValid = false;
+      } else {
+        pincodeValidationMessage.textContent = '';
+      }
+
+      if (!state) {
+        stateValidationMessage.textContent = 'State is required';
+        isValid = false;
+      } else {
+        stateValidationMessage.textContent = '';
+      }
+
+      if (!number) {
+        numberValidationMessage.textContent = 'Number is required';
+        isValid = false;
+        console.log('isValid:1', isValid)
+      } else if (number.length !== 10) {
+        numberValidationMessage.textContent = 'Number Must Be 10 digits';
+        isValid = false;
+      } else {
+        numberValidationMessage.textContent = '';
+        console.log('isValid:0', isValid)
+      }
+      console.log('isValid:-1', isValid);
+
+      submitButton.disabled = !isValid;
+
+      return isValid;
+    }
+
+  </script>
 
   <body>
     <% if(message){%>
-  <span class="text-center mt-4 " id="errorShow" style="color: red;font-weight: bold; font-family: 'Merriweather', serif;  ;">
-    <%=message%>
-  </span>
-  <%}%>
-  <script>
-    setTimeout(function () {
-        document.getElementById('errorShow').style.display = 'block';
-              setTimeout(function () {
-            document.getElementById('errorShow').style.display = 'none';
-        },3000); 
-    }, 0); 
-  </script>
-  <div class="product-text-container p-4 mx-5" style="display: flex; justify-content: center; align-items: center;">
-      <h3 style="font-family: 'Merriweather', serif;   margin-top: 11px;" id="ManageProduct-text">MANAGE ADDRESS</h3>
-  </div >
+      <span class="text-center mt-4 " id="errorShow"
+        style="color: red;font-weight: bold; font-family: 'Merriweather', serif;  ;">
+        <%=message%>
+      </span>
+      <%}%>
+        <script>
+          setTimeout(function () {
+            document.getElementById('errorShow').style.display = 'block';
+            setTimeout(function () {
+              document.getElementById('errorShow').style.display = 'none';
+            }, 3000);
+          }, 0); 
+        </script>
+        <div class="product-text-container p-4 mx-5"
+          style="display: flex; justify-content: center; align-items: center;">
+          <h3 style="font-family: 'Merriweather', serif;   margin-top: 11px;" id="ManageProduct-text">MANAGE ADDRESS
+          </h3>
+        </div>
 
-  <!-- Button trigger modal -->
-  <div class="mx-5 data mt-4 p-3 ">
-  <button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      ADD ADDRESS
-    </button>
-    <a href="/user-profile" class="btn btn-secondary" style="color: #fff; text-decoration: none;"> Back to Profile</a>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg  ">
-        <div class="modal-content ">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5 " id="staticBackdropLabel">ADD ADDRESS</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="container  mt-5 mb-5 ">
-              <div class="row mx-0 justify-content-center">
-                <div class="col-md-6 col-lg-6">
-                  <form
-                    method="POST"
-                    class="w-100 rounded-1 p-4 border bg-white"
-                    action="/user-addAddress"
-                  >
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">Name</span>
-                      <input
-                      id="addName"
-                        name="name"
-                        type="text"
-                        class="form-control"
-                        placeholder="enter your name"
-                        onchange="validateAddAddressForm()"
-                      />
-                      <div id="addNameError" style="color: red;"></div>
-                    </label>
-            
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">Address line </span>
-                      <input
-                      id="addAddress"
-                        name="address"
-                        type="text"
-                        class="form-control"
-                        placeholder="Address(Area and Street) "
-                        onchange="validateAddAddressForm()"
-                      />
-                      <div id="addAddressError" style="color: red;"></div>
-                    </label>
-            
-                
-            
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">City</span>
-                      <input 
-                      id="addCity"
-                      name="city" type="text" class="form-control" placeholder="City/District/Town" 
-                      onchange="validateAddAddressForm()"/>
-                      <div id="addCityError" style="color: red;"></div>
-                    </label>
-            
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">State/Province</span>
-                      <input
-                      id="addState"
-                      name="state" type="text" class="form-control" placeholder="State" onchange="validateAddAddressForm()"/>
-                      <div id="addStateError" style="color: red;"></div>
-                    </label>
-            
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">Zip/Postal code</span>
-                      <input
-                      id="addPincode" name="pincode" type="text" class="form-control" placeholder="Pincode" onchange="validateAddAddressForm()"/>
-                      <div id="addPincodeError" style="color: red;"></div>
-                    </label>
-            
-                  
-            
-                    <label class="d-block mb-4">
-                      <span class="form-label d-block">Phone</span>
-                      <input
-                      id="addPhone"
-                        name="phone"
-                        type="text"
-                        class="form-control"
-                        placeholder="10-digit mobile number" onchange="validateAddAddressForm()"
-                      />
-                      <div id="addPhoneError" style="color: red;"></div>
-                    </label>
-            
-                  
-            
-                    <div class="mb-3  ">
-                      <button type="submit" class="btn btn-primary px-4 rounded-3" onclick="return validateAddAddressForm()">
-                        Save
-                      </button>
-                      <button type="button" class="btn btn-danger px-4 rounded-3" data-bs-dismiss="modal">Close</button>
+        <!-- Button trigger modal -->
+        <div class="mx-5 data mt-4 p-3 ">
+          <button type="button " class="btn btn-primary  " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            ADD ADDRESS
+          </button>
+          <a href="/user-profile" class="btn btn-secondary" style="color: #fff; text-decoration: none;"> Back to
+            Profile</a>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg  ">
+            <div class="modal-content ">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5 " id="staticBackdropLabel">ADD ADDRESS</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="container  mt-5 mb-5 ">
+                <div class="row mx-0 justify-content-center">
+                  <div class="col-md-6 col-lg-6">
+                    <form method="POST" class="w-100 rounded-1 p-4 border bg-white" action="/user-addAddress">
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Name</span>
+                        <input id="addName" name="name" type="text" class="form-control" placeholder="enter your name"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addNameError" style="color: red;"></div>
+                      </label>
 
-                    </div>
-            
-                  </form>
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Address line </span>
+                        <input id="addAddress" name="address" type="text" class="form-control"
+                          placeholder="Address(Area and Street) " onchange="validateAddAddressForm()" />
+                        <div id="addAddressError" style="color: red;"></div>
+                      </label>
+
+
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">City</span>
+                        <input id="addCity" name="city" type="text" class="form-control"
+                          placeholder="City/District/Town" onchange="validateAddAddressForm()" />
+                        <div id="addCityError" style="color: red;"></div>
+                      </label>
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">State/Province</span>
+                        <input id="addState" name="state" type="text" class="form-control" placeholder="State"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addStateError" style="color: red;"></div>
+                      </label>
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Zip/Postal code</span>
+                        <input id="addPincode" name="pincode" type="text" class="form-control" placeholder="Pincode"
+                          onchange="validateAddAddressForm()" />
+                        <div id="addPincodeError" style="color: red;"></div>
+                      </label>
+
+
+
+                      <label class="d-block mb-4">
+                        <span class="form-label d-block">Phone</span>
+                        <input id="addPhone" name="phone" type="text" class="form-control"
+                          placeholder="10-digit mobile number" onchange="validateAddAddressForm()" />
+                        <div id="addPhoneError" style="color: red;"></div>
+                      </label>
+
+
+
+                      <div class="mb-3  ">
+                        <button type="submit" class="btn btn-primary px-4 rounded-3"
+                          onclick="return validateAddAddressForm()">
+                          Save
+                        </button>
+                        <button type="button" class="btn btn-danger px-4 rounded-3"
+                          data-bs-dismiss="modal">Close</button>
+
+                      </div>
+
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
-          <!-- <div class="modal-footer">
+              <!-- <div class="modal-footer">
             <button type="button" class="btn btn-primary">Understood</button>
           </div> -->
-        </div>
-      </div>
-    </div>
-    <div class="row mx-5 ">
-    <% addressData.address.forEach(data => { %>
-    <div class=" mt-4 col-md-4  ">
-      <div class="card " style=" box-shadow: 0px 0px 7px -3px;border-radius: 12px;">
-        <div class="card-body">
-          <h5 class="card-title">Address Details</h5>
-          <p class="card-text">Name:<%=data.name%></p>
-          <p class="card-text">Address:<%=data.address%></p>
-          <p class="card-text">City:<%=data.city%></p>
-          <p class="card-text">State:<%=data.state%></p>
-          <p class="card-text">Pincode:<%=data.pincode%></p>
-          <p class="card-text">Phone:<%=data.phone%></p>
-    
-          <!-- Edit and Delete Buttons -->
-          <div class="">
-          <button type="button " class="btn btn-primary"  onclick="openEditAddressModal('<%= data._id %>')"> EDIT </button>  
-          <button type="button" class="btn btn-danger" onclick="deleteAddress('<%= data._id %>')">Delete</button>
+            </div>
           </div>
-          <!--edit address modal-->
+        </div>
+        <div class="row mx-5 ">
+          <% addressData.address.forEach(data=> { %>
+            <div class=" mt-4 col-md-4  ">
+              <div class="card " style=" box-shadow: 0px 0px 7px -3px;border-radius: 12px;">
+                <div class="card-body">
+                  <h5 class="card-title">Address Details</h5>
+                  <p class="card-text">Name:<%=data.name%>
+                  </p>
+                  <p class="card-text">Address:<%=data.address%>
+                  </p>
+                  <p class="card-text">City:<%=data.city%>
+                  </p>
+                  <p class="card-text">State:<%=data.state%>
+                  </p>
+                  <p class="card-text">Pincode:<%=data.pincode%>
+                  </p>
+                  <p class="card-text">Phone:<%=data.phone%>
+                  </p>
 
-          <div class="modal fade" id="editAddressModal<%= data._id %>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg  ">
-              <div class="modal-content ">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5 " id="editAddressModallabel">EDIT ADDRESS</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="container  mt-5 mb-5 ">
-                    <div class="row mx-0 justify-content-center">
-                      <div class="col-md-6 col-lg-6">
-                        <!--edit address form -->
-                        <form method="POST" class="w-100 rounded-1 p-4 border bg-white" action="/user-editAddress/<%= data._id %>">
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">Name</span>
-                            <input
-                              id="editName"
-                              name="name"
-                              type="text"
-                              value="<%=data.name%>"
-                              class="form-control"
-                              placeholder="enter your name"  onchange="validateEditAddressForm()"
-                            />
-                            <div id="editNameError" style="color: red;"></div>
+                  <!-- Edit and Delete Buttons -->
+                  <div class="">
+                    <button type="button " class="btn btn-primary" onclick="openEditAddressModal('<%= data._id %>')">
+                      EDIT </button>
+                    <button type="button" class="btn btn-danger"
+                      onclick="deleteAddress('<%= data._id %>')">Delete</button>
+                  </div>
+                  <!--edit address modal-->
 
-                          </label>
-                  
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">Address line </span>
-                            <input
-                              id="editAddress"
-                              name="address"
-                              type="text"
-                              class="form-control"
-                              value="<%=data.address%>"
+                  <div class="modal fade" id="editAddressModal<%= data._id %>" data-bs-backdrop="static"
+                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg  ">
+                      <div class="modal-content ">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5 " id="editAddressModallabel">EDIT ADDRESS</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="container  mt-5 mb-5 ">
+                          <div class="row mx-0 justify-content-center">
+                            <div class="col-md-6 col-lg-6">
+                              <!--edit address form -->
+                              <form method="POST" class="w-100 rounded-1 p-4 border bg-white"
+                                action="/user-editAddress/<%= data._id %>">
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Name</span>
+                                  <input id="name_<%= data._id %>" name="name" type="text" value="<%=data.name%>"
+                                    class="form-control" placeholder="enter your name"
+                                    onchange="validateEditAddressForm('<%= data._id %>')" />
+                                  <div id="name-validation-message_<%= data._id %>" style="color: red;"></div>
 
-                              placeholder="Address(Area and Street) " onchange="validateEditAddressForm()"
-                            />
-                            <div id="editAddressError" style="color: red;"></div>
+                                </label>
 
-                          </label>
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">City</span>
-                            <input 
-                            id="editCity"
-                            name="city" type="text" class="form-control" 
-                            placeholder="City/District/Town" value="<%=data.city%>"  onchange="validateEditAddressForm()"/>
-                            <div id="editCityError" style="color: red;"></div>
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Address line </span>
+                                  <input id="address_<%-data._id %>" name="address" type="text" class="form-control"
+                                    value="<%=data.address%>" placeholder="Address(Area and Street) "
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="address-validation-message_<%= data._id %>" style="color: red;"></div>
 
-                          </label>
-                  
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">State/Province</span>
-                            <input id="editState" name="state" type="text" class="form-control" placeholder="State" value="<%=data.state%>"  onchange="validateEditAddressForm()"/>
-                            <div id="editStateError" style="color: red;"></div>
+                                </label>
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">City</span>
+                                  <input id="city_<%-data._id %>" name="city" type="text" class="form-control"
+                                    placeholder="City/District/Town" value="<%=data.city%>"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="city-validation-message_<%= data._id %>" style="color: red;"></div>
 
-                          </label>
-                  
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">Zip/Postal code</span>
-                            <input id="editPincode" name="pincode" type="text" class="form-control" placeholder="Pincode" value="<%=data.pincode%>"  onchange="validateEditAddressForm()"/>
-                            <div id="editPincodeError" style="color: red;"></div> 
-                          </label>
-                  
-                        
-                  
-                          <label class="d-block mb-4">
-                            <span class="form-label d-block">Phone</span>
-                            <input
-                            id="editPhone"
-                              name="phone"
-                              type="text"
-                              class="form-control"
-                              value="<%=data.phone%>"
-                              placeholder="10-digit mobile number"  onchange="validateEditAddressForm()"
-                            />
-                            <div id="editPhoneError" style="color: red;"></div>
+                                </label>
 
-                          </label>
-                  
-          
-                  
-                          <div class="mb-3  ">
-                            <button type="submit" class="btn btn-primary px-4 rounded-3" onclick="return validateEditAddressForm()">
-                              Save Changes
-                            </button>
-                            <button type="button" class="btn btn-danger px-4 rounded-3" data-bs-dismiss="modal">Close</button>
-          
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">State/Province</span>
+                                  <input id="state_<%-data._id %>" name="state" type="text" class="form-control"
+                                    placeholder="State" value="<%=data.state%>" onchange="validateEditAddressForm()" />
+                                  <div id="state-validation-message_<%= data._id %>" style="color: red;"></div>
+
+                                </label>
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Zip/Postal code</span>
+                                  <input id="pincode_<%-data._id %>" name="pincode" type="text" class="form-control"
+                                    placeholder="Pincode" value="<%=data.pincode%>"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="pincode-validation-message_<%= data._id %>" style="color: red;"></div>
+                                </label>
+
+
+
+                                <label class="d-block mb-4">
+                                  <span class="form-label d-block">Phone</span>
+                                  <input id="number_<%-data._id %>" name="phone" type="text" class="form-control"
+                                    value="<%=data.phone%>" placeholder="10-digit mobile number"
+                                    onchange="validateEditAddressForm()" />
+                                  <div id="number-validation-message_<%= data._id %>" style="color: red;"></div>
+
+                                </label>
+
+
+
+                                <div class="mb-3  ">
+                                  <button type="submit" id="submitButton_" class="btn btn-primary px-4 rounded-3"
+                                    onclick="return validateEditAddressForm('<%-data._id%>')">
+                                    Save Changes
+                                  </button>
+                                  <button type="button" class="btn btn-danger px-4 rounded-3"
+                                    data-bs-dismiss="modal">Close</button>
+
+                                </div>
+
+                              </form>
+                            </div>
                           </div>
-                  
-                        </form>
+                        </div>
+                        <!-- <div class="modal-footer">
+                  <button type="button" class="btn btn-primary">Understood</button>
+                </div> -->
                       </div>
                     </div>
                   </div>
-                <!-- <div class="modal-footer">
-                  <button type="button" class="btn btn-primary">Understood</button>
-                </div> -->
+                </div>
               </div>
             </div>
-          </div>
+            <% }) %>
         </div>
-      </div>
-    </div>
-    <% }) %>
-  </div>
   </body>
 
-  
+
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <!-- Add the following script in your HTML file -->
-  <script>
-    // Function to validate the Edit Address form
-    function validateEditAddressForm() {
-      console.log('Validating edit addrkkkkkkkkkkkkkkkkkess form...');
 
-      clearEditAddressFormErrors();
-  
-    const name1 = document.getElementById('editName').value.trim();
-    const address1 = document.getElementById('editAddress').value.trim();
-    const city1 = document.getElementById('editCity').value.trim();
-    const state1 = document.getElementById('editState').value.trim();
-    const pincode1 = document.getElementById('editPincode').value.trim();
-    const phone1 = document.getElementById('editPhone').value.trim();
-  
-  
-  
-      let isValid = true;
-  
-      // Validate Name
-      if (name1 === '') {
-        displayEditAddressError('Name is required!', 'editNameError');
-        isValid = false;
-      }
-  
-      // Validate Address
-      if (address1 === '') {
-        displayEditAddressError('Address is required!', 'editAddressError');
-        isValid = false;
-      }
-  
-      // Validate City
-      if (city1 === '') {
-        displayEditAddressError('City is required!', 'editCityError');
-        isValid = false;
-      }
-  
-      // Validate State
-      if (state1 === '') {
-        displayEditAddressError('State is required!', 'editStateError');
-        isValid = false;
-      }
-  
-      // Validate Pincode
-      if (pincode1 === '') {
-        displayEditAddressError('Pincode is required!', 'editPincodeError');
-        isValid = false;
-      } else if (!/^\d{6}$/.test(pincode1)) {
-        displayEditAddressError('Pincode must be 6 digits!', 'editPincodeError');
-        isValid = false;
-      }
-  
-      // Validate Phone
-      if (phone1 === '') {
-        displayEditAddressError('Phone is required!', 'editPhoneError');
-        isValid = false;
-      } else if (!/^\d{10}$/.test(phone1)) {
-        displayEditAddressError('Phone must be 10 digits!', 'editPhoneError');
-        isValid = false;
-      }
-  
-      // Additional validation logic can be added here
-  
-      return isValid;
-    }
-  
-    // Function to display error messages for Edit Address form
-    function displayEditAddressError(message, errorContainerId) {
-      const errorContainer = document.getElementById(errorContainerId);
-      errorContainer.innerText = message;
-    }
-  
-    // Function to clear error messages for Edit Address form
-    function clearEditAddressFormErrors() {
-      const errorContainers = ['editNameError', 'editAddressError', 'editCityError', 'editStateError', 'editPincodeError', 'editPhoneError'];
-      errorContainers.forEach(containerId => {
-        const errorContainer = document.getElementById(containerId);
-        errorContainer.innerText = '';
-      });
-    }
-  </script>
+
+
 
   <script>
     // Function to validate the Add Address form
@@ -441,31 +426,51 @@
 
 
   <script>
-    function openEditAddressModal(addressId){
-      $('#editAddressModal'+addressId).modal('show')
+    function openEditAddressModal(addressId) {
+      $('#editAddressModal' + addressId).modal('show')
     }
 
-    function deleteAddress(addressId){
-      if(confirm('Are you sure you want to delete this address')){
-        fetch(`/user-deleteAddress/${addressId}`,{
-          method:'post',
-        }).then(response=>response.json())
-        .then((data)=>{
-          if(data.success){
-            window.location.reload()
-          }else{
-            console.error('error deleting address',data.message);
-          }
-        })
-        .catch((err)=>{
-          console.error('error deleting address',err);
-        })
-      }
+    function deleteAddress(addressId) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/user-deleteAddress/${addressId}`, {
+            method: 'post',
+          }).then(response => response.json())
+            .then((data) => {
+              if (data.success) {
+                Swal.fire({
+                  title: 'Deleted!',
+                  text: 'Your item has been deleted.',
+                  icon: 'success',
+                  timer: 1000,
+                  showConfirmButton: false,
+                }).then(() => {
+                  window.location.reload();
+                });
+              } else {
+                console.error('Error deleting address', data.message);
+                Swal.fire(
+                  'Error!',
+                  'An error occurred while deleting the address.',
+                  'error'
+                );
+              }
+            })
+        }
+      });
     }
-    
+
   </script>
 
-  
+ 
   <div style="height: 100px;">
 
   </div>
