@@ -1,0 +1,147 @@
+<%-include("../partials/adminPartials/header")%>
+
+  <style>
+    .product-text-container {
+      border-radius: 12px;
+      width: 100%;
+      height: 56px;
+      margin-top: 73px;
+      box-shadow: 2px 2px 2px 2px grey;
+
+    }
+    input.form-control {
+      border: 2px solid black;
+         
+  }
+
+    .add-coupon {
+      box-shadow: 2px 2px 2px 2px grey;
+      border-radius: 8px;
+    }
+  </style>
+  <div class="product-text-container container mb-4"
+    style="display: flex; justify-content: center;align-items: center;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color: black;">
+    <h4 style=" margin-top: 11px;" id="ManageProduct-text">ADD OFFER  </h4>
+  </div>
+  <div class="container mt-5 add-coupon mb-3">
+    <div class="row justify-content-center ">
+      <div class="col-md-4 fw-bold">
+
+        <div class="mb-3 mt-4">
+          <label for="couponName" class="form-label">Select Category</label>
+          <select class="form-control" id="categorySelect" name="category" required>
+            <option value="" selected disabled>Select a Category</option>
+            <% categoryData.forEach(category=> { %>
+                <option value="<%= category._id %>">
+                    <%= category.name %>
+                </option>
+                <% }); %>
+        </select>
+        <span class="error" id="categoryError" style="color: red;"></span>
+        <div class="mb-3 mt-4">
+          <label for="couponCode" class="form-label">Percentage</label>
+          <input type="text"   class="form-control" id="Percentage" name="couponCode" placeholder="Enter Percentage"
+            required >
+            <span class="error" id="percentageError" style="color: red;"></span>
+
+        </div>
+
+      
+
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="startDate" name="startDate" required>
+          <span class="error" id="startDateError" style="color: red;"></span>
+
+        </div>
+
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date</label>
+          <input type="date" class="form-control" id="endDate" name="endDate" required>
+          <span class="error" id="endDateError" style="color: red;"></span>
+
+        </div>
+
+        <div class="mb-3 text-center">
+          <button onclick="submitForm()" class="btn btn-success">Add Offer</button>
+
+          <a href="/admin/manageoffer" class="btn btn-secondary">Back</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+ <script>
+    function submitForm(){
+        const categoryName=document.getElementById('categorySelect')
+        const Percentage=document.getElementById('Percentage')
+        const startDate=document.getElementById('startDate')
+        const expiryDate=document.getElementById('endDate')
+
+        const currentDate = new Date().toISOString().split('T')[0];
+
+
+        const categoryNameError=document.getElementById('categoryError').innerText=''
+        const percentageError=document.getElementById('percentageError').innerText=''
+        const startDateErrorError=document.getElementById('startDateError').innerText=''
+        const endDateError=document.getElementById('endDateError').innerText=''
+
+        let isValid=true
+        if(!categoryName.value){
+            document.getElementById('categoryError').innerText='Category is required'
+            isValid=false
+        }
+
+        if (isNaN(Percentage.value) || Percentage.value < 1 || Percentage.value > 99) {
+            document.getElementById('percentageError').innerText = 'Percentage must be a number between 1 and 99';
+            isValid = false;
+        }
+        if (startDate.value < currentDate) {
+            document.getElementById('startDateError').innerText = 'Start date must be greater than the current date';
+            isValid = false;
+        }
+        if (endDate.value <= startDate.value) {
+            document.getElementById('endDateError').innerText = 'End date must be greater than the start date';
+            isValid = false;
+        }
+
+        if(isValid){
+            try{
+                const data={
+                categoryId:categoryName.value,
+                Percentage:Percentage.value,
+                startDate:startDate.value,
+                endDate:endDate.value
+            }
+                fetch('/admin/addOffer',{
+                    method:'post',
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify(data)
+                }).then(response=>response.json())
+                .then((data=>{
+                    if(data.success){
+                        window.location.href='/admin/manageOffer'
+                    }else{
+                      Swal.fire({
+          icon: 'error',
+          title: 'Offer Error',
+          text: data.message,
+         
+        });
+                    }
+                }))
+            
+           
+        }catch(err){
+            console.error(err)
+        }
+    }
+
+    }
+ </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <%-include("../partials/adminPartials/footer")%>

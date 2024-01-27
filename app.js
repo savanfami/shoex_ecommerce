@@ -14,6 +14,7 @@ const flash=require('connect-flash')
 const { ErrorHandler }=require('./middleWares/errorhandling')
 const PORT=process.env.PORT
 connectDB
+const cronJob=require('./util/crone')
 
 
 
@@ -29,7 +30,7 @@ app.use(session({
     //     maxAge:360000
     // }
 }))
-
+cronJob()
 app.use(nocache())
 
 app.use(flash())

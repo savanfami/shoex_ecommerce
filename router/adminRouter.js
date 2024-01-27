@@ -6,7 +6,7 @@ const adminAuth=require('../middleWares/adminAuth')
 const upload=require('../middleWares/addCategory-multer')
 const uploads=require('../middleWares/Product-multer')
 const couponController=require('../controller/coupon')
-
+const offerController=require('../controller/offercontroller')
 
  const uploadfields=[
     {name:"mainImage",maxCount:1},
@@ -75,4 +75,14 @@ router.post('/addcoupon',adminAuth.verifyAdmin,couponController.addCoupon)
 router.get('/editcoupon/:id',adminAuth.verifyAdmin,couponController.editCoupon)
 router.patch('/editcoupon',adminAuth.verifyAdmin,couponController.editdcoupon)
 router.delete('/deletecoupon/:id',adminAuth.verifyAdmin,couponController.deleteCoupon)
+
+
+//routes for offer
+
+router.get('/manageOffer',adminAuth.verifyAdmin,offerController.tooffer)
+router.get('/addOffer',adminAuth.verifyAdmin,offerController.toaddOffer)
+router.post('/addOffer',adminAuth.verifyAdmin,offerController.addOffer)
+router.delete('/deleteOffer/:id',adminAuth.verifyAdmin,offerController.deleteOffer)
+
+
 module.exports=router

@@ -117,11 +117,24 @@
                   <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
                   <!-- <span class="text-success ms-2">In stock</span> -->
                 </div>
+                <% if (productData.discountAmount==productData.price) { %>
 
-                <div class="mb-3">
-                  <span class="h5">₹<%=productData.price%></span>
-                  <!-- <span class="text-muted">/per box</span> -->
-                </div>
+                  <div class="mb-3">
+                    <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span>
+                  </div>
+                      
+             
+                <% }else if(productData.discountAmount){%>
+                  <div class="mb-3">
+                    <span class="h5"> Price : <strong style="text-decoration: line-through; color: red;">₹ <%=productData.price%></strong></span>  </div>  
+                    <div class="mb-3">
+                      <span class="h5">Offer Price : <strong style="color: green;">₹ <%=productData.discountAmount%> </strong> <small style="color: green;font-size:15px;"> <strong>(<%=productData.categoryoffer%>%) </strong> </small></span>
+                    </div>
+                <%}
+                else {%>
+                  <div class="mb-3">
+                    <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span>  </div>                </div>
+                <%} %>
 
                 <p>
                   <%=productData.description %>

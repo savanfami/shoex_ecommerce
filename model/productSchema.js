@@ -32,6 +32,12 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    discountAmount:{
+        type:Number
+    },
+    categoryoffer:{
+        type:Number
+    },
     variant: [{
         size: {
           type: Number,
