@@ -13,7 +13,7 @@ const verifyAdmin=async (req,res,next)=>{
 const existingAdmin=async(req,res,next)=>{
     try{
         if(req.session.adminlogged){
-            res.redirect('/admin/manageUser')
+            res.redirect('/admin/dashboard')
         }else{
             next()
         }

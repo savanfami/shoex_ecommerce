@@ -59,7 +59,34 @@
           Top
           Selling</h3>
       </header>
-     
+      <section>
+        <div class="container">
+          <div class="row custom-a">
+            <% bestSeller.forEach((data)=> { %>
+              <div class="col d-flex justify-content-around flex-wrap col-lg-3">
+                <div class="custom-card-container ms-5 mt-5">
+                  <a  onclick="addToWishlist('<%-data._id%>')" class="custom-icon-heart" style="border: none; background: none; padding: 0; font: inherit; cursor: pointer;"> <i class="fa-regular fa-heart" style="font-size: 25px;"></i></a>
+                  <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>
+                  <a href="/user-productDetailshome/<%-data._id %>">
+                    <img class="card-img-top" src="/productImages/<%=data.productDetails.images[0]%>" alt="Card image cap"
+                      height="190px" width="210px">
+                  </a>
+                </div>
+                <div class="custom-additional-info ms-5">
+                  <a href="/user/product/details/">
+                    <p>
+                      <%=data.productDetails.name%>
+                    </p>
+                  </a>
+                  <p class="custom-p">₹ <%=data.productDetails.price%>  
+                  </p>
+                </div>
+              </div>
+              <% }) %>
+            
+        </div>
+        
+      </section>
       <hr>
 
       <header class="mb-4 sub-head mt-5" style="font-family:radley;font-size:25px;">

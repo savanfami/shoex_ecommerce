@@ -93,6 +93,7 @@
   <script>
     function validateInputAmount(inputId) {
       const input = document.getElementById(inputId);
+      console.log(input,"inpiuy");
       const warning = document.getElementById(inputId + 'Warning');
       const amount = parseFloat(input.value);
       if (amount < 0) {
@@ -146,7 +147,7 @@ if(validateCouponCode){
       };
 
 
-
+      
       fetch('/admin/addcoupon', {
         method: 'POST',
         headers: {

@@ -16,7 +16,9 @@ const home = async (req, res, next) => {
     try {
         const categoryData = await category.find({ status: true }).limit(3)
         const productData = await product.find({ status: true }).limit(4)
-        res.render('./user/home', { categoryData, productData })
+        const bestSeller=await helpers.bestseller()
+
+        res.render('./user/home', { categoryData, productData,bestSeller })
     } catch (err) {
         console.log(err);
         next(err)
@@ -41,8 +43,9 @@ const toUserHome = async (req, res) => {
     try {
         const categoryData = await category.find({ status: true }).limit(3)
         const productData = await product.find({ status: true }).limit(4)
+        const bestSeller=await helpers.bestseller()
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
-        res.render('./user/userHome', { categoryData, productData, cartcount })
+        res.render('./user/userHome', { categoryData, productData, cartcount,bestSeller })
     } catch (err) {
         console.log(err);
     }
@@ -141,7 +144,7 @@ const otpConformation = async (req, res) => {
         const data =req.session.data;
         const Otp= await OTP.findOne({email:data.email})
         console.log(Otp);
-        console.log(Otp.expireAt);
+        // console.log(Otp.expireAt);
         if (Date.now() > Otp.expireAt) {
             await OTP.deleteOne({ email });
         } else {
@@ -227,7 +230,6 @@ const toForgotPassword = (req, res) => {
 
 const forgotPass = async (req, res) => {
     try {
-        console.log(req.body);
         const check = await user.findOne({ email: req.body.email })
         // req.session.email = check.email
 

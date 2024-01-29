@@ -35,7 +35,17 @@
                       </p>
                       <p>Quantity: <%= data.quantity %>
                       </p>
-                      <p>Price:<strong>₹ <%=data.product.price %></strong>
+                      <% if (data.product.discountAmount == data.product.price) { %>
+                        <p>Price:<strong>₹ <%=data.product.price %></strong>
+                       
+                      <% }else if(data.product.discountAmount){%>
+                        <p>Price:<strong style="color: green;">₹ <%=data.product.discountAmount %></strong>
+
+                     <% }
+                      else{%>
+                        <p>Price:<strong>₹ <%=data.product.price %></strong>
+
+                      <%} %>
                       </p>
                       <p class="mt-2">
                        Total Price:<strong>₹ <%=EachAmount[i].total %></strong>

@@ -415,12 +415,15 @@
     
         // Validate Phone
         if (phone === '') {
-          displayAddAddressError('Phone is required!', 'addPhoneError');
-          isValid = false;
-        } else if (!/^\d{10}$/.test(phone)) {
-          displayAddAddressError('Phone must be 10 digits!', 'addPhoneError');
-          isValid = false;
-        }
+    displayAddAddressError('Phone is required!', 'addPhoneError');
+    isValid = false;
+} else if (!/^\d{10}$/.test(phone)) {
+    displayAddAddressError('Phone must be 10 digits!', 'addPhoneError');
+    isValid = false;
+} else if (/^0+$/.test(phone)) {
+    displayAddAddressError('All digits cannot be zero!', 'addPhoneError');
+    isValid = false;
+} 
     
         // Additional validation logic can be added here
     

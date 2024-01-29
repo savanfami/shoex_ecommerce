@@ -24,46 +24,58 @@ console.log(err);    }
 }
 
 const totalAmount = async (user) => {
+  const totalAmount = await cart.aggregate([
+      {
+          $match: { userId: user }
+      },
+      {
+          $unwind: '$products'
+      },
+      {
+          $project: {
+              item: '$products.productId',
+              quantity: '$products.quantity'
+          }
+      },
+      {
+          $lookup: {
+              from: 'products',
+              localField: 'item',
+              foreignField: '_id',
+              as: 'cartItems'
+          }
+      },
+      {
+          $project: {
+              item: 1,
+              quantity: 1,
+              product: { $arrayElemAt: ['$cartItems', 0] }
+          }
+      },
+      {
+          $group: {
+              _id: null,
+              total: {
+                  $sum: {
+                      $multiply: [
+                          '$quantity',
+                          {
+                              $cond: {
+                                  if: { $gt: ['$product.discountAmount', 0] },
+                                  then: '$product.discountAmount',
+                                  else: '$product.price'
+                              }
+                          }
+                      ]
+                  }
+              }
+          }
+      }
+  ]);
 
-    const totalAmount = await cart.aggregate([
-        {
-            $match: { userId: user }
-        },
-        {
-            $unwind: '$products'
-        },
-        {
-            $project: {
-                item: '$products.productId',
-                quantity: '$products.quantity'
-            }
+  return totalAmount;
+};
 
-        },
-        {
-            $lookup: {
-                from: 'products',
-                localField: 'item',
-                foreignField: '_id',
-                as: 'cartItems'
-            }
-        },
-        {
-            $project: {
-                item: 1,
-                quantity: 1,
-                product: { $arrayElemAt: ['$cartItems', 0] }
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                total: { $sum: { $multiply: ['$quantity', '$product.price'] } }
-            }
-        }
-    ])
-    return totalAmount
-
-}
 
 const cartProductData = async (user) => {
     const cartData = await cart.aggregate([
@@ -108,46 +120,59 @@ const cartProductData = async (user) => {
 
 
 const priceofEachitem = async (user) => {
+  const EachAmount = await cart.aggregate([
+      {
+          $match: { userId: user }
+      },
+      {
+          $unwind: '$products'
+      },
+      {
+          $project: {
+              item: '$products.productId',
+              quantity: '$products.quantity',
+              size: '$products.size'
+          }
+      },
+      {
+          $lookup: {
+              from: 'products',
+              localField: 'item',
+              foreignField: '_id',
+              as: 'cartItems'
+          }
+      },
+      {
+          $project: {
+              item: 1,
+              quantity: 1,
+              size: 1,
+              product: { $arrayElemAt: ['$cartItems', 0] }
+          }
+      },
+      {
+          $project: {
+              total: {
+                  $sum: {
+                      $multiply: [
+                          '$quantity',
+                          {
+                              $cond: {
+                                  if: { $gt: ['$product.discountAmount', 0] },
+                                  then: '$product.discountAmount',
+                                  else: '$product.price'
+                              }
+                          }
+                      ]
+                  }
+              }
+          }
+      }
+  ]);
 
-    const EachAmount = await cart.aggregate([
-        {
-            $match: { userId: user }
-        },
-        {
-            $unwind: '$products'
-        },
-        {
-            $project: {
-                item: '$products.productId',
-                quantity: '$products.quantity',
-                size: '$products.size'
-            }
+  return EachAmount;
+};
 
-        },
-        {
-            $lookup: {
-                from: 'products',
-                localField: 'item',
-                foreignField: '_id',
-                as: 'cartItems'
-            }
-        },
-        {
-            $project: {
-                item: 1,
-                quantity: 1,
-                size: 1,
-                product: { $arrayElemAt: ['$cartItems', 0] }
-            }
-        },
-        {
-            $project: {
-                total: { $sum: { $multiply: ['$quantity', '$product.price'] } }
-            }
-        }
-    ])
-    return EachAmount
-}
 
 
 
@@ -407,6 +432,57 @@ const productData = async () => {
   };
 
 
+  const bestseller=async(req,res)=>{
+    try{
+
+      const bestseller = await order.aggregate([
+        {
+            $unwind: '$items'
+        },
+        {
+            $group: {
+                _id: '$items.productId',
+                totalCount: { $sum: '$items.quantity' },
+                size: { $first: '$items.size' }, 
+                quantity: { $first: '$items.quantity' } 
+            }
+        },
+        {
+            $sort: {
+                totalCount: -1
+            }
+        },
+        {
+            $limit: 4
+        },
+        {
+            $lookup: {
+                from: 'products',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'productDetails'
+            }
+        },
+        {
+            $unwind: '$productDetails'
+        },
+        {
+            $project: {
+                _id: 1,
+                totalCount: 1,
+                size: 1, 
+                quantity: 1, 
+                productDetails: 1
+            }
+        }
+    ]);
+    return bestseller
+
+    }catch(err){
+      console.error(err)
+    }
+  }
+
 module.exports = {
     orderDataforInvoice
 };
@@ -422,6 +498,7 @@ module.exports = {
     orderDataforInvoice,
     productData,
     returnData,
-    rejectedData
+    rejectedData,
+    bestseller
 
 } 

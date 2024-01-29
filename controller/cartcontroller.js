@@ -81,7 +81,7 @@ const getaddtoCart = async (req, res) => {
         const userId = user._id;
         const cartcount = await helpers.getCartCount(req, res, req.session.email)
         const cartProductData = await helpers.cartProductData(userId)
-
+        console.log(cartProductData,"cart");
         if (cartProductData.length > 0) {
             const total = await helpers.totalAmount(userId)
             const EachAmount = await helpers.priceofEachitem(userId)

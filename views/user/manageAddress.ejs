@@ -87,7 +87,10 @@
       } else if (number.length !== 10) {
         numberValidationMessage.textContent = 'Number Must Be 10 digits';
         isValid = false;
-      } else {
+      }else if (/^[0]+$/.test(number)) {
+    numberValidationMessage.textContent = 'All digits cannot be zero';
+    isValid = false}
+       else {
         numberValidationMessage.textContent = '';
         console.log('isValid:0', isValid)
       }
@@ -392,12 +395,15 @@
 
       // Validate Phone
       if (phone === '') {
-        displayAddAddressError('Phone is required!', 'addPhoneError');
-        isValid = false;
-      } else if (!/^\d{10}$/.test(phone)) {
-        displayAddAddressError('Phone must be 10 digits!', 'addPhoneError');
-        isValid = false;
-      }
+    displayAddAddressError('Phone is required!', 'addPhoneError');
+    isValid = false;
+} else if (!/^\d{10}$/.test(phone)) {
+    displayAddAddressError('Phone must be 10 digits!', 'addPhoneError');
+    isValid = false;
+} else if (/^0+$/.test(phone)) {
+    displayAddAddressError('All digits cannot be zero!', 'addPhoneError');
+    isValid = false;
+} 
 
       // Additional validation logic can be added here
 

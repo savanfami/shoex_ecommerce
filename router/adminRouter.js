@@ -7,6 +7,7 @@ const upload=require('../middleWares/addCategory-multer')
 const uploads=require('../middleWares/Product-multer')
 const couponController=require('../controller/coupon')
 const offerController=require('../controller/offercontroller')
+const dashboardController=require('../controller/dashboard')
 
  const uploadfields=[
     {name:"mainImage",maxCount:1},
@@ -19,7 +20,6 @@ const offerController=require('../controller/offercontroller')
 
 // routes for admin login
 router.get('/',adminAuth.existingAdmin,adminController.toadminLogin)
-router.get('/dashboard',adminAuth.verifyAdmin,adminController.toDashboard)
 router.post('/login',adminAuth.existingAdmin,adminController.adminLogin)
 router.get('/logout',adminController.adminLogout)
 //route for user management
@@ -83,6 +83,15 @@ router.get('/manageOffer',adminAuth.verifyAdmin,offerController.tooffer)
 router.get('/addOffer',adminAuth.verifyAdmin,offerController.toaddOffer)
 router.post('/addOffer',adminAuth.verifyAdmin,offerController.addOffer)
 router.delete('/deleteOffer/:id',adminAuth.verifyAdmin,offerController.deleteOffer)
+
+//routes for dashboard
+
+router.get('/dashboard',adminAuth.verifyAdmin,adminController.toDashboard)
+router.get('/latestOrders',adminAuth.verifyAdmin,dashboardController.getOrderandSellers)
+router.get('/count-orders-by-day',adminAuth.verifyAdmin,dashboardController.salesReport)
+router.get('/count-orders-by-month',adminAuth.verifyAdmin,dashboardController.salesReport)
+router.get('/count-orders-by-year',adminAuth.verifyAdmin,dashboardController.salesReport)
+router.post('/download-sales-report',adminAuth.verifyAdmin,dashboardController.genereatesalesReport)
 
 
 module.exports=router

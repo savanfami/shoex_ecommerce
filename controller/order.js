@@ -53,11 +53,17 @@ const placeOrder = async (req, res,next) => {
         for (let i = 0; i < products.length; i++) {
             const product = products[i].product
             const item = {
-                price: product.price,
+                // price: product.price,
                 productId: products[i].item,
                 size: products[i].size,
                 quantity: products[i].quantity
             }
+            if ('discountAmount' in product && product.discountAmount !== null) {
+                item.price = product.discountAmount;
+            } else {
+                item.price = product.price; 
+            }
+        
             items.push(item)
         }
         console.log(totalAmount,"toootal amount");
