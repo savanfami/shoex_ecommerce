@@ -101,7 +101,7 @@
             document.getElementById('startDateError').innerText = 'Start date must be greater than the current date';
             isValid = false;
         }
-        if (endDate.value <= startDate.value) {
+        if (expiryDate.value <= startDate.value) {
             document.getElementById('endDateError').innerText = 'End date must be greater than the start date';
             isValid = false;
         }

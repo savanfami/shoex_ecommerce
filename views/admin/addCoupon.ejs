@@ -26,32 +26,32 @@
   <div class="container mt-5 add-coupon mb-3">
     <div class="row justify-content-center ">
       <div class="col-md-4 fw-bold">
-
+        <form id="couponform" >
         <div class="mb-3 mt-4">
-          <label for="couponName" class="form-label">Coupon Name</label>
-          <input type="text" class="form-control" id="couponName" name="couponName" placeholder="Enter coupon name"
-            required>
+          <label for="CouponName" class="form-label">Coupon Name</label>
+          <input type="text" class="form-control" id="CouponName" name="couponName" placeholder="Enter coupon name"
+            >
+            <p id="couponnameError" class="form-text text-danger "></p>
+
         </div>
         <div class="mb-3 mt-4">
           <label for="couponCode" class="form-label">Coupon Code</label>
-          <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code"
-            required onchange="validateCouponCode()">
-          <small id="couponWarning" class="form-text text-danger d-none">Invalid coupon code. Must contain at least one
-            uppercase letter, one lowercase letter, one number, and #</small>
+          <input type="text" class="form-control" id="couponcode" name="couponCode" placeholder="Enter coupon code" >
+          <p id="couponCodeError" class="form-text text-danger "></p>
         </div>
 
         <div class="mb-3">
           <label for="minPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
           <input type="number" class="form-control" id="minPurchaseAmount" name="minPurchaseAmount"
-            placeholder="Enter minimum purchase amount" onchange="validateInputAmount('minPurchaseAmount')">
-          <small id="minAmountWarning" class="form-text text-danger d-none">Amount cannot be negative.</small>
+            placeholder="Enter minimum purchase amount">
+          <p id="minAmountWarning" class="form-text text-danger "></p>
         </div>
 
         <div class="mb-3">
           <label for="discountAmount" class="form-label">Discount Amount</label>
           <input type="number" class="form-control" id="discountAmount" name="discountAmount"
-            placeholder="Enter discount amount" onchange="validateInputAmount('discountAmount')">
-          <small id="discountAmountWarning" class="form-text text-danger d-none">Amount cannot be negative.</small>
+            placeholder="Enter discount amount" >
+          <p id="discountAmountWarning" class="form-text text-danger "></p>
         </div>
 
         <div class="mb-3">
@@ -72,60 +72,54 @@
 
         <div class="mb-3">
           <label for="startDate" class="form-label">Start Date</label>
-          <input type="date" class="form-control" id="startDate" name="startDate" required>
+          <input type="date" class="form-control" id="startDate" name="startDate" >
+          <small id="startDateError" class="form-text text-danger"></small>
+
         </div>
 
         <div class="mb-3">
           <label for="endDate" class="form-label">End Date</label>
-          <input type="date" class="form-control" id="endDate" name="endDate" required>
+          <input type="date" class="form-control" id="endDate" name="endDate" >
+          <small id="endDateError" class="form-text text-danger"></small>
+
         </div>
 
         <div class="mb-3 text-center">
-          <button onclick="submitForm()" class="btn btn-success">Add Coupon</button>
+          <button onclick="submitForm();" type="button"    class="btn btn-success">Add Coupon</button>
+        </form>
 
           <a href="/admin/managecoupon" class="btn btn-secondary">Back</a>
         </div>
-
       </div>
     </div>
   </div>
 
+ 
+
+
   <script>
-    function validateInputAmount(inputId) {
-      const input = document.getElementById(inputId);
-      console.log(input,"inpiuy");
-      const warning = document.getElementById(inputId + 'Warning');
-      const amount = parseFloat(input.value);
-      if (amount < 0) {
-        warning.textContent = 'Amount cannot be negative.';
-        warning.classList.remove('d-none');
-      } else {
-        warning.classList.add('d-none');
-      }
-    }
+    function submitForm(){
+      console.log("Before trim:", document.getElementById('CouponName').value);
+const couponName = document.getElementById('CouponName').value.trim();
+console.log("After trim:", couponName);
 
-    function validateCouponCode() {
-        const couponCodeInput = document.getElementById('couponCode');
-        const couponWarning = document.getElementById('couponWarning');
-
-        const couponCode = couponCodeInput.value.trim();
-
-        if (!couponCode) {
-            couponWarning.textContent = 'Coupon code is required.';
-            couponWarning.classList.remove('d-none');
-            return false;
-        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#])[A-Za-z\d#]+$/.test(couponCode)) {
-            couponWarning.textContent = 'Invalid coupon code. Must contain at least one uppercase letter, one lowercase letter, one number, and #.';
-            couponWarning.classList.remove('d-none');
-            return false;
-        } else {
-            couponWarning.classList.add('d-none');
-
-            return true;
-        }
-    }
-if(validateCouponCode){
-    function submitForm() {
+      const couponCode=document.getElementById('couponcode').value.trim();
+      const minPurchaseAmount=document.getElementById('minPurchaseAmount')
+      const discountAmount=document.getElementById('discountAmount')
+      const startDate=document.getElementById('startDate')
+      const endDate=document.getElementById('endDate')
+      const currentDate = new Date().toISOString().split('T')[0];
+      console.log(couponName.value,couponCode,minPurchaseAmount,discountAmount,endDate,currentDate);
+      const couponnameError=document.getElementById('couponnameError').innerText=''
+   
+      const couponCodeError=document.getElementById('couponCodeError').innerText=' '
+      
+      const minPurchaseError=document.getElementById('minAmountWarning').innerText=''
+   
+      const discountError=document.getElementById('discountAmountWarning').innerText=''
+    
+      const startDateError=document.getElementById('startDateError').innerText=''
+      const endDateError=document.getElementById('endDateError').innerText=''
       const discountTypeElements = document.getElementsByName('discountType');
       let selectedDiscountType;
 
@@ -135,19 +129,67 @@ if(validateCouponCode){
           break;
         }
       }
+      let isValid=true
+      console.log(couponName,couponCode,minPurchaseAmount.value,'1234567898765432123456789');
+     console.log (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#])[A-Za-z\d#]+$/.test(couponCode),'asdfasdfa')
+      if(!couponName){
+        console.log('coupon name error');
+            document.getElementById('couponnameError').innerText='coupon  name is required'
+            isValid=false
+        }
+      if(!couponCode){
+        console.log('coupon code error');
+            document.getElementById('couponCodeError').innerText='coupon code is required'
+            isValid=false
+        }else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#])[A-Za-z\d#]+$/.test(couponCode)){
+          console.log('code is checking....');
+          document.getElementById('couponCodeError').innerText='Invalid coupon code. Must contain at least one uppercase letter, one lowercase letter, one number, and #.';
 
-      const couponData = {
-        couponName: document.getElementById('couponName').value,
-        couponCode: document.getElementById('couponCode').value,
-        minPurchaseAmount: document.getElementById('minPurchaseAmount').value,
-        discountAmount: document.getElementById('discountAmount').value,
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        discountType: selectedDiscountType
-      };
+            isValid=false
+        }
+      if(!minPurchaseAmount.value){
+        console.log('coupon amount error');
+            document.getElementById('minAmountWarning').innerText='min  Amount is required'
+            isValid=false
+        }else if(parseFloat(minPurchaseAmount.value)<0){
+          document.getElementById('minAmountWarning').innerText='min  Amount  should not be negative'
+            isValid=false
+        }
+      if(!discountAmount.value){
+        console.log('coupon disc error');
+            document.getElementById('discountAmountWarning').innerText='dicount Amount is required'
+            isValid=false
+        }else if(parseFloat(discountAmount.value)<0){
+          document.getElementById('discountAmountWarning').innerText='dicount  Amount  should not be negative'
+            isValid=false
+        }
 
+         if(discountAmount.value>minPurchaseAmount.value){
+          document.getElementById('discountAmountWarning').innerText='discount amount should be less than min purchase amound'
+            isValid=false
+        }
+        if (startDate.value < currentDate) {
+          console.log('coupon current error');
+            document.getElementById('startDateError').innerText = 'Start date must be greater than the current date';
+            isValid = false;
+        }
+        if (endDate.value <= startDate.value) {
+          console.log('coupon start error');
+            document.getElementById('endDateError').innerText = 'End date must be greater than the start date';
+            isValid = false;
+        }
+        if(isValid){
+          try{
+            const couponData = {
+              couponName: document.getElementById('CouponName').value,
+              couponCode: document.getElementById('couponcode').value,
+              minPurchaseAmount: document.getElementById('minPurchaseAmount').value,
+              discountAmount: document.getElementById('discountAmount').value,
+              startDate: document.getElementById('startDate').value,
+              endDate: document.getElementById('endDate').value,
+              discountType: selectedDiscountType
+            };
 
-      
       fetch('/admin/addcoupon', {
         method: 'POST',
         headers: {
@@ -159,18 +201,20 @@ if(validateCouponCode){
         .then(data => {
           if(data.success){
             window.location.href='/admin/managecoupon'
-          }else{
-            window.location.reload()
           }
         })
         .catch(error => {
           console.error('Error during fetch:', error);
        
         });
-    }
-
+        }catch(err){
+            console.error(err)
+        }
+        
+    }else{
+          console.log('not a valid form....................');
+        }
   }
-
   </script>
 
   <%-include("../partials/adminPartials/footer")%>

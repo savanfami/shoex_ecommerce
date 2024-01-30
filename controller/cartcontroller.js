@@ -203,35 +203,33 @@ const useCoupon=async(req,res,next)=>{
         const cartData=await cart.findOne({userId:userData._id})
         const totalAmount=req.session.totalAmount
         const coupon=await coupons.findOne({couponCode})
+        console.log(coupon);
         const currentDate=Date.now()
+        if(coupon==null){
+            // console.log('coupon not found');
+            return  res.json({success:false,message:'coupon not found'})
+        }
         if(currentDate>coupon.endDate){
             return  res.json({success:false,message:'coupon has expired'})
-        }
-        if(!coupon){
-            console.log('coupon not found');
-            return  res.json({success:false,message:'coupon not found'})
         }
 
         const isCouponused=userData.usedCoupons.some(usedCoupon=>usedCoupon.couponCode===couponCode)
         if(isCouponused){
-            console.log("coupon already usedd]");
             return  res.json({success:false,message:"coupon already used"})
         }
         else if (totalAmount < coupon.minPurchaseAmount) {
-            console.log('purrchase amount not ');
             return res.json({ success: false, message: 'Purchase amount does not meet the minimum requirement for the coupon' });
           }
           if (totalAmount < coupon.discountAmount) {
-            console.log('Purchase Amount must Greater Than Discount amount');
             return res.json({ success: false, message: 'Purchase Amount must Greater Than Discount amount' });
           }
 
         
           const totalAfterDiscount=totalAmount-coupon.discountAmount
-          console.log(totalAfterDiscount,"total after discound");
+        //   console.log(totalAfterDiscount,"total after discound");
           const discountAmount=coupon.discountAmount
           req.session.discountedAmount=coupon.discountAmount
-          console.log(req.session.discountedAmount,"discountedAmount");
+        //   console.log(req.session.discountedAmount,"discountedAmount");
           req.session.grandtotal=totalAfterDiscount
           userData.usedCoupons.push({
             couponCode,
@@ -259,5 +257,4 @@ module.exports = {
     checkout,
     changeQuantity,
     useCoupon
-
 }
