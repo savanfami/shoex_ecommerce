@@ -80,6 +80,16 @@
         display: flex;
         flex-wrap: wrap;
     }
+    #offerPersentage{
+        position: absolute;
+    margin-top: 62px;
+    margin-left: 22px;
+    color: white;
+    font-weight: 700;
+    font-size: larger;
+    transform: rotate(-9deg);
+}
+    
 </style>
 <div style="width: 150px;" class="float-end">
     <form id="sortForm" action="/user/viewallProduct" method="GET">
@@ -151,6 +161,12 @@
             <div class="col maindiv justify-content-around flex-wrap col-lg-3 imgviv" style="display: flex;" data-brand="<%= data.brand %>"
                 data-category="<%= data.category %>" data-price="<%= data.price %>"  data-sort="<%=data.sort %>" data-product-id="<%=data._id%>" >
                 <div class="custom-card-container ms-5 mt-5">
+                    <%if(data.isOffer){%>
+                        <div style="display: flex;align-items: center;">
+                            <img src="/assets/offerPersentage.png" alt="" style="    width: 86px;margin-top: 54px;position: absolute;">
+                            <h4 id="offerPersentage"><%=data.discountPercentage%></h4>
+                        </div>
+                        <%}%>
                     <a class="custom-icon-heart" onclick="addToWishlist('<%-data._id%>')" style="border: none; background: none; padding: 0; font: inherit; cursor: pointer;"> <i class="fa-regular fa-heart" style="font-size: 25px;"></i></a>
 
                     <i class="fa-regular fa-circle-check custom-icon-cart" style="color: #09672a;"></i>

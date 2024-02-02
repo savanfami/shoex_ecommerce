@@ -38,7 +38,7 @@
     </style>
     <div class="product-text-container container-fluid mb-4"
         style="display: flex; justify-content: center;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif ;text-decoration: underline;">
-        <h4 style=" margin-top: 11px;" id="ManageProduct-text">OFFER MANAGEMENT</h4>
+        <h4 style=" margin-top: 11px;" id="ManageProduct-text">CATEGORY OFFER MANAGEMENT</h4>
     </div>
     <div class="mx-5 data mt-4 p-3 ">
         <a href="/admin/addOffer" class="btn btn-primary">ADD OFFER</a>
@@ -63,7 +63,12 @@
                             year: 'numeric' }) %></strong></p>
 
 <div class="icon-buttons">
-
+    <form action="/admin/editOffer/<%-data._id %>" method="PATCH">
+        <button class="custom-icon-heart"
+            style="font-size: 1.5em; border: none; background: none; padding: 0; font: inherit; cursor: pointer;">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+    </form>
      <button class="custom-icon-heart"
         style="font-size: 1.5em; border: none; background: none; padding: 0; font: inherit; cursor: pointer;"
         onclick="deleteOffer('<%-data._id%>')">

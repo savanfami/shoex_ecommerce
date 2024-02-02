@@ -246,7 +246,7 @@ const salesReport=async(req,res)=>{
             }
         ]);
 
-        // console.log(bestseller, "besteselllerrrrrrrrr");
+        console.log(bestseller, "besteselllerrrrrrrrr");
         if (!bestseller) throw new Error("no data found");
         res.json({ bestseller });
 

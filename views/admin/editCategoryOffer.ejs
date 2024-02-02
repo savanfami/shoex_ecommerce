@@ -21,49 +21,42 @@
   </style>
   <div class="product-text-container container mb-4"
     style="display: flex; justify-content: center;align-items: center;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color: black;">
-    <h4 style=" margin-top: 11px;" id="ManageProduct-text">ADD OFFER  </h4>
+    <h4 style=" margin-top: 11px;" id="ManageProduct-text">EDIT OFFER  </h4>
   </div>
   <div class="container mt-5 add-coupon mb-3">
     <div class="row justify-content-center ">
       <div class="col-md-4 fw-bold">
 
         <div class="mb-3 mt-4">
-          <label for="couponName" class="form-label">Select Category</label>
-          <select class="form-control" id="categorySelect" name="category" required>
-            <option value="" selected disabled>Select a Category</option>
-            <% categoryData.forEach(category=> { %>
-                <option value="<%= category._id %>">
-                    <%= category.name %>
-                </option>
-                <% }); %>
-        </select>
+          <label for="couponName" class="form-label">Category Name</label>
+          <input type="text" class="form-control" value="<%-offerData.categoryName %>" readonly>
         <span class="error" id="categoryError" style="color: red;"></span>
         <div class="mb-3 mt-4">
           <label for="couponCode" class="form-label">Percentage</label>
-          <input type="text"   class="form-control" id="Percentage" name="couponCode" placeholder="Enter Percentage"
+          <input type="text"  value="<%-offerData.percentage %>"  class="form-control" id="Percentage"  placeholder="Enter Percentage"
             required >
             <span class="error" id="percentageError" style="color: red;"></span>
 
         </div>
 
-      
+      <input type="hidden" value="<%-offerData._id %>" id="catId">
 
         <div class="mb-3">
           <label for="startDate" class="form-label">Start Date</label>
-          <input type="date" class="form-control" id="startDate" name="startDate" required>
+          <input type="date" class="form-control" value="<%- new Date(offerData.startDate).toISOString().split('T')[0] %>" id="startDate" name="startDate" >
           <span class="error" id="startDateError" style="color: red;"></span>
 
         </div>
 
         <div class="mb-3">
           <label for="endDate" class="form-label">End Date</label>
-          <input type="date" class="form-control" id="endDate" name="endDate" required>
+          <input type="date" class="form-control" value="<%- new Date(offerData.expiryDate).toISOString().split('T')[0] %>" id="endDate" name="endDate" >
           <span class="error" id="endDateError" style="color: red;"></span>
 
         </div>
 
         <div class="mb-3 text-center">
-          <button onclick="submitForm()" class="btn btn-success">Add Offer</button>
+          <button onclick="submitForm()" class="btn btn-success">SAVE </button>
 
           <a href="/admin/manageoffer" class="btn btn-secondary">Back</a>
         </div>
@@ -74,24 +67,19 @@
 
  <script>
     function submitForm(){
-        const categoryName=document.getElementById('categorySelect')
         const Percentage=document.getElementById('Percentage')
         const startDate=document.getElementById('startDate')
         const expiryDate=document.getElementById('endDate')
 
         const currentDate = new Date().toISOString().split('T')[0];
+        const catId=document.getElementById('catId')
 
-
-        const categoryNameError=document.getElementById('categoryError').innerText=''
         const percentageError=document.getElementById('percentageError').innerText=''
         const startDateErrorError=document.getElementById('startDateError').innerText=''
         const endDateError=document.getElementById('endDateError').innerText=''
 
         let isValid=true
-        if(!categoryName.value){
-            document.getElementById('categoryError').innerText='Category is required'
-            isValid=false
-        }
+        
 
         if (isNaN(Percentage.value) || Percentage.value < 1 || Percentage.value > 99) {
             document.getElementById('percentageError').innerText = 'Percentage must be a number between 1 and 99';
@@ -109,13 +97,13 @@
         if(isValid){
             try{
                 const data={
-                categoryId:categoryName.value,
+                catid:catId.value,
                 Percentage:Percentage.value,
                 startDate:startDate.value,
                 endDate:expiryDate.value
             }
-                fetch('/admin/addOffer',{
-                    method:'post',
+                fetch('/admin/editOffer',{
+                    method:'put',
                     headers:{
                         'Content-Type':'application/json'
                     },

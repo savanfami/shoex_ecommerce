@@ -1,0 +1,143 @@
+<%-include("../partials/adminPartials/header")%>
+
+  <style>
+    .product-text-container {
+      border-radius: 12px;
+      width: 100%;
+      height: 56px;
+      margin-top: 73px;
+      box-shadow: 2px 2px 2px 2px grey;
+
+    }
+    input.form-control {
+      border: 2px solid black;
+         
+  }
+
+    .add-coupon {
+      box-shadow: 2px 2px 2px 2px grey;
+      border-radius: 8px;
+    }
+  </style>
+  <div class="product-text-container container mb-4"
+    style="display: flex; justify-content: center;align-items: center;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color: black;">
+    <h4 style=" margin-top: 11px;color: green;" id="ManageProduct-text">EDIT PRODUCT OFFER  <i class='fa-solid fa-ticket nav_icon'></i></h4>
+  </div>
+  <div class="container mt-5 add-coupon mb-3">
+    <div class="row justify-content-center ">
+      <div class="col-md-4 fw-bold">
+        <div class="mb-3 mt-4">
+          <label for="couponCode" class="form-label">Product Name</label>
+          <select class="form-control" id="productSelect" name="category" disabled>
+            <option value="" selected  ><%-offerData.productName%></option>
+           
+        </select>
+     
+        </div>
+        <div class="mb-3 mt-4">
+          <label for="couponCode" class="form-label">Percentage</label>
+          <input type="number" value="<%-offerData.offerpercentage %>"  class="form-control" id="Percentage" name="couponCode" placeholder="Enter Percentage"
+          onchange="addOfferform()">
+            <div id="percentageError" style="color: red;"></div>      
+        </div>
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input type="date" class="form-control" value="<%- new Date(offerData.startDate).toISOString().split('T')[0] %>" id="startDate" name="startDate" required>
+          <div id="startDateError" style="color: red;" onchange="addOfferform()"></div>      
+        </div>
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date</label>
+          <input type="date" class="form-control" id="endDate" value="<%- new Date(offerData.expiryDate).toISOString().split('T')[0] %>" name="endDate" required>
+          <div id="endDateError" style="color: red;" onchange="addOfferform()"></div>      
+        </div>
+        <div class="modal-footer">
+          <a href="/admin/manageproductoffer" class="btn btn-secondary">Close</a>
+          <button type="button" class="btn btn-primary" onclick="return addOfferform()"> EDIT</button>
+       
+      </div>
+    </div>
+    <script>
+      function addOfferform(){
+        console.log("pro");
+        const percentage=document.getElementById('Percentage')
+        const startDate=document.getElementById('startDate').value.trim();
+        const endDate=document.getElementById('endDate').value.trim();
+        const productSelect = document.getElementById('productSelect');
+    const productName = productSelect.options[productSelect.selectedIndex].text;
+        console.log(endDate,"endtDae");
+        const currentDate = new Date().toISOString().split('T')[0];
+        console.log(currentDate,"cureee");
+        clearoffererrors()
+        let isValid = true;
+    
+        if (isNaN(percentage.value) || percentage.value < 1 || percentage.value > 99) {
+            displayAddOfferError('Percentage must be a number between 1 and 99','percentageError');
+                isValid = false;
+            }
+        
+        if(startDate<currentDate){
+            displayAddOfferError('start Date must be greater than or equall to current date!', 'startDateError');
+            isValid = false;
+        }
+        
+        if(endDate<startDate){
+            displayAddOfferError('end Date must be less than current date!', 'endDateError');
+            isValid = false
+        }
+        if(isValid){
+        
+            const addofferData={
+                percentage:document.getElementById('Percentage').value,
+                startDate:document.getElementById('startDate').value,
+                endDate:document.getElementById('endDate').value,
+                productName:productName
+                
+                
+            }
+            fetch('/admin/editproductOffer',{
+                method:'put',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(addofferData)
+            })
+            .then(response => response.json())
+        .then(data => {
+          if(data.success){
+            window.location.href='/admin/manageproductoffer'
+          }else{
+            console.log('data is ',data.success);
+        Swal.fire({
+          icon: 'error',
+          title: 'Product Error',
+          text: data.message,
+         
+        });
+          }
+        })
+        }
+          
+        }
+          function displayAddOfferError(message, errorContainerId) {
+          const errorContainer = document.getElementById(errorContainerId);
+          errorContainer.innerText = message;
+        }
+    
+        function clearoffererrors() {
+        
+          const errorContainers = ['percentageError','startDateError','endDateError'];
+          errorContainers.forEach(containerId => {
+            const errorContainer = document.getElementById(containerId);
+            errorContainer.innerText = '';
+          });
+        }  
+    
+    
+    </script>
+
+ 
+
+
+
+  
+  <%-include("../partials/adminPartials/footer")%></div>

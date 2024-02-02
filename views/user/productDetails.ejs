@@ -117,25 +117,31 @@
                   <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
                   <!-- <span class="text-success ms-2">In stock</span> -->
                 </div>
-                <% if (productData.discountAmount==productData.price) { %>
-
+                <% if (productData.productdiscountAmount<=productData.discountAmount) { %>
                   <div class="mb-3">
-                    <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span>
-                  </div>
-                      
-             
-                <% }else if(productData.discountAmount){%>
+                    <span class="h5"> Price : <strong style="text-decoration: line-through; color: red;">₹ <%=productData.price%></strong></span></div>
+                   <div class="mb-3">
+                    <span class="h5">Offer Price : <strong style="color: green;">₹ <%=productData.productdiscountAmount%></strong>  <small style="color: green;font-size:15px;"> <strong>(<%=productData.productOffer%>%) </strong> </small></span>
+                  </div>        
+                <% }else if(productData.discountAmount==productData.price){%>
                   <div class="mb-3">
-                    <span class="h5"> Price : <strong style="text-decoration: line-through; color: red;">₹ <%=productData.price%></strong></span>  </div>  
-                    <div class="mb-3">
-                      <span class="h5">Offer Price : <strong style="color: green;">₹ <%=productData.discountAmount%> </strong> <small style="color: green;font-size:15px;"> <strong>(<%=productData.categoryoffer%>%) </strong> </small></span>
-                    </div>
-                <%}
-                else {%>
-                  <div class="mb-3">
-                    <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span>  </div>               
-                <%} %>
-
+                    <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span></div>
+              <%}else if(productData.discountAmount){%>
+                <div class="mb-3">
+                  <span class="h5"> Price : <strong style="text-decoration: line-through; color: red;">₹ <%=productData.price%></strong></span></div>
+                <div class="mb-3">
+                  <span class="h5">Offer Price : <strong style="color: green;">₹ <%=productData.discountAmount%></strong>  <small style="color: green;font-size:15px;"> <strong>(<%=productData.discountPercentage%>%) </strong> </small></span>
+                </div>     
+             <% }else if(!productData.discountAmount&& productData.productdiscountAmount){%>
+              <div class="mb-3">
+                <span class="h5"> Price : <strong style="text-decoration: line-through; color: red;">₹ <%=productData.price%></strong></span></div>
+               <div class="mb-3">
+                <span class="h5">Offer Price : <strong style="color: green;">₹ <%=productData.productdiscountAmount%></strong>  <small style="color: green;font-size:15px;"> <strong>(<%=productData.discountPercentage%>%) </strong> </small></span>
+              </div> 
+             <%}else{%>
+              <div class="mb-3">
+              <span class="h5"> Price : <strong style="color: green;">₹ <%=productData.price%></strong></span>  </div>
+              <%} %>
                 <p>
                   <%=productData.description %>
                 </p>

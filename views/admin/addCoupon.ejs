@@ -96,6 +96,7 @@
 
  
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     function submitForm(){
@@ -164,11 +165,11 @@ console.log("After trim:", couponName);
             isValid=false
         }
 
-         if(discountAmount.value>minPurchaseAmount.value){
+         if(parseFloat(discountAmount.value)>parseFloat(minPurchaseAmount.value)){
           document.getElementById('discountAmountWarning').innerText='discount amount should be less than min purchase amound'
             isValid=false
         }
-        if (startDate.value < currentDate) {
+        if (startDate.value < currentDate.value) {
           console.log('coupon current error');
             document.getElementById('startDateError').innerText = 'Start date must be greater than the current date';
             isValid = false;
@@ -201,6 +202,14 @@ console.log("After trim:", couponName);
         .then(data => {
           if(data.success){
             window.location.href='/admin/managecoupon'
+          }else{
+            console.log('data is ',data.success);
+        Swal.fire({
+          icon: 'error',
+          title: 'Coupon Error',
+          text: data.message,
+         
+        });
           }
         })
         .catch(error => {

@@ -20,6 +20,7 @@ const checkOffer=async(req,res)=>{
                     await product.findByIdAndUpdate(data._id,{discountAmount:discountedPrice,$unset:{categoryoffer:1}})
                 })
                 await offer.findByIdAndDelete(off._id);
+                console.log("dleted offer");
             }
 
         }

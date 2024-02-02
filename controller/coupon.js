@@ -26,33 +26,38 @@ const toaddCoupon=async(req,res,next)=>{
 
 //post for addcoupon
 
-const addCoupon=async(req,res,next)=>{
-    try{
-        const {couponName,couponCode,minPurchaseAmount,discountAmount,startDate,endDate,discountType}=req.body
-        const existingCoupon=await coupons.findOne({couponCode})
-        if(existingCoupon){
-            res.json(400).json({success:false,message:'Coupon with this code already exist'})
-        }
-        if (!couponName || !couponCode || isNaN(minPurchaseAmount) || isNaN(discountAmount) || !discountType || !startDate || !endDate ) {
+const addCoupon = async (req, res, next) => {
+    try {
+      const { couponName, couponCode, minPurchaseAmount, discountAmount, startDate, endDate, discountType } = req.body;
+      const existingCoupon = await coupons.findOne({ couponCode });
   
-            return res.status(400).json({ success: false, message: 'Invalid input. Please provide all required fields with valid values.' });
-          }
-        const coupon=new coupons({
-            couponName,
-            couponCode,
-            minPurchaseAmount,
-            discountAmount,
-            couponType:discountType,
-            startDate,
-            endDate
-        })
-        await coupon.save()
-        res.json({success:true,message:'Coupon Creatd successfully'})
-    }catch(err){
-        console.error(err)
-        next(err)
+      if (existingCoupon) {
+        console.log("Coupon already exists");
+        return res.status(400).json({ success: false, message: 'Coupon with this code already exists' });
+      }
+  
+      if (!couponName || !couponCode || isNaN(minPurchaseAmount) || isNaN(discountAmount) || !discountType || !startDate || !endDate) {
+        return res.status(400).json({ success: false, message: 'Invalid input. Please provide all required fields with valid values.' });
+      }
+  
+      const coupon = new coupons({
+        couponName,
+        couponCode,
+        minPurchaseAmount,
+        discountAmount,
+        couponType: discountType,
+        startDate,
+        endDate
+      });
+  
+      await coupon.save();
+      res.json({ success: true, message: 'Coupon created successfully' });
+    } catch (err) {
+      console.error(err);
+      next(err);
     }
-}
+  };
+  
 
 //to edicoupon
 

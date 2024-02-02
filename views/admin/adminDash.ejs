@@ -121,7 +121,7 @@
                                                       <th>Price</th>
                                                       <th>size</th>
                                                       <th>Status</th>
-                                                      <th>Sold</th>
+                                                      <!-- <th>Sold</th> -->
                                                   </tr>
                                               </thead>
                                               <tbody id="bestSellersTable">
@@ -389,7 +389,7 @@ console.log("Best Sellers Table:", bestSellersTable);
         const priceCell = row.insertCell(3);
         const sizeCell = row.insertCell(4);
         const statusCell = row.insertCell(5);
-        const salesCell = row.insertCell(6);
+        // const salesCell = row.insertCell(6);
 
         const imgElement = document.createElement("img");
         const imageUrl = "/productImages/" + seller.productDetails.images[0];
@@ -400,7 +400,7 @@ console.log("Best Sellers Table:", bestSellersTable);
         console.log(seller.productDetails.name);
         console.log(seller.productDetails.DiscountAmount);
         console.log(seller.productDetails.AvailableQuantity);
-        console.log(seller.totalCount);
+        console.log(seller.totalCount,"totallllllllllllllllllllllll");
         productCell.textContent = seller.productDetails._id; 
         productNameCell.textContent = seller.productDetails.name; 
         priceCell.textContent = seller.productDetails.discountAmount?seller.productDetails.discountAmount:seller.productDetails.price;
@@ -409,7 +409,7 @@ console.log("Best Sellers Table:", bestSellersTable);
         statusCell.textContent = isAvailable ? "In Stock" : "Out of Stock";
         statusCell.style.color = isAvailable ? "green" : "red";
         statusCell.style.fontWeight = "bold";
-        salesCell.textContent = seller.totalCount;
+        // salesCell.textContent = seller.totalCount;
     });
 }
 

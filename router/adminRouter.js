@@ -77,13 +77,24 @@ router.patch('/editcoupon',adminAuth.verifyAdmin,couponController.editdcoupon)
 router.delete('/deletecoupon/:id',adminAuth.verifyAdmin,couponController.deleteCoupon)
 
 
-//routes for offer
+//routes for categoryoffer
 
 router.get('/manageOffer',adminAuth.verifyAdmin,offerController.tooffer)
 router.get('/addOffer',adminAuth.verifyAdmin,offerController.toaddOffer)
 router.post('/addOffer',adminAuth.verifyAdmin,offerController.addOffer)
-router.delete('/deleteOffer/:id',adminAuth.verifyAdmin,offerController.deleteOffer)
+router.delete('/deleteOffer/:id',adminAuth.verifyAdmin,offerController.deletCategoryOffer)
+router.get('/editOffer/:id',adminAuth.verifyAdmin,offerController.editOffer)
+router.put('/editOffer',adminAuth.verifyAdmin,offerController.editCategoryOffer)
 
+
+//routes for productOffer
+
+router.get('/manageproductoffer',adminAuth.verifyAdmin,offerController.manageproductOffer)
+router.get('/addProductOffer',adminAuth.verifyAdmin,offerController.addproductoffer)
+router.post('/addproductOffer',adminAuth.verifyAdmin,offerController.addproductOffer)
+router.delete('/deleteproductOffer',adminAuth.verifyAdmin,offerController.deleteProductOffer)
+router.get('/editproductOffer/:name',adminAuth.verifyAdmin,offerController.editProductOffer)
+router.put('/editproductOffer',adminAuth.verifyAdmin,offerController.editproductoffer)
 //routes for dashboard
 
 router.get('/dashboard',adminAuth.verifyAdmin,adminController.toDashboard)
