@@ -350,7 +350,7 @@ const downloadInvoice = async (req, res) => {
         const id = req.params.orderId
         const filePath = path.join(__dirname, '../public/pdf', `${id}.pdf`);
         res.download(filePath, `shoexinvoice.pdf`)
-        await fs.promises.unlink(filePath)
+        // await fs.promises.unlink(filePath)
     } catch (error) {
         console.error('Error in downloading the invoice:', error);
         res.status(500).json({ success: false, message: 'Error in downloading the invoice' });
