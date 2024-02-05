@@ -523,7 +523,7 @@ const searchproduct = async (req, res) => {
                 { color: { $regex: query, $options: 'i' } },
             ]
         });
-        res.render('../user/searchproduct', {
+        res.render('./user/searchproduct', {
             searchResults, cartcount, count: Math.ceil(count / pagesize),
             page, query,
             productCategory,
