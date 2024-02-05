@@ -491,7 +491,7 @@ const filterProducts = async (req, res) => {
 
 }
 
-const searchProduct = async (req, res) => {
+const searchproduct = async (req, res) => {
     try {
         const query = req.query.query
         const productbrand = await product.distinct('brand')
@@ -523,7 +523,7 @@ const searchProduct = async (req, res) => {
                 { color: { $regex: query, $options: 'i' } },
             ]
         });
-        res.render('./user/searchProduct', {
+        res.render('../user/searchproduct', {
             searchResults, cartcount, count: Math.ceil(count / pagesize),
             page, query,
             productCategory,
@@ -897,7 +897,7 @@ module.exports = {
     addnewAddress,
     categoryList,
     filterProducts,
-    searchProduct,
+    searchproduct,
     toWallet,
     toForgotPassword,
     forgotPass,

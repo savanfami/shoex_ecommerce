@@ -41,7 +41,7 @@ router.get('/user-viewallProduct',userAuth.verifyUser,userController.viewallProd
 router.get('/user-viewallProducthome',userController.viewallProducthome)
 router.get('/user-categoryList/:categoryId',userAuth.verifyUser,userController.categoryList)
 router.get('/user/filterProducts',userAuth.verifyUser,userController.filterProducts)
-router.get('/user/searchProducts',userController.searchProduct)
+router.get('/user/searchproducts',userController.searchproduct)
 //route for userprofile
 
 router.get('/user-profile',userAuth.verifyUser,userController.touserProfile)
