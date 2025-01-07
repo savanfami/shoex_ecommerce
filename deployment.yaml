@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: savan1239/ecommerce:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3300
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  selector: 
+    app: webapp
+  type: NodePort
+  ports: 
+  - protocol: TCP
+    port: 3300
+    targetPort: 3300
+    nodePort: 31110

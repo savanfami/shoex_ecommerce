@@ -1,5 +1,6 @@
 const user = require('../model/userSchema')
 const bcrypt = require('bcrypt')
+const cpu=require('os').cpus().length
 const sendOTP = require('../controller/otpcontroller')
 const OTP = require('../model/otpSchema')
 const category = require('../model/categorySchema')
@@ -561,15 +562,26 @@ const touserProfile = async (req, res) => {
 
 //post edit userProfile
 const usereditProfile = async (req, res) => {
+    
     try {
-        const id = req.params.id
-        const userData = await user.findOne({ _id: id })
-        const updateUser = await userData.updateOne({ username: req.body.name })
-        res.redirect('/user-profile')
+        
+        const id = req.params.id;
+        const userData = await user.findById(id); 
+        if (!userData) {
+            throw new Error('User not found');
+        }
+
+        await userData.updateOne({ username: req.body.name },{session}); 
+
+   
+        res.redirect('/user-profile');
     } catch (err) {
-        console.log(err);
-    }
-}
+
+        console.error(err);
+        res.status(500).send("An error occurred while updating the profile."); 
+    } 
+};
+
 
 //get for manageAddress
 
